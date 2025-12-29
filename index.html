@@ -70,6 +70,7 @@
         }
         .anim-spin-atk { animation: spin-attack 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
+        /* Recuo de Dano */
         @keyframes hit-spin {
             0% { transform: rotateY(30deg) rotateZ(0deg); }
             20% { transform: rotateY(80deg) rotateZ(-20deg) translateX(20px); }
@@ -78,14 +79,28 @@
         }
         .anim-hit-recoil { animation: hit-spin 0.5s ease-out; }
 
+        /* Respiração Padrão */
         @keyframes breathing {
             0%, 100% { transform: scale(1) translateY(0); opacity: 0.9; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6)); }
             50% { transform: scale(1.03) translateY(-4px); opacity: 1; filter: drop-shadow(0 20px 25px rgba(0,0,0,0.7)); }
         }
 
+        /* Carregamento de Magia (Brilho + Pulso) */
+        @keyframes charge-glow {
+            0% { filter: brightness(1) contrast(1) drop-shadow(0 0 0px transparent); transform: scale(1); }
+            50% { filter: brightness(1.8) contrast(1.2) drop-shadow(0 0 25px rgba(255,255,255,0.9)); transform: scale(1.15); }
+            100% { filter: brightness(1) contrast(1) drop-shadow(0 0 0px transparent); transform: scale(1); }
+        }
+        .anim-charging { animation: charge-glow 0.8s ease-in-out infinite; }
+
         .sprite-renderer img, .sprite-renderer .emoji-renderer {
             max-width: 100%; max-height: 100%; object-fit: contain;
             animation: breathing 3s ease-in-out infinite;
+        }
+
+        /* Quando carregando magia, sobrescreve a respiração */
+        .sprite-renderer.anim-charging img, .sprite-renderer.anim-charging .emoji-renderer {
+            animation: none; /* Para a respiração para focar no brilho */
         }
 
         .emoji-renderer { font-size: 4.5rem; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.4)); user-select: none; }
@@ -93,22 +108,20 @@
         /* --- POSICIONAMENTO 3D --- */
         .entity-wrapper {
             position: absolute; transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Transição suave */
             z-index: 10;
         }
 
         .pos-enemy { transform: translateX(var(--e-x)) translateY(var(--e-y)) translateZ(var(--e-z)); }
         .pos-player { transform: translateX(var(--p-x)) translateY(var(--p-y)) translateZ(var(--p-z)); }
 
+        /* Movimento Físico (Agressivo) */
         .anim-melee-player { transform: translateX(-15px) translateY(-50px) translateZ(-350px) scale(1.1); }
         .anim-melee-enemy { transform: translateX(15px) translateY(50px) translateZ(150px) scale(1.1); }
 
-        /* Magic Glow: Apenas sobe um pouco, sem avançar */
-        @keyframes magic-glow { 
-            0%, 100% { transform: translateY(0px) scale(1); } 
-            50% { transform: translateY(-15px) scale(1.1); filter: brightness(2.5) drop-shadow(0 0 10px white); } 
-        }
-        .anim-channeling { animation: magic-glow 0.5s ease-in-out infinite; }
+        /* Movimento Mágico (Ajustado: Muito sutil, quase parado) */
+        .anim-magic-step-p { transform: translateX(0px) translateY(-15px) translateZ(-20px) scale(1.05); }
+        .anim-magic-step-e { transform: translateX(0px) translateY(-15px) translateZ(20px) scale(1.05); }
 
         .character-shadow {
             position: absolute; bottom: -5px; left: 50%; width: 90px; height: 25px;
@@ -290,7 +303,6 @@
             'sup_fire': { n: 'Meteoro', t: 'fire', p: 3.5, icon: '🌋' }
         };
 
-        // Adicionei spriteUrl de volta para que o Summon funcione com imagens se existirem
         const MONSTERS_DATABASE = [
             { id: 'thunder', name: 'Thunder Lord', element: 'lightning', emoji: '🦄', spriteUrl: 'src/Thyron.png', hp: 1400, atk: 210, def: 80, stars: 5, skills: ['melee', 'bolt', 'sup_lightning'] },
             { id: 'water', name: 'Leviathan', element: 'water', emoji: '🐋', spriteUrl: 'src/Neriah.png', hp: 1800, atk: 140, def: 120, stars: 5, skills: ['melee', 'water', 'sup_water'] },
@@ -304,7 +316,7 @@
         };
 
         const init = () => {
-            const saved = localStorage.getItem('paperwar_v7');
+            const saved = localStorage.getItem('paperwar_v8');
             if (saved) state = JSON.parse(saved);
             
             if (state.inventory.length > 0) {
@@ -312,7 +324,7 @@
                     const dbMon = MONSTERS_DATABASE.find(dm => dm.emoji === m.emoji);
                     if(dbMon) {
                         if(dbMon.skills.length > m.skills.length) m.skills = dbMon.skills;
-                        if(!m.spriteUrl) m.spriteUrl = dbMon.spriteUrl; // Corrige saves antigos sem sprite
+                        if(!m.spriteUrl) m.spriteUrl = dbMon.spriteUrl;
                     }
                 });
             } else {
@@ -340,7 +352,7 @@
             document.getElementById('val-mana').innerText = state.mana.toLocaleString();
         };
 
-        const save = () => localStorage.setItem('paperwar_v7', JSON.stringify(state));
+        const save = () => localStorage.setItem('paperwar_v8', JSON.stringify(state));
 
         const changeView = (id) => {
             document.querySelectorAll('main').forEach(m => m.classList.add('hidden-view'));
@@ -373,7 +385,6 @@
                 const isLeader = state.leaderIdx === i;
                 el.className = `monster-slot ${isLeader ? 'border-amber-400 border-[3px]' : ''} element-${m.element}`;
                 
-                // Exibe imagem ou emoji no inventário
                 let visual = m.spriteUrl ? `<img src="${m.spriteUrl}" class="w-10 h-10 object-contain drop-shadow-md" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"><span class="text-3xl hidden">${m.emoji}</span>` : `<span class="text-3xl">${m.emoji}</span>`;
 
                 el.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center p-1">${visual}<span class="text-[8px] font-black text-white uppercase mt-1">Lv.${m.lvl}</span></div>`;
@@ -453,9 +464,10 @@
                 pEnt.classList.add('anim-melee-player');
                 await sleep(500);
             } else {
-                // Magia: SÓ Brilha/Flutua (sem giro, sem avanço)
-                pEnt.classList.add('anim-channeling');
-                await sleep(400);
+                // Magia: Passo Suave + Brilho Intenso
+                pEnt.classList.add('anim-magic-step-p'); // Move o corpo (wrapper)
+                pVis.classList.add('anim-charging');     // Brilha o visual (sprite)
+                await sleep(600); // Tempo de "casting/escolha"
                 await spawnParticles(true, skill.t, isSup ? 10 : 1);
             }
 
@@ -463,8 +475,8 @@
             applyDmg(state.battle.p, state.battle.e, skill, 'ent-enemy');
 
             setTimeout(() => {
-                pVis.classList.remove('anim-spin-atk');
-                pEnt.classList.remove('anim-melee-player', 'anim-channeling');
+                pVis.classList.remove('anim-spin-atk', 'anim-charging');
+                pEnt.classList.remove('anim-melee-player', 'anim-magic-step-p');
             }, 200);
 
             if(state.battle.e.curHp <= 0) {
@@ -492,9 +504,10 @@
                  eEnt.classList.add('anim-melee-enemy');
                  await sleep(500);
             } else {
-                 // Inimigo Magia: SÓ Brilha
-                 eEnt.classList.add('anim-channeling');
-                 await sleep(400);
+                 // Inimigo Magia: Passo Suave + Brilho
+                 eEnt.classList.add('anim-magic-step-e');
+                 eVis.classList.add('anim-charging');
+                 await sleep(600);
                  await spawnParticles(false, skill.t, isSup ? 10 : 1);
             }
 
@@ -502,8 +515,8 @@
             applyDmg(state.battle.e, state.battle.p, skill, 'ent-player');
 
             setTimeout(() => {
-                eVis.classList.remove('anim-spin-atk');
-                eEnt.classList.remove('anim-melee-enemy', 'anim-channeling');
+                eVis.classList.remove('anim-spin-atk', 'anim-charging');
+                eEnt.classList.remove('anim-melee-enemy', 'anim-magic-step-e');
             }, 200);
 
             if(state.battle.p.curHp <= 0) {
@@ -521,7 +534,6 @@
             def.curHp = Math.max(0, def.curHp - dmg);
             updateHUD();
             
-            // O ALVO sempre sofre recoil
             const visual = document.getElementById(tid === 'ent-player' ? 'player-sprite-container' : 'enemy-sprite-container');
             visual.classList.add('anim-hit-recoil');
             setTimeout(() => visual.classList.remove('anim-hit-recoil'), 500);
