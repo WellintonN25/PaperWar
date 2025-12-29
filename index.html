@@ -2,21 +2,23 @@
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PaperWar - Battle Arena</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        
+
         :root {
-            --p-x: 35px; --p-y: -60px; --p-z: 250px;
-            --e-x: -35px; --e-y: -180px; --e-z: -450px;
+            --p-x: 35px; --p-y: 60px; --p-z: 250px;
+            --e-x: -35px; --e-y: -100px; --e-z: -450px;
         }
 
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: #020617; 
-            margin: 0; padding: 0; height: 100vh; overflow: hidden;
+            margin: 0; padding: 0; 
+            height: 100vh; height: 100dvh; 
+            overflow: hidden;
             display: flex; align-items: center; justify-content: center;
         }
 
@@ -24,15 +26,16 @@
 
         /* --- AMBIENTE 3D --- */
         .battle-scene {
-            perspective: 1200px; perspective-origin: 50% 25%;
+            perspective: 1200px; perspective-origin: 50% 35%;
             overflow: hidden;
             background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.8)), 
-                        url('src/area.avif') no-repeat center center;
+                        url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1000') no-repeat center center;
             background-size: cover;
+            display: flex; flex-direction: column; height: 100%;
         }
 
         .arena-container {
-            position: relative; width: 100%; height: 100%;
+            position: relative; width: 100%; flex: 1;
             transform-style: preserve-3d;
             display: flex; justify-content: center; align-items: center;
         }
@@ -44,10 +47,11 @@
                 linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
             background-size: 100% 100%, 60px 60px, 60px 60px;
-            transform: rotateX(75deg) translateY(15%);
-            bottom: -100%; z-index: 1;
+            transform: rotateX(75deg) translateY(25%);
+            bottom: -40%; z-index: 1;
         }
 
+        /* --- ANIMAÇÕES DE SPRITE --- */
         .sprite-renderer {
             width: 120px; height: 120px;
             display: flex; align-items: center; justify-content: center;
@@ -58,6 +62,7 @@
         #player-sprite-container { transform: rotateY(30deg) rotateX(5deg); }
         #enemy-sprite-container { transform: rotateY(-30deg) rotateX(5deg); }
 
+        /* Rotação Apenas para Melee */
         @keyframes spin-attack {
             0% { transform: rotateY(30deg) rotateZ(0deg); }
             50% { transform: rotateY(210deg) rotateZ(15deg) scale(1.2); }
@@ -74,33 +79,18 @@
         .anim-hit-recoil { animation: hit-spin 0.5s ease-out; }
 
         @keyframes breathing {
-            0%, 100% { 
-                transform: scale(1) translateY(0); 
-                opacity: 0.9; 
-                filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6)) brightness(1);
-            }
-            50% { 
-                transform: scale(1.03) translateY(-4px); 
-                opacity: 1; 
-                filter: drop-shadow(0 20px 25px rgba(0,0,0,0.7)) brightness(1.1);
-            }
+            0%, 100% { transform: scale(1) translateY(0); opacity: 0.9; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6)); }
+            50% { transform: scale(1.03) translateY(-4px); opacity: 1; filter: drop-shadow(0 20px 25px rgba(0,0,0,0.7)); }
         }
 
         .sprite-renderer img, .sprite-renderer .emoji-renderer {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            image-rendering: auto;
+            max-width: 100%; max-height: 100%; object-fit: contain;
             animation: breathing 3s ease-in-out infinite;
         }
 
-        .emoji-renderer {
-            font-size: 4.5rem;
-            filter: drop-shadow(0 8px 10px rgba(0,0,0,0.4));
-            user-select: none;
-            display: inline-block;
-        }
+        .emoji-renderer { font-size: 4.5rem; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.4)); user-select: none; }
 
+        /* --- POSICIONAMENTO 3D --- */
         .entity-wrapper {
             position: absolute; transform-style: preserve-3d;
             transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -110,11 +100,15 @@
         .pos-enemy { transform: translateX(var(--e-x)) translateY(var(--e-y)) translateZ(var(--e-z)); }
         .pos-player { transform: translateX(var(--p-x)) translateY(var(--p-y)) translateZ(var(--p-z)); }
 
-        .anim-melee-player { transform: translateX(-15px) translateY(-140px) translateZ(-350px) scale(1.1); }
-        .anim-melee-enemy { transform: translateX(15px) translateY(-30px) translateZ(150px) scale(1.1); }
-        
-        @keyframes magic-glow { 0%, 100% { transform: translateY(-20px) scale(1.05); } 50% { transform: translateY(-30px) scale(1.1); filter: brightness(2.5); } }
-        .anim-channeling { animation: magic-glow 0.3s infinite; }
+        .anim-melee-player { transform: translateX(-15px) translateY(-50px) translateZ(-350px) scale(1.1); }
+        .anim-melee-enemy { transform: translateX(15px) translateY(50px) translateZ(150px) scale(1.1); }
+
+        /* Magic Glow: Apenas sobe um pouco, sem avançar */
+        @keyframes magic-glow { 
+            0%, 100% { transform: translateY(0px) scale(1); } 
+            50% { transform: translateY(-15px) scale(1.1); filter: brightness(2.5) drop-shadow(0 0 10px white); } 
+        }
+        .anim-channeling { animation: magic-glow 0.5s ease-in-out infinite; }
 
         .character-shadow {
             position: absolute; bottom: -5px; left: 50%; width: 90px; height: 25px;
@@ -123,46 +117,14 @@
             z-index: -1; pointer-events: none;
         }
 
+        /* --- HUD --- */
         .hud-container {
-            transition: opacity 0.3s ease; background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 8px;
-            border-radius: 8px; width: 85px; opacity: 0.25;
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 8px; border-radius: 8px; width: 90px; opacity: 0.8;
+            backdrop-filter: blur(4px); transition: opacity 0.3s ease;
         }
 
-        /* --- MONSTER BOX STYLES --- */
-        .monster-slot {
-            aspect-ratio: 1 / 1;
-            position: relative;
-            border: 2px solid #334155;
-            background: #1e293b;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .monster-slot:hover { transform: scale(1.05); z-index: 10; }
-        .monster-slot.selected { border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.4); }
-        .monster-slot.leader::after {
-            content: "L";
-            position: absolute; top: 0; right: 0;
-            background: #facc15; color: #000; font-size: 8px; font-weight: 900;
-            padding: 1px 4px; border-bottom-left-radius: 4px;
-        }
-
-        .slot-lvl {
-            position: absolute; top: 2px; left: 4px;
-            font-size: 9px; font-weight: 800; color: white;
-            text-shadow: 1px 1px 2px black; z-index: 5;
-        }
-
-        .slot-stars {
-            position: absolute; bottom: 2px; width: 100%;
-            display: flex; justify-content: center; gap: 1px;
-            font-size: 7px; color: #facc15; z-index: 5;
-        }
-
+        /* --- ELEMENTOS --- */
         .element-fire { background: linear-gradient(135deg, #ef4444, #7f1d1d); }
         .element-water { background: linear-gradient(135deg, #3b82f6, #1e3a8a); }
         .element-lightning { background: linear-gradient(135deg, #eab308, #713f12); }
@@ -171,204 +133,114 @@
         /* --- MOTOR DE PARTÍCULAS --- */
         @keyframes p-fall { 0% { transform: var(--origin); opacity: 0; } 10% { opacity: 1; } 100% { transform: var(--destination); opacity: 0; } }
         @keyframes p-travel { 0% { transform: var(--origin) scale(0.2); opacity: 0; } 15% { opacity: 1; scale: 1.2; } 100% { transform: var(--destination) scale(0.6); opacity: 0; } }
-        
+
         .particle { position: absolute; left: 50%; top: 50%; z-index: 60; pointer-events: none; }
         .p-fire { width: 45px; height: 45px; border-radius: 50%; background: radial-gradient(circle, #fff, #facc15, #ef4444); box-shadow: 0 0 30px #f97316; animation: p-travel 0.6s linear forwards; }
         .p-water { width: 25px; height: 25px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 20px #0ea5e9; filter: blur(2px); animation: p-travel 0.5s ease-out forwards; }
-        .p-lightning { width: 8px; height: 800px; background: #fff; box-shadow: 0 0 20px #fff, 0 0 40px #facc15, 0 0 80px rgba(234, 179, 8, 0.6); transform-origin: top center; animation: p-fall 0.4s ease-in forwards; }
-        .p-robot { width: 20px; height: 20px; background: #ef4444; border-radius: 2px; box-shadow: 0 0 15px #ef4444; animation: p-travel 0.5s forwards; }
-
-        .white-flash { position: absolute; inset: 0; background: white; z-index: 100; pointer-events: none; opacity: 0; }
-        .do-flash { animation: flash-screen 0.4s ease-out; }
-        @keyframes flash-screen { 0% { opacity: 0; } 25% { opacity: 0.8; } 100% { opacity: 0; } }
-        
-        .hit-ring { position: absolute; border-radius: 50%; border: 10px solid white; animation: hit-ring-anim 0.5s ease-out forwards; }
-        @keyframes hit-ring-anim { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(8); opacity: 0; } }
+        .p-lightning { width: 8px; height: 600px; background: #fff; box-shadow: 0 0 20px #fff, 0 0 40px #facc15; transform-origin: top center; animation: p-fall 0.4s ease-in forwards; }
 
         .dmg-text { position: absolute; top: -120px; left: 50%; transform: translateX(-50%); color: #ff4444; font-weight: 900; font-size: 3.5rem; text-shadow: 0 4px 10px black; animation: damage-float 0.8s ease-out forwards; z-index: 100; }
         @keyframes damage-float { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-80px); } }
 
+        /* --- CONTROLES DE BATALHA --- */
+        .battle-controls {
+            padding: 1.25rem;
+            padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+            background: linear-gradient(to top, rgba(2, 6, 23, 0.95), transparent);
+            z-index: 100;
+        }
+
+        .hit-ring { position: absolute; border-radius: 50%; border: 10px solid white; animation: hit-ring-anim 0.5s ease-out forwards; }
+        @keyframes hit-ring-anim { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(8); opacity: 0; } }
+
         .screen-shake { animation: shake-anim 0.2s ease-in-out 3; }
         @keyframes shake-anim { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(15px, -15px); } }
 
-        /* UI Summon */
-        .summon-box { position: relative; width: 110px; height: 90px; background: linear-gradient(to bottom, #4338ca, #312e81); border: 4px solid #6366f1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transform-style: preserve-3d; transition: all 0.5s ease; }
-        .box-lid { position: absolute; top: -12px; left: -4px; width: 118px; height: 25px; background: #6366f1; border: 4px solid #818cf8; border-radius: 8px 8px 0 0; transform-origin: bottom; transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .box-open .box-lid { transform: translateY(-80px) rotateX(-110deg) scale(0.5); opacity: 0; }
-        .box-open .summon-box { transform: scale(0.8); opacity: 0.5; }
-        .box-shake { animation: vibrate 0.1s infinite; }
-        @keyframes vibrate { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
-        .reveal-emoji { position: absolute; font-size: 5rem; opacity: 0; transform: translateY(20px) scale(0.5); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 10; }
-        .box-open .reveal-emoji { opacity: 1; transform: translateY(-100px) scale(1.6); }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar { width: 0px; }
+        
+        .monster-slot {
+            aspect-ratio: 1 / 1;
+            position: relative;
+            border: 2px solid #334155;
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div id="flash-effect" class="white-flash"></div>
+    <div id="flash-effect" class="fixed inset-0 bg-white z-[1000] pointer-events-none opacity-0"></div>
 
     <div id="app" class="w-full h-full max-w-md bg-white relative shadow-2xl overflow-hidden flex flex-col sm:h-[94vh] sm:rounded-[3rem] border-slate-900 border-[6px]">
-        
+
         <!-- LOGIN VIEW -->
         <main id="view-login" class="flex-1 flex flex-col items-center justify-center p-8 bg-slate-900 text-white">
-            <div class="text-center space-y-4 mb-12">
-                <h1 class="text-6xl font-black uppercase italic tracking-tighter text-indigo-500 drop-shadow-2xl">PaperWar</h1>
-                <p class="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em]">Tactical Combat Simulator</p>
-            </div>
-            
-            <div class="w-full space-y-6">
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-4">Nome do Comandante</label>
-                    <input type="text" id="login-name" maxlength="15" placeholder="Digite seu nome..." class="w-full bg-slate-800 border-2 border-slate-700 rounded-2xl px-6 py-4 font-bold text-white outline-none focus:border-indigo-500 transition-all">
-                </div>
-                <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-5 rounded-3xl font-black uppercase shadow-2xl transition-all active:scale-95">Entrar no Sistema</button>
-            </div>
-            
-            <p class="mt-8 text-[8px] text-slate-600 font-bold uppercase">v2.0 Persistence Update</p>
+            <h1 class="text-6xl font-black uppercase italic tracking-tighter text-indigo-500 mb-8">PaperWar</h1>
+            <input type="text" id="login-name" placeholder="Comandante..." class="w-full bg-slate-800 border-2 border-slate-700 rounded-2xl px-6 py-4 font-bold text-white mb-4 outline-none focus:border-indigo-500">
+            <button onclick="handleLogin()" class="w-full bg-indigo-600 py-5 rounded-3xl font-black uppercase shadow-xl active:scale-95 transition-all">Entrar</button>
         </main>
 
-        <header id="ui-header" class="p-4 bg-white border-b hidden justify-between items-center z-[100] shrink-0 overflow-x-auto">
-            <div class="flex items-center space-x-3 shrink-0">
-                <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg text-xl">👤</div>
-                <div class="leading-none">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Comandante</p>
-                    <p id="player-name-ui" class="font-bold text-slate-800 text-sm mt-1">---</p>
-                </div>
+        <!-- HEADER UI -->
+        <header id="ui-header" class="p-4 bg-white border-b hidden justify-between items-center z-[100] shrink-0">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-xl">👤</div>
+                <p id="player-name-ui" class="font-bold text-slate-800 text-sm truncate max-w-[100px]">---</p>
             </div>
-            <div class="flex space-x-2 font-bold text-[10px] ml-2">
-                <div class="bg-indigo-50 px-2 py-1 rounded-full border border-indigo-100 text-indigo-700 flex items-center shrink-0">⚡ <span id="val-energy">100</span></div>
-                <div class="bg-amber-50 px-2 py-1 rounded-full border border-amber-100 text-amber-700 flex items-center shrink-0">💎 <span id="val-crystals">9999</span></div>
-                <div class="bg-slate-100 px-2 py-1 rounded-full border border-slate-200 text-slate-700 flex items-center shrink-0">💰 <span id="val-mana">0</span></div>
+            <div class="flex space-x-2 font-bold text-[10px]">
+                <div class="bg-indigo-50 px-3 py-1.5 rounded-full text-indigo-700">⚡ <span id="val-energy">100</span></div>
+                <div class="bg-amber-50 px-3 py-1.5 rounded-full text-amber-700">💎 <span id="val-crystals">0</span></div>
+                <div class="bg-slate-100 px-3 py-1.5 rounded-full text-slate-700">💰 <span id="val-mana">0</span></div>
             </div>
         </header>
 
         <!-- HOME VIEW -->
         <main id="view-home" class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50 hidden-view">
-            <div class="bg-gradient-to-br from-indigo-600 to-indigo-950 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
-                <h2 class="text-3xl font-black italic uppercase tracking-tighter mb-1 leading-none">Aventura</h2>
-                <p class="text-indigo-100/70 text-xs mb-8 font-bold">Explore o mundo de PaperWar</p>
+            <div class="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
+                <h2 class="text-3xl font-black italic uppercase mb-2">Aventura</h2>
                 <div class="flex space-x-3">
                     <button onclick="changeView('view-story')" class="bg-white text-indigo-700 px-6 py-4 rounded-2xl font-black text-xs uppercase shadow-xl active:scale-95 transition-all">Modo História</button>
-                    <button onclick="startBattle()" class="bg-indigo-500/30 border border-white/20 text-white px-6 py-4 rounded-2xl font-black text-xs uppercase active:scale-95 transition-all">Boss Aleatório</button>
+                    <button onclick="startBattle()" class="bg-indigo-500/30 border border-white/20 text-white px-6 py-4 rounded-2xl font-black text-xs uppercase active:scale-95">Boss Solo</button>
                 </div>
             </div>
-            
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="changeView('view-collection')" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-center space-y-3 active:scale-95 transition-all">
-                    <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-3xl">🎴</div>
+                <button onclick="changeView('view-collection')" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-center space-y-3">
+                    <div class="text-4xl">🎴</div>
                     <span class="text-xs font-black uppercase text-slate-800">Monster Box</span>
                 </button>
-                <button onclick="changeView('view-summon')" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-center space-y-3 active:scale-95 transition-all">
-                    <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl">📦</div>
+                <button onclick="changeView('view-summon')" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-center space-y-3">
+                    <div class="text-4xl">📦</div>
                     <span class="text-xs font-black uppercase text-slate-800">Summon</span>
                 </button>
-                <button onclick="changeView('view-shop')" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-center space-y-3 active:scale-95 transition-all col-span-2">
-                    <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-3xl mx-auto">🏛️</div>
-                    <span class="text-xs font-black uppercase text-slate-800">Loja Mana</span>
-                </button>
-            </div>
-        </main>
-
-        <!-- SHOP VIEW -->
-        <main id="view-shop" class="flex-1 overflow-y-auto p-6 hidden-view bg-slate-50">
-            <div class="flex items-center space-x-4 mb-6">
-                <button onclick="changeView('view-home')" class="p-3 bg-white rounded-full shadow-md text-slate-500"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-                <h2 class="text-xl font-black uppercase tracking-tighter text-slate-800 italic">Loja de Mana</h2>
-            </div>
-            
-            <div class="space-y-4">
-                <div class="bg-white p-5 rounded-[2rem] border border-slate-200 flex items-center justify-between shadow-sm">
-                    <div class="flex items-center space-x-4">
-                        <div class="text-3xl">🧪</div>
-                        <div>
-                            <h4 class="font-black text-slate-800 text-sm uppercase">Poção XP (Pequena)</h4>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase">+2 Níveis</p>
-                        </div>
-                    </div>
-                    <button onclick="buyPotion('small')" class="bg-indigo-600 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase shadow-md">1.000 💰</button>
-                </div>
-
-                <div class="bg-white p-5 rounded-[2rem] border border-slate-200 flex items-center justify-between shadow-sm">
-                    <div class="flex items-center space-x-4">
-                        <div class="text-3xl">🧪</div>
-                        <div>
-                            <h4 class="font-black text-slate-800 text-sm uppercase">Poção XP (Média)</h4>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase">+5 Níveis</p>
-                        </div>
-                    </div>
-                    <button onclick="buyPotion('med')" class="bg-indigo-600 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase shadow-md">2.500 💰</button>
-                </div>
-
-                <div class="bg-white p-5 rounded-[2rem] border border-slate-200 flex items-center justify-between shadow-sm">
-                    <div class="flex items-center space-x-4">
-                        <div class="text-4xl">⚗️</div>
-                        <div>
-                            <h4 class="font-black text-slate-800 text-sm uppercase">Super Poção XP</h4>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase">+10 Níveis</p>
-                        </div>
-                    </div>
-                    <button onclick="buyPotion('large')" class="bg-indigo-600 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase shadow-md">5.000 💰</button>
-                </div>
-            </div>
-        </main>
-
-        <!-- STORY VIEW -->
-        <main id="view-story" class="flex-1 overflow-y-auto p-6 hidden-view bg-slate-50">
-            <div class="flex items-center space-x-4 mb-6">
-                <button onclick="changeView('view-home')" class="p-3 bg-white rounded-full shadow-md text-slate-500"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-                <h2 class="text-xl font-black uppercase tracking-tighter text-slate-800 italic">Mapa da História</h2>
-            </div>
-            <div id="story-list" class="space-y-4 pb-10"></div>
-        </main>
-
-        <!-- MONSTER BOX VIEW -->
-        <main id="view-collection" class="flex-1 overflow-hidden hidden-view bg-slate-900 flex flex-col">
-            <div class="p-4 bg-slate-800 border-b border-slate-700 flex items-center justify-between shrink-0">
-                <div class="flex items-center space-x-3">
-                    <button onclick="changeView('view-home')" class="text-slate-400 p-1"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-                    <h2 class="text-sm font-black text-white uppercase tracking-widest italic">Monster Box</h2>
-                </div>
-                <div class="text-[10px] font-bold text-slate-400 bg-slate-900/50 px-3 py-1 rounded-full">
-                    MONSTROS: <span id="box-count" class="text-indigo-400">0</span>/100
-                </div>
-            </div>
-            <div id="list-monsters" class="flex-1 overflow-y-auto p-4 grid grid-cols-4 gap-2 content-start pb-20"></div>
-        </main>
-
-        <!-- SUMMON VIEW -->
-        <main id="view-summon" class="flex-1 hidden-view bg-slate-950 flex flex-col items-center justify-center relative p-8">
-            <button onclick="changeView('view-home')" class="absolute top-8 left-8 p-3 bg-white/10 rounded-full text-white backdrop-blur">✕</button>
-            <div class="max-w-xs w-full flex flex-col items-center space-y-12">
-                <div id="box-anchor" class="relative w-full h-40 flex items-center justify-center">
-                    <div id="summon-result-emoji" class="reveal-emoji">🐉</div>
-                    <div id="main-box" class="summon-box"><div class="box-lid"></div></div>
-                </div>
-                <button onclick="doSummon()" id="btn-summon" class="w-full bg-amber-500 text-white py-5 rounded-[2rem] font-black text-lg shadow-2xl active:scale-95 transition-all uppercase">Abrir (75 💎)</button>
             </div>
         </main>
 
         <!-- BATTLE VIEW -->
-        <main id="view-battle" class="flex-1 hidden-view battle-scene flex flex-col relative overflow-hidden">
-            <div id="arena" class="arena-container flex-1">
+        <main id="view-battle" class="flex-1 hidden-view battle-scene">
+            <div id="arena" class="arena-container">
                 <div class="ground-plane"></div>
+                
+                <!-- Inimigo -->
                 <div id="ent-enemy" class="entity-wrapper pos-enemy">
                     <div class="flex flex-col items-center">
-                        <div id="enemy-hud" class="hud-container mb-2 text-center">
-                             <div class="flex justify-between text-[7px] text-white font-black mb-0.5 tracking-tighter uppercase leading-none"><span id="enemy-name-lbl">Boss</span><span id="enemy-hp-pct">100%</span></div>
+                        <div id="enemy-hud" class="hud-container mb-2">
+                             <div class="flex justify-between text-[7px] text-white font-black mb-1 uppercase tracking-tighter"><span id="enemy-name-lbl">BOSS</span><span id="enemy-hp-pct">100%</span></div>
                              <div class="h-1 w-full bg-black/40 rounded-full overflow-hidden"><div id="enemy-hp-fill" class="h-full bg-red-500 transition-all duration-300" style="width: 100%"></div></div>
                         </div>
                         <div id="enemy-sprite-container" class="sprite-renderer"></div>
                         <div class="character-shadow"></div>
                     </div>
                 </div>
+
                 <div id="effect-layer" class="absolute inset-0 pointer-events-none" style="transform-style: preserve-3d;"></div>
+
+                <!-- Jogador -->
                 <div id="ent-player" class="entity-wrapper pos-player">
                     <div class="flex flex-col items-center">
-                        <div id="player-hud" class="hud-container mb-2 text-center">
-                             <div class="flex justify-between text-[7px] text-white font-black mb-0.5 tracking-tighter uppercase leading-none"><span id="player-lvl-lbl">Lv. 99</span><span id="player-hp-pct">100%</span></div>
+                        <div id="player-hud" class="hud-container mb-2">
+                             <div class="flex justify-between text-[7px] text-white font-black mb-1 uppercase tracking-tighter"><span id="player-lvl-lbl">Lv. 1</span><span id="player-hp-pct">100%</span></div>
                              <div class="h-1 w-full bg-black/40 rounded-full overflow-hidden"><div id="player-hp-fill" class="h-full bg-emerald-500 transition-all duration-300" style="width: 100%"></div></div>
                         </div>
                         <div id="player-sprite-container" class="sprite-renderer"></div>
@@ -376,160 +248,117 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-transparent p-6 z-[100] absolute bottom-0 left-0 right-0 pointer-events-none">
-                <div id="combat-log" class="text-[10px] text-white font-mono text-center mb-4 uppercase tracking-widest italic font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">Aguarda o teu turno</div>
-                <div id="skill-grid" class="grid grid-cols-3 gap-3 pointer-events-auto"></div>
+
+            <div class="battle-controls">
+                <div id="combat-log" class="text-[10px] text-white font-black text-center mb-4 uppercase tracking-[0.2em] italic drop-shadow-lg">Tua Vez!</div>
+                <div id="skill-grid" class="grid grid-cols-3 gap-3"></div>
             </div>
         </main>
 
-        <!-- MODAL DETALHES -->
-        <div id="modal-details" class="fixed inset-0 z-[200] hidden flex items-end sm:items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-            <div class="bg-slate-900 w-full max-w-md rounded-t-[3rem] sm:rounded-[3rem] overflow-hidden shadow-2xl border border-slate-700">
-                <div id="m-header" class="h-56 relative flex items-center justify-center overflow-hidden border-b border-white/5">
-                    <button onclick="closeModal()" class="absolute top-8 right-8 bg-black/40 text-white w-10 h-10 rounded-full z-20 backdrop-blur flex items-center justify-center">✕</button>
-                    <div id="m-bg-layer" class="absolute inset-0 opacity-40"></div>
-                    <div id="m-visual" class="relative z-10 scale-[2] drop-shadow-[0_20px_20px_rgba(0,0,0,0.5)] flex items-center justify-center"></div>
-                    <div class="absolute bottom-6 left-8 z-10">
-                        <div id="m-stars" class="text-yellow-400 text-sm mb-1 drop-shadow-lg"></div>
-                        <h2 id="m-name" class="text-3xl font-black text-white uppercase italic tracking-tighter drop-shadow-lg"></h2>
-                        <div id="m-tag" class="inline-block bg-white/10 backdrop-blur px-2 py-0.5 rounded text-[8px] font-black text-white uppercase mt-1 border border-white/10"></div>
-                    </div>
-                </div>
-                <div class="p-6 space-y-4">
-                    <div class="flex space-x-4">
-                        <div class="flex-1 bg-slate-800/50 p-4 rounded-2xl border border-slate-700">
-                            <h4 class="text-[9px] font-black text-slate-500 uppercase mb-3 tracking-widest">Atributos</h4>
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-[10px] font-bold"><span class="text-slate-400">HP</span><span id="st-hp" class="text-white"></span></div>
-                                <div class="flex justify-between text-[10px] font-bold"><span class="text-slate-400">ATK</span><span id="st-atk" class="text-red-400"></span></div>
-                                <div class="flex justify-between text-[10px] font-bold"><span class="text-slate-400">DEF</span><span id="st-def" class="text-blue-400"></span></div>
-                                <div class="flex justify-between text-[10px] font-bold"><span class="text-slate-400">SPD</span><span id="st-spd" class="text-emerald-400"></span></div>
-                            </div>
-                        </div>
-                        <div class="flex-1 space-y-2">
-                            <h4 class="text-[9px] font-black text-slate-500 uppercase mb-3 tracking-widest">Poções XP</h4>
-                            <div id="potion-usage" class="grid grid-cols-3 gap-1">
-                                <button onclick="usePotion('small')" class="bg-slate-800 p-2 rounded-lg border border-slate-700 text-center flex flex-col items-center">
-                                    <span class="text-xs">🧪</span>
-                                    <span id="pot-count-small" class="text-[8px] text-white font-bold">0</span>
-                                </button>
-                                <button onclick="usePotion('med')" class="bg-slate-800 p-2 rounded-lg border border-slate-700 text-center flex flex-col items-center">
-                                    <span class="text-xs">🧪</span>
-                                    <span id="pot-count-med" class="text-[8px] text-white font-bold">0</span>
-                                </button>
-                                <button onclick="usePotion('large')" class="bg-slate-800 p-2 rounded-lg border border-slate-700 text-center flex flex-col items-center">
-                                    <span class="text-xs">⚗️</span>
-                                    <span id="pot-count-large" class="text-[8px] text-white font-bold">0</span>
-                                </button>
-                            </div>
-                            <h4 class="text-[9px] font-black text-slate-500 uppercase mt-2 tracking-widest">Skills</h4>
-                            <div id="m-skills" class="space-y-1"></div>
-                        </div>
-                    </div>
-                    <div class="flex space-x-3">
-                         <button id="btn-leader" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-xl transition-all border-b-4 border-indigo-800 active:border-b-0 active:translate-y-1">Set Leader</button>
-                         <button class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-xl transition-all border-b-4 border-emerald-800 active:border-b-0 active:translate-y-1">Power Up</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- STORY VIEW -->
+        <main id="view-story" class="flex-1 overflow-y-auto p-6 hidden-view bg-slate-50">
+            <button onclick="changeView('view-home')" class="mb-4 text-slate-500 font-bold">← VOLTAR</button>
+            <div id="story-list" class="space-y-4"></div>
+        </main>
 
-        <div id="notif-box" class="fixed top-24 left-0 right-0 px-8 pointer-events-none flex flex-col items-center space-y-2 z-[300]"></div>
+        <!-- MONSTER BOX -->
+        <main id="view-collection" class="flex-1 overflow-hidden hidden-view bg-slate-900 flex flex-col">
+            <div class="p-4 bg-slate-800 flex justify-between items-center shrink-0">
+                <button onclick="changeView('view-home')" class="text-white font-bold text-xs">← VOLTAR</button>
+                <div class="text-[10px] text-slate-400 font-bold uppercase">BAÚ: <span id="box-count">0</span>/100</div>
+            </div>
+            <div id="list-monsters" class="flex-1 overflow-y-auto p-4 grid grid-cols-4 gap-2 content-start"></div>
+        </main>
+
+        <!-- SUMMON VIEW -->
+        <main id="view-summon" class="flex-1 hidden-view bg-slate-950 flex flex-col items-center justify-center p-12">
+            <div id="summon-box" class="w-48 h-48 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-7xl shadow-[0_0_50px_rgba(79,70,229,0.4)] mb-12 overflow-hidden relative">🎁</div>
+            <button onclick="doSummon()" class="w-full bg-amber-500 text-white py-6 rounded-[2rem] font-black uppercase shadow-2xl active:scale-95 transition-all">Summon (75 💎)</button>
+            <button onclick="changeView('view-home')" class="mt-6 text-slate-500 font-bold text-[10px] uppercase">Sair</button>
+        </main>
+
     </div>
 
     <script>
-        const SAVE_KEY = "paperwar_player_data";
-
         const SKILL_LIBRARY = {
-            'melee_basic': { n: 'Investida', t: 'melee', p: 1.2, icon: '⚔️' },
-            'light_bolt': { n: 'Raio Neon', t: 'lightning', p: 1.8, icon: '⚡' },
-            'water_jet': { n: 'Jacto Forte', t: 'water', p: 1.6, icon: '🌊' },
-            'fire_orbs': { n: 'Esferas Fogo', t: 'fire', p: 1.7, icon: '🔥' },
-            'robot_laser': { n: 'Laser IA', t: 'robot', p: 2.0, icon: '🔴' },
+            'melee': { n: 'Investida', t: 'melee', p: 1.2, icon: '⚔️' },
+            'bolt': { n: 'Raio Neon', t: 'lightning', p: 1.8, icon: '⚡' },
+            'water': { n: 'Jato d\'Água', t: 'water', p: 1.6, icon: '🌊' },
+            'fire': { n: 'Bola Fogo', t: 'fire', p: 1.7, icon: '🔥' },
             'sup_lightning': { n: 'Calamidade', t: 'lightning', p: 3.2, icon: '💥' },
             'sup_water': { n: 'Dilúvio', t: 'water', p: 2.8, icon: '🌊' },
             'sup_fire': { n: 'Meteoro', t: 'fire', p: 3.5, icon: '🌋' }
         };
 
+        // Adicionei spriteUrl de volta para que o Summon funcione com imagens se existirem
         const MONSTERS_DATABASE = [
-            { id: 'thunder_lord', name: 'Lorde Trovão', element: 'lightning', emoji: '🦄', spriteUrl: 'src/Thyron.png', hp: 1400, atk: 210, def: 80, spd: 130, stars: 5, skills: ['melee_basic', 'light_bolt', 'sup_lightning'] },
-            { id: 'leviathan', name: 'Leviatã Real', element: 'water', emoji: '🐋', spriteUrl: 'src/Neriah.png', hp: 1800, atk: 140, def: 120, spd: 95, stars: 5, skills: ['melee_basic', 'water_jet', 'sup_water'] },
-            { id: 'magma_titan', name: 'Titã de Magma', element: 'fire', emoji: '🌋', spriteUrl: 'src/Aelyra.png', hp: 1600, atk: 185, def: 100, spd: 90, stars: 5, skills: ['melee_basic', 'fire_orbs', 'sup_fire'] },
-            { id: 'ia_sentinel', name: 'Sentinela IA', element: 'robot', emoji: '🤖', spriteUrl: 'src/Kaelthar.png', hp: 2200, atk: 120, def: 170, spd: 70, stars: 5, skills: ['melee_basic', 'robot_laser'] }
+            { id: 'thunder', name: 'Thunder Lord', element: 'lightning', emoji: '🦄', spriteUrl: 'src/Thyron.png', hp: 1400, atk: 210, def: 80, stars: 5, skills: ['melee', 'bolt', 'sup_lightning'] },
+            { id: 'water', name: 'Leviathan', element: 'water', emoji: '🐋', spriteUrl: 'src/Neriah.png', hp: 1800, atk: 140, def: 120, stars: 5, skills: ['melee', 'water', 'sup_water'] },
+            { id: 'fire', name: 'Magma Titan', element: 'fire', emoji: '🌋', spriteUrl: 'src/Aelyra.png', hp: 1600, atk: 185, def: 100, stars: 5, skills: ['melee', 'fire', 'sup_fire'] }
         ];
 
-        const STORY_STAGES = [
-            { id: 1, title: "O Despertar", desc: "Um robô descontrolado ameaça a vila.", enemyId: 'ia_sentinel', reward: 500, energy: 5, mana: 1500 },
-            { id: 2, title: "Nascente Sagrada", desc: "O Leviatã protege as águas antigas.", enemyId: 'leviathan', reward: 750, energy: 8, mana: 2500 },
-            { id: 3, title: "Pico Vulcânico", desc: "O Titã de Magma despertou no vulcão.", enemyId: 'magma_titan', reward: 1000, energy: 10, mana: 4000 },
-            { id: 4, title: "Juízo Final", desc: "Enfrente o Lorde do Trovão no topo do mundo.", enemyId: 'thunder_lord', reward: 2000, energy: 15, mana: 8000 }
-        ];
-
-        const ELEMENTS_DATA = { fire: 'element-fire', water: 'element-water', lightning: 'element-lightning', robot: 'element-robot' };
-
-        let state = { 
-            playerName: "",
-            crystals: 1000, energy: 100, mana: 5000, inventory: [], leaderIdx: 0, 
-            potions: { small: 2, med: 0, large: 0 },
-            selectedMonsterIdx: null,
-            isSummoning: false, storyProgress: 1, 
-            battle: { p: null, e: null, turn: 'player', busy: false, isStory: false, stageId: null } 
-        };
-
-        const saveGame = () => {
-            localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-        };
-
-        const loadGame = () => {
-            const saved = localStorage.getItem(SAVE_KEY);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                state = { ...state, ...parsed };
-                return true;
-            }
-            return false;
+        let state = {
+            playerName: "", crystals: 1000, energy: 100, mana: 5000,
+            inventory: [], leaderIdx: 0, storyProgress: 1,
+            battle: { p: null, e: null, turn: 'player', busy: false }
         };
 
         const init = () => {
-            if (loadGame()) {
-                if (state.playerName) {
-                    document.getElementById('player-name-ui').innerText = state.playerName;
-                    changeView('view-home');
-                }
+            const saved = localStorage.getItem('paperwar_v7');
+            if (saved) state = JSON.parse(saved);
+            
+            if (state.inventory.length > 0) {
+                state.inventory.forEach(m => {
+                    const dbMon = MONSTERS_DATABASE.find(dm => dm.emoji === m.emoji);
+                    if(dbMon) {
+                        if(dbMon.skills.length > m.skills.length) m.skills = dbMon.skills;
+                        if(!m.spriteUrl) m.spriteUrl = dbMon.spriteUrl; // Corrige saves antigos sem sprite
+                    }
+                });
             } else {
-                state.inventory.push({...MONSTERS_DATABASE[0], instId: Date.now(), lvl: 40, curHp: MONSTERS_DATABASE[0].hp});
-                saveGame();
+                state.inventory.push({...MONSTERS_DATABASE[0], lvl: 15, curHp: MONSTERS_DATABASE[0].hp + 150});
+            }
+
+            if (state.playerName) {
+                document.getElementById('player-name-ui').innerText = state.playerName;
+                changeView('view-home');
             }
             updateStats();
-            renderStoryMap();
         };
 
         const handleLogin = () => {
             const name = document.getElementById('login-name').value.trim();
-            if (name.length < 3) return notify("Nome muito curto!");
+            if (name.length < 2) return;
             state.playerName = name;
             document.getElementById('player-name-ui').innerText = name;
-            saveGame();
-            changeView('view-home');
-            notify("Comandante registrado!");
+            save(); changeView('view-home');
         };
 
-        const updateStats = () => { 
-            document.getElementById('val-crystals').innerText = state.crystals; 
-            document.getElementById('val-energy').innerText = state.energy; 
-            document.getElementById('val-mana').innerText = state.mana.toLocaleString(); 
+        const updateStats = () => {
+            document.getElementById('val-crystals').innerText = state.crystals;
+            document.getElementById('val-energy').innerText = state.energy;
+            document.getElementById('val-mana').innerText = state.mana.toLocaleString();
+        };
+
+        const save = () => localStorage.setItem('paperwar_v7', JSON.stringify(state));
+
+        const changeView = (id) => {
+            document.querySelectorAll('main').forEach(m => m.classList.add('hidden-view'));
+            document.getElementById(id).classList.remove('hidden-view');
+            const header = document.getElementById('ui-header');
+            if (['view-login', 'view-battle', 'view-summon'].includes(id)) { header.classList.add('hidden'); header.classList.remove('flex'); }
+            else { header.classList.remove('hidden'); header.classList.add('flex'); }
+            if (id === 'view-collection') renderInventory();
+            if (id === 'view-story') renderStory();
         };
 
         const renderCharacter = (monster, containerId) => {
             const container = document.getElementById(containerId);
             if(!container) return;
-            
             if(monster.spriteUrl) {
                 container.innerHTML = `
-                    <img src="${monster.spriteUrl}" alt="${monster.name}" 
-                         class="character-img" 
-                         onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
-                    <span class="emoji-renderer hidden">${monster.emoji}</span>
+                    <img src="${monster.spriteUrl}" alt="${monster.name}" class="character-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <span class="emoji-renderer" style="display:none">${monster.emoji}</span>
                 `;
             } else {
                 container.innerHTML = `<span class="emoji-renderer">${monster.emoji}</span>`;
@@ -537,323 +366,197 @@
         };
 
         const renderInventory = () => {
-            const list = document.getElementById('list-monsters'); 
-            list.innerHTML = '';
+            const list = document.getElementById('list-monsters'); list.innerHTML = '';
             document.getElementById('box-count').innerText = state.inventory.length;
-
             state.inventory.forEach((m, i) => {
                 const el = document.createElement('div');
                 const isLeader = state.leaderIdx === i;
-                el.className = `monster-slot ${ELEMENTS_DATA[m.element]} ${isLeader ? 'leader selected' : ''}`;
-                el.onclick = () => openDetails(i);
+                el.className = `monster-slot ${isLeader ? 'border-amber-400 border-[3px]' : ''} element-${m.element}`;
                 
-                const visualContent = m.spriteUrl ? 
-                    `<img src="${m.spriteUrl}" class="w-10 h-10 object-contain drop-shadow-md" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
-                     <span class="text-3xl filter drop-shadow-md select-none hidden">${m.emoji}</span>` :
-                    `<span class="text-3xl filter drop-shadow-md select-none">${m.emoji}</span>`;
+                // Exibe imagem ou emoji no inventário
+                let visual = m.spriteUrl ? `<img src="${m.spriteUrl}" class="w-10 h-10 object-contain drop-shadow-md" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"><span class="text-3xl hidden">${m.emoji}</span>` : `<span class="text-3xl">${m.emoji}</span>`;
 
-                el.innerHTML = `
-                    <div class="slot-lvl">Lv.${m.lvl}</div>
-                    <div class="w-full h-full flex items-center justify-center p-1">
-                        ${visualContent}
-                    </div>
-                    <div class="slot-stars">${'★'.repeat(m.stars)}</div>
-                `;
+                el.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center p-1">${visual}<span class="text-[8px] font-black text-white uppercase mt-1">Lv.${m.lvl}</span></div>`;
+                el.onclick = () => { state.leaderIdx = i; save(); renderInventory(); };
                 list.appendChild(el);
             });
         };
 
-        const openDetails = (idx) => {
-            state.selectedMonsterIdx = idx;
-            const m = state.inventory[idx];
-            const modal = document.getElementById('modal-details');
-            document.getElementById('m-bg-layer').className = `absolute inset-0 opacity-40 ${ELEMENTS_DATA[m.element]}`;
-            document.getElementById('m-name').innerText = m.name;
-            document.getElementById('m-stars').innerText = '★'.repeat(m.stars);
-            document.getElementById('m-tag').innerText = `${m.element} • NÍVEL ${m.lvl}`;
-            document.getElementById('st-hp').innerText = m.hp + (m.lvl * 20);
-            document.getElementById('st-atk').innerText = m.atk + (m.lvl * 2);
-            document.getElementById('st-def').innerText = m.def + (m.lvl * 2);
-            document.getElementById('st-spd').innerText = m.spd;
-            
-            updatePotionCounts();
-
-            if(m.spriteUrl) {
-                document.getElementById('m-visual').innerHTML = `
-                    <img src="${m.spriteUrl}" class="h-32 object-contain" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
-                    <span class="text-7xl hidden">${m.emoji}</span>
-                `;
-            } else {
-                document.getElementById('m-visual').innerHTML = `<span class="text-7xl">${m.emoji}</span>`;
-            }
-            
-            const sBox = document.getElementById('m-skills'); 
-            sBox.innerHTML = '';
-            m.skills.forEach(sKey => {
-                const s = SKILL_LIBRARY[sKey];
-                sBox.innerHTML += `<div class="bg-slate-800 p-2 rounded-lg border border-slate-700 flex items-center space-x-3"><span class="text-lg">${s.icon}</span><div><p class="text-[8px] font-black text-white uppercase leading-none">${s.n}</p><p class="text-[6px] text-slate-500 uppercase font-bold mt-1">${s.t} Type</p></div></div>`;
+        const renderStory = () => {
+            const list = document.getElementById('story-list'); list.innerHTML = '';
+            [1,2,3,4].forEach(lv => {
+                const locked = lv > state.storyProgress;
+                const div = document.createElement('div');
+                div.className = `p-5 rounded-[2rem] border-2 ${locked ? 'bg-slate-100 border-slate-200' : 'bg-white border-indigo-100 shadow-md'}`;
+                div.innerHTML = `<div class="mb-4"><p class="text-[9px] font-black text-indigo-500 uppercase">Stage ${lv}</p><h3 class="font-black text-slate-800 text-lg">Invasão ${lv}</h3></div>
+                                 <button onclick="${locked ? '' : `startBattle()`}" class="w-full ${locked ? 'bg-slate-300' : 'bg-indigo-600 shadow-lg'} text-white py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest">${locked ? 'Bloqueado' : 'Combater'}</button>`;
+                list.appendChild(div);
             });
-            document.getElementById('btn-leader').onclick = () => { state.leaderIdx = idx; saveGame(); closeModal(); renderInventory(); notify("Líder Atualizado!"); };
-            modal.classList.remove('hidden');
-        };
-
-        const updatePotionCounts = () => {
-            document.getElementById('pot-count-small').innerText = `x${state.potions.small}`;
-            document.getElementById('pot-count-med').innerText = `x${state.potions.med}`;
-            document.getElementById('pot-count-large').innerText = `x${state.potions.large}`;
-        };
-
-        const buyPotion = (type) => {
-            const prices = { small: 1000, med: 2500, large: 5000 };
-            if (state.mana >= prices[type]) {
-                state.mana -= prices[type];
-                state.potions[type]++;
-                updateStats();
-                saveGame();
-                notify("Compra efetuada!");
-            } else {
-                notify("Mana insuficiente!");
-            }
-        };
-
-        const usePotion = (type) => {
-            if (state.potions[type] <= 0) return notify("Sem poções!");
-            const levels = { small: 2, med: 5, large: 10 };
-            const m = state.inventory[state.selectedMonsterIdx];
-            if (m.lvl >= 100) return notify("Nível máximo!");
-            
-            state.potions[type]--;
-            m.lvl = Math.min(100, m.lvl + levels[type]);
-            saveGame();
-            openDetails(state.selectedMonsterIdx);
-            renderInventory();
-            notify(`Subiu para Lv. ${m.lvl}!`);
-        };
-
-        const changeView = (id) => {
-            document.querySelectorAll('main').forEach(m => m.classList.add('hidden-view'));
-            const target = document.getElementById(id);
-            if(target) target.classList.remove('hidden-view');
-            
-            const header = document.getElementById('ui-header');
-            if (id === 'view-login' || id === 'view-battle' || id === 'view-summon') {
-                header.classList.add('hidden');
-                header.classList.remove('flex');
-            } else {
-                header.classList.remove('hidden');
-                header.classList.add('flex');
-            }
-            
-            if(id === 'view-collection') renderInventory();
-            if(id === 'view-story') renderStoryMap();
-        };
-
-        const renderStoryMap = () => {
-            const list = document.getElementById('story-list');
-            list.innerHTML = '';
-            STORY_STAGES.forEach(stage => {
-                const isLocked = stage.id > state.storyProgress;
-                const isCompleted = stage.id < state.storyProgress;
-                const card = document.createElement('div');
-                card.className = `p-6 rounded-[2rem] border-2 transition-all flex justify-between items-center ${isLocked ? 'bg-slate-100 border-slate-200 opacity-60' : 'bg-white border-indigo-100 shadow-md hover:border-indigo-400'}`;
-                card.innerHTML = `<div class="space-y-1"><div class="flex items-center space-x-2"><span class="text-[10px] font-black uppercase text-indigo-500">Fase ${stage.id}</span>${isCompleted ? '<span class="text-emerald-500 text-[10px] font-black uppercase">✓ Completo</span>' : ''}</div><h3 class="text-lg font-black text-slate-800">${stage.title}</h3><p class="text-[10px] text-slate-400 font-bold uppercase">Recompensa: ${stage.mana} 💰</p></div><div>${isLocked ? '🔒' : `<button onclick="startStoryBattle(${stage.id})" class="bg-indigo-600 text-white px-5 py-3 rounded-2xl font-black text-[10px] uppercase shadow-lg active:scale-90 transition-all">Lutar (${stage.energy}⚡)</button>`}</div>`;
-                list.appendChild(card);
-            });
-        };
-
-        const notify = (msg) => {
-            const box = document.getElementById('notif-box');
-            const el = document.createElement('div');
-            el.className = "bg-indigo-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-2xl animate-bounce border border-white/10 mx-auto w-fit mb-2";
-            el.innerText = msg; box.appendChild(el);
-            setTimeout(() => el.remove(), 2500);
-        };
-
-        const startBattle = (customEnemy = null, isStory = false, stageId = null) => {
-            if(state.inventory.length === 0) return notify("Sem monstros!");
-            const cost = isStory ? STORY_STAGES.find(s => s.id === stageId).energy : 5;
-            if(state.energy < cost) return notify("Falta Energia!");
-            state.energy -= cost; 
-            updateStats();
-            saveGame();
-            const pMon = state.inventory[state.leaderIdx];
-            state.battle.p = {...pMon, curHp: pMon.hp + (pMon.lvl * 20), atk: pMon.atk + (pMon.lvl * 2)};
-            let eData = customEnemy ? MONSTERS_DATABASE.find(m => m.id === customEnemy) : MONSTERS_DATABASE[Math.floor(Math.random() * MONSTERS_DATABASE.length)];
-            state.battle.e = {...eData, curHp: eData.hp, lvl: isStory ? stageId * 20 : 50};
-            state.battle.isStory = isStory;
-            state.battle.stageId = stageId;
-            renderCharacter(state.battle.p, 'player-sprite-container');
-            renderCharacter(state.battle.e, 'enemy-sprite-container');
-            document.getElementById('enemy-name-lbl').innerText = state.battle.e.name;
-            document.getElementById('player-lvl-lbl').innerText = `Lv. ${pMon.lvl}`;
-            updateHUD(); renderBattleSkills(); changeView('view-battle');
-            state.battle.turn = 'player'; state.battle.busy = false;
-            document.getElementById('combat-log').innerText = "Tua Vez!";
-        };
-
-        const startStoryBattle = (id) => {
-            const stage = STORY_STAGES.find(s => s.id === id);
-            startBattle(stage.enemyId, true, id);
         };
 
         const updateHUD = () => {
-            const pMax = state.battle.p.hp + (state.inventory[state.leaderIdx].lvl * 20);
-            const pPct = (state.battle.p.curHp / pMax) * 100;
-            const ePct = (state.battle.e.curHp / state.battle.e.hp) * 100;
+            const pPct = (state.battle.p.curHp / state.battle.p.maxHp) * 100;
+            const ePct = (state.battle.e.curHp / state.battle.e.maxHp) * 100;
             document.getElementById('player-hp-fill').style.width = `${pPct}%`;
-            document.getElementById('player-hp-pct').innerText = `${Math.ceil(pPct)}%`;
             document.getElementById('enemy-hp-fill').style.width = `${ePct}%`;
+            document.getElementById('player-hp-pct').innerText = `${Math.ceil(pPct)}%`;
             document.getElementById('enemy-hp-pct').innerText = `${Math.ceil(ePct)}%`;
         };
 
-        const renderBattleSkills = () => {
+        const startBattle = () => {
+            const pMon = state.inventory[state.leaderIdx];
+            const dbData = MONSTERS_DATABASE.find(m => m.emoji === pMon.emoji);
+            if(dbData) { pMon.skills = dbData.skills; if(!pMon.spriteUrl) pMon.spriteUrl = dbData.spriteUrl; }
+
+            const eData = MONSTERS_DATABASE[Math.floor(Math.random()*3)];
+            state.battle.p = {...pMon, curHp: pMon.hp + (pMon.lvl*10), maxHp: pMon.hp + (pMon.lvl*10), atk: pMon.atk + (pMon.lvl*2)};
+            state.battle.e = {...eData, curHp: eData.hp, maxHp: eData.hp, lvl: 15};
+            
+            renderCharacter(state.battle.p, 'player-sprite-container');
+            renderCharacter(state.battle.e, 'enemy-sprite-container');
+            
+            document.getElementById('enemy-name-lbl').innerText = eData.name;
+            document.getElementById('player-lvl-lbl').innerText = `Lv. ${pMon.lvl}`;
+            
+            renderSkills(); updateHUD();
+            state.battle.busy = false; state.battle.turn = 'player';
+            document.getElementById('combat-log').innerText = "Tua Vez!";
+            changeView('view-battle');
+        };
+
+        const renderSkills = () => {
             const grid = document.getElementById('skill-grid'); grid.innerHTML = '';
-            state.battle.p.skills.forEach(sKey => {
-                const s = SKILL_LIBRARY[sKey];
-                const b = document.createElement('button');
-                b.className = "bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-2xl hover:bg-white/30 active:scale-95 transition-all flex flex-col items-center justify-center space-y-1";
-                b.innerHTML = `<span class="text-xl leading-none">${s.icon}</span><p class="font-black text-[8px] uppercase text-white text-center leading-none">${s.n}</p>`;
-                b.onclick = () => performSequence(sKey);
-                grid.appendChild(b);
+            state.battle.p.skills.forEach(sk => {
+                const s = SKILL_LIBRARY[sk];
+                const isSup = sk.includes('sup');
+                const btn = document.createElement('button');
+                btn.className = `backdrop-blur-md border p-4 rounded-3xl flex flex-col items-center justify-center space-y-1 active:scale-90 transition-all ${isSup ? 'bg-amber-500/20 border-amber-300/40 shadow-[0_0_15px_rgba(251,191,36,0.2)]' : 'bg-white/10 border-white/20'}`;
+                btn.innerHTML = `<span class="text-2xl drop-shadow-md">${s.icon}</span><span class="text-[8px] font-black text-white uppercase">${s.n}</span>`;
+                btn.onclick = () => performSequence(sk);
+                grid.appendChild(btn);
             });
         };
 
         const performSequence = async (skillKey) => {
             if(state.battle.busy || state.battle.turn !== 'player') return;
-            state.battle.busy = true; setHudOpacity(0);
+            state.battle.busy = true;
             const pEnt = document.getElementById('ent-player');
-            const pVisual = document.getElementById('player-sprite-container');
-            const log = document.getElementById('combat-log');
+            const pVis = document.getElementById('player-sprite-container');
             const skill = SKILL_LIBRARY[skillKey];
+            const isSup = skillKey.includes('sup');
 
-            pVisual.classList.add('anim-spin-atk');
-            
+            document.getElementById('combat-log').innerText = `USANDO ${skill.n.toUpperCase()}!`;
+
             if(skill.t === 'melee') {
+                // Físico: Gira e Avança
+                pVis.classList.add('anim-spin-atk');
                 pEnt.classList.add('anim-melee-player');
                 await sleep(500);
             } else {
+                // Magia: SÓ Brilha/Flutua (sem giro, sem avanço)
                 pEnt.classList.add('anim-channeling');
-                log.innerText = `Lançando ${skill.n}...`;
                 await sleep(400);
-                await spawnParticles(true, skillKey);
+                await spawnParticles(true, skill.t, isSup ? 10 : 1);
             }
 
-            triggerImpact('ent-enemy', skillKey.includes('sup'));
+            triggerImpact('ent-enemy');
             applyDmg(state.battle.p, state.battle.e, skill, 'ent-enemy');
-            
+
             setTimeout(() => {
-                pVisual.classList.remove('anim-spin-atk');
+                pVis.classList.remove('anim-spin-atk');
                 pEnt.classList.remove('anim-melee-player', 'anim-channeling');
             }, 200);
 
-            setHudOpacity(0.25);
             if(state.battle.e.curHp <= 0) {
-                handleVictory();
+                document.getElementById('combat-log').innerText = "VITÓRIA!";
+                state.crystals += 60; state.mana += 350; save(); updateStats();
+                setTimeout(() => changeView('view-home'), 2000);
             } else {
                 state.battle.turn = 'enemy';
-                log.innerText = "Turno do Inimigo...";
-                await sleep(1200);
-                enemySequence();
+                setTimeout(enemyTurn, 1200);
             }
         };
 
-        const enemySequence = async () => {
+        const enemyTurn = async () => {
             const eEnt = document.getElementById('ent-enemy');
-            const eVisual = document.getElementById('enemy-sprite-container');
+            const eVis = document.getElementById('enemy-sprite-container');
             const skillKey = state.battle.e.skills[Math.floor(Math.random() * state.battle.e.skills.length)];
             const skill = SKILL_LIBRARY[skillKey];
-
-            eVisual.classList.add('anim-spin-atk');
+            const isSup = skillKey.includes('sup');
+            
+            document.getElementById('combat-log').innerText = `${state.battle.e.name} usou ${skill.n}!`;
 
             if(skill.t === 'melee') {
-                eEnt.classList.add('anim-melee-enemy');
-                await sleep(500);
+                 // Inimigo Físico: Gira e Avança
+                 eVis.classList.add('anim-spin-atk');
+                 eEnt.classList.add('anim-melee-enemy');
+                 await sleep(500);
             } else {
-                eEnt.classList.add('anim-channeling');
-                await sleep(400);
-                await spawnParticles(false, skillKey);
+                 // Inimigo Magia: SÓ Brilha
+                 eEnt.classList.add('anim-channeling');
+                 await sleep(400);
+                 await spawnParticles(false, skill.t, isSup ? 10 : 1);
             }
 
-            triggerImpact('ent-player', false);
+            triggerImpact('ent-player');
             applyDmg(state.battle.e, state.battle.p, skill, 'ent-player');
-            
+
             setTimeout(() => {
-                eVisual.classList.remove('anim-spin-atk');
+                eVis.classList.remove('anim-spin-atk');
                 eEnt.classList.remove('anim-melee-enemy', 'anim-channeling');
             }, 200);
 
             if(state.battle.p.curHp <= 0) {
-                notify("DERROTA...");
+                document.getElementById('combat-log').innerText = "DERROTA...";
                 setTimeout(() => changeView('view-home'), 2000);
             } else {
                 state.battle.turn = 'player';
                 state.battle.busy = false;
-                document.getElementById('combat-log').innerText = "Tua Vez!";
+                document.getElementById('combat-log').innerText = "TUA VEZ!";
             }
         };
 
-        const handleVictory = () => {
-            notify("VITÓRIA!");
-            let crystalsGain = 0;
-            let manaGain = 0;
-
-            if(state.battle.isStory) {
-                const stage = STORY_STAGES.find(s => s.id === state.battle.stageId);
-                crystalsGain = stage.reward;
-                manaGain = stage.mana;
-                if(state.battle.stageId === state.storyProgress) state.storyProgress++;
-            } else { 
-                crystalsGain = 200; 
-                manaGain = 800 + Math.floor(Math.random() * 500);
-            }
-
-            state.crystals += crystalsGain;
-            state.mana += manaGain;
-            notify(`Ganhaste ${manaGain} 💰!`);
+        const applyDmg = (att, def, s, tid) => {
+            const dmg = Math.floor(att.atk * s.p * (0.9 + Math.random() * 0.2));
+            def.curHp = Math.max(0, def.curHp - dmg);
+            updateHUD();
             
-            updateStats();
-            saveGame();
-            setTimeout(() => changeView('view-home'), 2000);
-        };
-
-        const applyDmg = (att, def, skill, tid) => {
-            const d = Math.floor(att.atk * skill.p * (0.9 + Math.random() * 0.2));
-            def.curHp = Math.max(0, def.curHp - d);
-            
-            const visualId = tid === 'ent-player' ? 'player-sprite-container' : 'enemy-sprite-container';
-            const visual = document.getElementById(visualId);
+            // O ALVO sempre sofre recoil
+            const visual = document.getElementById(tid === 'ent-player' ? 'player-sprite-container' : 'enemy-sprite-container');
             visual.classList.add('anim-hit-recoil');
             setTimeout(() => visual.classList.remove('anim-hit-recoil'), 500);
 
-            const pop = document.createElement('div'); pop.className = 'dmg-text'; pop.innerText = `-${d}`;
-            document.getElementById(tid).appendChild(pop); 
-            setTimeout(() => pop.remove(), 800); 
-            updateHUD();
+            const pop = document.createElement('div');
+            pop.className = 'dmg-text'; pop.innerText = `-${dmg}`;
+            document.getElementById(tid).appendChild(pop);
+            setTimeout(() => pop.remove(), 800);
         };
 
-        const spawnParticles = async (isToEnemy, skillKey) => {
-            const container = document.getElementById('effect-layer');
-            const skill = SKILL_LIBRARY[skillKey];
-            const pType = skill.t;
-            const tX = isToEnemy ? 'var(--e-x)' : 'var(--p-x)';
-            const tY = isToEnemy ? 'var(--e-y)' : 'var(--p-y)';
-            const tZ = isToEnemy ? 'var(--e-z)' : 'var(--p-z)';
-            const oX = isToEnemy ? 'var(--p-x)' : 'var(--e-x)';
-            const oY = isToEnemy ? 'var(--p-y)' : 'var(--e-y)';
-            const oZ = isToEnemy ? 'var(--p-z)' : 'var(--e-z)';
-            for(let i=0; i < (skillKey.includes('sup') ? 10 : 1); i++) {
+        const spawnParticles = async (toEnemy, type, count = 1) => {
+            const layer = document.getElementById('effect-layer');
+            const tX = toEnemy ? 'var(--e-x)' : 'var(--p-x)';
+            const tY = toEnemy ? 'var(--e-y)' : 'var(--p-y)';
+            const oX = toEnemy ? 'var(--p-x)' : 'var(--e-x)';
+            const oY = toEnemy ? 'var(--p-y)' : 'var(--e-y)';
+            
+            for(let i=0; i < (count === 1 ? 3 : 15); i++) {
                 const p = document.createElement('div');
-                p.className = `particle p-${pType}`;
-                p.style.setProperty('--origin', `translate(-50%, -50%) translateX(${oX}) translateY(${oY}) translateZ(${oZ})`);
-                p.style.setProperty('--destination', `translate(-50%, -50%) translateX(${tX}) translateY(${tY}) translateZ(${tZ})`);
-                if(i > 0) p.style.animationDelay = `${i * 0.1}s`;
-                container.appendChild(p);
+                p.className = `particle p-${type}`;
+                const randX = count > 1 ? (Math.random() * 60 - 30) : 0;
+                const randY = count > 1 ? (Math.random() * 60 - 30) : 0;
+                p.style.setProperty('--origin', `translateX(${oX}) translateY(${oY}) translateZ(0)`);
+                p.style.setProperty('--destination', `translateX(calc(${tX} + ${randX}px)) translateY(calc(${tY} + ${randY}px)) translateZ(${toEnemy ? '-400px' : '200px'})`);
+                if(i > 0) p.style.animationDelay = `${i * 0.05}s`;
+                layer.appendChild(p);
                 setTimeout(() => p.remove(), 1000);
             }
-            if(pType === 'lightning') triggerFlash();
+            if(type === 'lightning') {
+                const f = document.getElementById('flash-effect');
+                f.style.opacity = "0.6"; setTimeout(() => f.style.opacity = "0", 150);
+            }
         };
 
-        const triggerImpact = (tid, big) => {
+        const triggerImpact = (tid) => {
             const arena = document.getElementById('arena');
             arena.classList.add('screen-shake');
             setTimeout(() => arena.classList.remove('screen-shake'), 300);
@@ -862,38 +565,29 @@
             setTimeout(() => r.remove(), 500);
         };
 
-        const triggerFlash = () => {
-            const f = document.getElementById('flash-effect');
-            f.classList.add('do-flash');
-            setTimeout(() => f.classList.remove('do-flash'), 500);
+        const doSummon = () => {
+            if (state.crystals < 75) return;
+            state.crystals -= 75;
+            const res = MONSTERS_DATABASE[Math.floor(Math.random()*3)];
+            state.inventory.push({...res, lvl: 1, curHp: res.hp});
+            
+            // Summon com Sprite
+            const box = document.getElementById('summon-box');
+            if (res.spriteUrl) {
+                box.innerHTML = `<img src="${res.spriteUrl}" class="w-full h-full object-contain drop-shadow-lg animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"> <span style="display:none" class="text-7xl">${res.emoji}</span>`;
+            } else {
+                box.innerHTML = res.emoji;
+            }
+            
+            save(); updateStats();
+            setTimeout(() => { box.innerHTML = '🎁'; }, 2000);
         };
 
-        const setHudOpacity = (v) => {
-            document.getElementById('player-hud').style.opacity = v;
-            document.getElementById('enemy-hud').style.opacity = v;
-        };
-
-        const doSummon = async () => {
-            if(state.isSummoning || state.crystals < 75) return notify("Crystals insuficientes!");
-            state.isSummoning = true; state.crystals -= 75; 
-            updateStats();
-            const anchor = document.getElementById('box-anchor');
-            const box = document.getElementById('main-box');
-            box.classList.add('box-shake');
-            await sleep(1500);
-            box.classList.remove('box-shake');
-            anchor.classList.add('box-open');
-            const randomT = MONSTERS_DATABASE[Math.floor(Math.random() * MONSTERS_DATABASE.length)];
-            document.getElementById('summon-result-emoji').innerText = randomT.emoji;
-            state.inventory.push({...randomT, instId: Date.now(), lvl: 1, curHp: randomT.hp});
-            saveGame();
-            setTimeout(() => { anchor.classList.remove('box-open'); state.isSummoning = false; notify(`Novo monstro: ${randomT.name}!`); }, 2000);
-        };
-
-        const closeModal = () => document.getElementById('modal-details').classList.add('hidden');
         const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-        init();
+        window.onload = init;
     </script>
 </body>
 </html>
+
+
