@@ -251,7 +251,7 @@
             border: 2px solid #fbbf24;
         }
 
-        /* --- TOAST NOTIFICATIONS --- */
+        /* --- TOAST SYSTEM --- */
         #toast-container {
             position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;
             display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 300px;
@@ -296,6 +296,10 @@
                 <div class="leading-tight">
                     <p class="text-[9px] font-bold text-slate-400 uppercase">Comandante</p>
                     <p id="player-name-ui" class="font-bold text-white text-sm truncate max-w-[100px]">---</p>
+                    <!-- XP BAR -->
+                    <div class="w-16 h-1 bg-slate-800 rounded-full mt-0.5 overflow-hidden border border-white/10">
+                        <div id="header-xp-bar" class="h-full bg-green-500 w-0 transition-all duration-300"></div>
+                    </div>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -345,6 +349,7 @@
                         <div class="text-2xl mb-2">🎴</div>
                         <h4 class="text-white font-bold uppercase text-xs">Monstros</h4>
                     </div>
+                    <!-- The button that caused the error: corrected to point to existing view-summon -->
                     <div onclick="changeView('view-summon')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center">
                         <div class="text-2xl mb-2">📦</div>
                         <h4 class="text-white font-bold uppercase text-xs">Summon</h4>
@@ -549,7 +554,7 @@
             </div>
         </main>
 
-        <!-- SUMMON -->
+        <!-- SUMMON SCREEN (FIXED) -->
         <main id="view-summon" class="flex-1 hidden-view bg-slate-950 flex flex-col items-center justify-center p-8 relative overflow-hidden">
             <button onclick="changeView('view-home')" class="absolute top-6 left-6 text-white font-bold text-xs z-20">← VOLTAR</button>
             <div class="absolute top-6 right-6 flex flex-col items-end space-y-1">
@@ -619,7 +624,7 @@
         };
 
         let state = { 
-            user: { name: "", crystals: 20000, energy: 100, mana: 0, tickets_common: 0, tickets_epic: 50, lvl: 5, xp: 0, potions: 0, firstClear: {} }, // firstClear obj
+            user: { name: "", crystals: 200, energy: 100, mana: 0, tickets_common: 0, tickets_epic: 0, lvl: 1, xp: 0, potions: 0, firstClear: {} },
             inventory: [], 
             leaderIdx: 0, 
             storyProgress: 1, 
@@ -652,13 +657,12 @@
 
         // --- CORE ---
         const init = () => {
-            const saved = localStorage.getItem('paperwar_v9'); // Version bump
+            const saved = localStorage.getItem('paperwar_v11');
             if(saved) {
                 state = JSON.parse(saved);
                 if(state.user.potions === undefined) state.user.potions = 0;
                 if(state.user.lvl === undefined) state.user.lvl = 1;
                 if(state.user.firstClear === undefined) state.user.firstClear = {};
-                // Migration logic if needed
                 if(state.user.tickets_common === undefined) {
                     state.user.tickets_common = state.user.tickets || 0;
                     state.user.tickets_epic = 0;
@@ -673,7 +677,6 @@
                     }
                 });
             } else { 
-                // New Account Bonus: 10 Epic Tickets (as requested)
                 state.user.tickets_epic = 10; 
                 state.user.tickets_common = 5; 
                 addMonster('thyron'); addMonster('vireya'); addMonster('slime'); 
@@ -681,7 +684,7 @@
             if(state.user.name) { document.getElementById('login-name').value = state.user.name; handleLogin(); }
             updateHeader();
         };
-        const save = () => localStorage.setItem('paperwar_v10', JSON.stringify(state));
+        const save = () => localStorage.setItem('paperwar_v11', JSON.stringify(state));
 
         const handleLogin = () => {
             const val = document.getElementById('login-name').value.trim();
@@ -724,6 +727,10 @@
             document.getElementById('val-energy').innerText = state.user.energy;
             document.getElementById('val-mana').innerText = state.user.mana;
             document.getElementById('header-lvl').innerText = state.user.lvl;
+            
+            const xpReq = 100 * state.user.lvl;
+            const pct = Math.min(100, (state.user.xp / xpReq) * 100);
+            document.getElementById('header-xp-bar').style.width = `${pct}%`;
         };
 
         // --- SHOP ---
@@ -732,12 +739,11 @@
             document.getElementById('shop-mana').innerText = state.user.mana;
         };
         const buyShopItem = (item) => {
-            // Price Balance
-            if(item === 'ticket_common') { if(state.user.mana < 1000) return showToast("Mana insuficiente!", "error"); state.user.mana -= 2000; state.user.tickets_common++; }
-            if(item === 'ticket_epic') { if(state.user.crystals < 200) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 300; state.user.tickets_epic++; }
+            if(item === 'ticket_common') { if(state.user.mana < 2000) return showToast("Mana insuficiente!", "error"); state.user.mana -= 2000; state.user.tickets_common++; }
+            if(item === 'ticket_epic') { if(state.user.crystals < 300) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 300; state.user.tickets_epic++; }
             if(item === 'energy') { if(state.user.crystals < 50) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 50; state.user.energy+=50; }
-            if(item === 'xp_pot') { if(state.user.mana < 100) return showToast("Mana insuficiente!", "error"); state.user.mana -= 500; state.user.potions++; }
-            if(item === 'xp_pot10') { if(state.user.mana < 1500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 4500; state.user.potions+=10; }
+            if(item === 'xp_pot') { if(state.user.mana < 500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 500; state.user.potions++; }
+            if(item === 'xp_pot10') { if(state.user.mana < 4500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 4500; state.user.potions+=10; }
             save(); updateShopUI(); updateHeader(); showToast("Item comprado com sucesso!");
         };
         const updateSummonUI = () => {
@@ -941,9 +947,7 @@
                 attackerEl.classList.remove('anim-cast');
             }
 
-            // HIT IMPACT (SPIN ADDED)
             defenderEl.classList.add('anim-hit-recoil');
-            // Adding Spin animation class
             defenderEl.querySelector('img').classList.add('anim-hit-spin'); 
             
             setTimeout(() => {
@@ -1056,10 +1060,9 @@
                 }
                 await sleep(600/spd); projectiles.forEach(p => p.el.remove()); return;
             }
-            // VOID DEVASTATION FIX
             if(type.includes('void')) {
                 const p = document.createElement('div'); 
-                p.className = 'vfx-blackhole'; // CSS class dedicated
+                p.className = 'vfx-blackhole';
                 layer.appendChild(p);
                 
                 const anim = p.animate([
@@ -1108,45 +1111,51 @@
                 let rewards = "";
                 const accXp = 50; 
                 state.user.xp += accXp;
-                if(state.user.xp >= 100 * state.user.lvl) {
-                    state.user.xp = 0; state.user.lvl++;
-                    showToast(`LEVEL UP! Nível ${state.user.lvl}`);
+                
+                const xpReq = 100 * state.user.lvl;
+                if(state.user.xp >= xpReq) {
+                    state.user.xp = state.user.xp - xpReq;
+                    state.user.lvl++;
+                    state.user.crystals += 25; 
+                    showToast(`LEVEL UP! Nível ${state.user.lvl} (+25 💎)`);
                 }
 
                 let crystalsGained = 0;
                 let manaGained = 0;
 
                 if(battleState.mode === 'dungeon') {
+                    // MELHORIA: Masmorra escala melhor (Base 500 + 250 por andar)
                     const floor = prepState.level;
-                    manaGained = 50 * floor;
-                    rewards = `+${manaGained} Mana | +${accXp} XP`;
+                    manaGained = 500 + (floor * 250); 
+                    crystalsGained = 5 + floor;
+                    rewards = `+${manaGained} Mana | +${crystalsGained} 💎`;
                 } else if(battleState.mode === 'tower') {
                     state.towerFloor++;
-                    crystalsGained = 50; 
-                    manaGained = 100;
+                    crystalsGained = 50 + (state.towerFloor * 10); 
+                    manaGained = 500 * state.towerFloor;
                     rewards = `Andar ${state.towerFloor-1} Completo!`;
                 } else {
-                    // Campaign First Clear Logic
+                    // MELHORIA: Campanha agora escala recompensa baseado na fase
                     const stage = prepState.level;
                     const stageKey = `stage_${stage}`;
-                    
                     if (!state.user.firstClear[stageKey]) {
-                        // First Clear Bonus
                         crystalsGained = 100;
+                        manaGained = 1000 * stage; // Recompensa generosa na primeira vez
                         state.user.firstClear[stageKey] = true;
                         if(stage === state.storyProgress) state.storyProgress++;
-                        rewards = `PRIMEIRA VEZ! +100 💎`;
+                        rewards = `PRIMEIRA VEZ! +${crystalsGained} 💎 | +${manaGained} Mana`;
                     } else {
-                        // Repeat Farm
-                        crystalsGained = 10;
-                        rewards = `+10 💎 | +50 Mana`;
+                        crystalsGained = 5;
+                        // Antes era fixo 100, agora escala: Fase 1 = 200, Fase 5 = 400
+                        manaGained = 150 + (stage * 50); 
+                        rewards = `+${crystalsGained} 💎 | +${manaGained} Mana`;
                     }
-                    manaGained = 50;
                 }
 
                 state.user.crystals += crystalsGained;
                 state.user.mana += manaGained;
                 save();
+                updateHeader();
                 document.getElementById('outcome-rewards').innerText = rewards;
             } else {
                 document.getElementById('outcome-rewards').innerText = "Tente melhorar seu time";
@@ -1228,7 +1237,6 @@
             const box = document.getElementById('summon-box');
             const flash = document.getElementById('summon-flash');
             
-            // Animation
             flash.style.transform = 'scale(20)'; flash.style.opacity = '1';
             await sleep(200);
             
@@ -1248,9 +1256,8 @@
                     else stars = 5;
                 }
 
-                // Filter DB for stars
                 pool = MONSTERS_DB.filter(m => m.stars === stars);
-                if (pool.length === 0) pool = MONSTERS_DB.filter(m => m.stars === (stars > 1 ? stars-1 : 1)); // Fallback
+                if (pool.length === 0) pool = MONSTERS_DB.filter(m => m.stars === (stars > 1 ? stars-1 : 1));
 
                 const mon = pool[Math.floor(Math.random() * pool.length)];
                 addMonster(mon.id);
@@ -1259,7 +1266,6 @@
 
             flash.style.opacity = '0';
             
-            // Check for 5 stars for shine effect
             const hasFiveStar = results.some(r => r.stars === 5);
             if (hasFiveStar) {
                 document.body.classList.add('shine-bg');
@@ -1267,7 +1273,6 @@
                 showToast("LENDA INVOCADA! ⭐⭐⭐⭐⭐", "success");
             }
 
-            // Show results
             if (count === 1) {
                 const m = results[0];
                 box.innerHTML = `<img src="${m.img}" class="w-full h-full object-contain animate-float"><span style="display:none;font-size:4rem">${m.emoji}</span>`;
