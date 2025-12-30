@@ -15,11 +15,17 @@
                     animation: {
                         'float': 'float 3s ease-in-out infinite',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'flash': 'flash 0.1s ease-out'
+                        'flash': 'flash 0.1s ease-out',
+                        'toast-slide': 'toast-slide 0.3s ease-out forwards',
+                        'toast-fade': 'toast-fade 0.3s ease-in forwards',
+                        'shine-gold': 'shine-gold 1s ease-in-out infinite'
                     },
                     keyframes: {
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
-                        flash: { '0%': { opacity: 0 }, '50%': { opacity: 0.8 }, '100%': { opacity: 0 } }
+                        flash: { '0%': { opacity: 0 }, '50%': { opacity: 0.8 }, '100%': { opacity: 0 } },
+                        'toast-slide': { '0%': { transform: 'translateY(-20px)', opacity: 0 }, '100%': { transform: 'translateY(0)', opacity: 1 } },
+                        'toast-fade': { '0%': { opacity: 1 }, '100%': { opacity: 0 } },
+                        'shine-gold': { '0%, 100%': { boxShadow: '0 0 20px #fbbf24' }, '50%': { boxShadow: '0 0 50px #fbbf24, 0 0 20px white' } }
                     }
                 }
             }
@@ -38,8 +44,22 @@
             background-color: #020617; 
             margin: 0; padding: 0; 
             height: 100vh; height: 100dvh; 
-            overflow: hidden;
+            overflow: hidden; 
             display: flex; align-items: center; justify-content: center;
+        }
+
+        #app { 
+            overflow: hidden; 
+            display: flex; flex-direction: column;
+        }
+
+        .scroll-container {
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scroll-container::-webkit-scrollbar {
+            display: none;
         }
 
         .hidden-view { display: none !important; }
@@ -149,7 +169,6 @@
             100% { filter: brightness(1); transform: translateX(0); } 
         }
 
-        /* NEW: Hit Spin Animation */
         .anim-hit-spin { animation: hit-spin 0.6s ease-out; }
         @keyframes hit-spin {
             0% { filter: brightness(1); transform: rotateY(0deg) translateX(0); }
@@ -186,6 +205,13 @@
             z-index: 101; pointer-events: none;
         }
 
+        .vfx-blackhole {
+            position: absolute; width: 100px; height: 100px; border-radius: 50%;
+            background: radial-gradient(circle, #000, #4c1d95, transparent);
+            box-shadow: 0 0 50px #4c1d95;
+            z-index: 99; pointer-events: none;
+        }
+
         .entity-wrapper {
             position: absolute; transform-style: preserve-3d;
             transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -219,13 +245,33 @@
             position: absolute; inset: 0; background: white; z-index: 200; pointer-events: none;
             animation: flash 0.15s ease-out forwards;
         }
+        
+        .shine-bg {
+            animation: shine-gold 2s infinite;
+            border: 2px solid #fbbf24;
+        }
+
+        /* --- TOAST NOTIFICATIONS --- */
+        #toast-container {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;
+            display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 300px;
+        }
+        .toast {
+            background: rgba(15, 23, 42, 0.95); color: white; padding: 12px 16px; border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 8px;
+            animation: toast-slide 0.3s ease-out forwards;
+        }
+        .toast.error { border-color: #ef4444; } .toast.success { border-color: #22c55e; } .toast.info { border-color: #3b82f6; }
+        .toast-icon { font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <div id="app" class="w-full h-full max-w-md bg-slate-950 relative shadow-2xl overflow-hidden flex flex-col sm:h-[94vh] sm:rounded-[2.5rem] border-slate-800 border-[8px]">
+    <div id="app" class="w-full h-full max-w-md bg-slate-950 relative shadow-2xl flex flex-col sm:h-[94vh] sm:rounded-[2.5rem] border-slate-800 border-[8px]">
 
         <div id="screen-flash" class="hidden"></div>
+        <div id="toast-container"></div>
 
         <!-- LOGIN -->
         <main id="view-login" class="flex-1 flex flex-col items-center justify-center p-8 bg-[url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=1000')] bg-cover bg-center relative">
@@ -252,7 +298,6 @@
                     <p id="player-name-ui" class="font-bold text-white text-sm truncate max-w-[100px]">---</p>
                 </div>
             </div>
-            <!-- Economia Atualizada -->
             <div class="flex items-center space-x-2">
                 <div class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1" title="Energia"><span class="text-xs">⚡</span><span id="val-energy" class="text-[10px] font-bold text-yellow-400">0</span></div>
                 <div class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1" title="Mana"><span class="text-xs">💧</span><span id="val-mana" class="text-[10px] font-bold text-blue-400">0</span></div>
@@ -261,7 +306,7 @@
         </header>
 
         <!-- HOME -->
-        <main id="view-home" class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-950 hidden-view scroll-smooth pb-24">
+        <main id="view-home" class="scroll-container flex-1 overflow-y-auto p-6 space-y-6 bg-slate-950 hidden-view scroll-smooth pb-24">
             <div class="relative w-full h-40 rounded-[2rem] overflow-hidden group cursor-pointer shadow-2xl" onclick="changeView('view-story')">
                 <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
@@ -342,14 +387,12 @@
             </div>
 
             <!-- Mini Roster Selector Overlay -->
-            <div id="prep-roster" class="absolute inset-0 bg-slate-950/95 z-20 flex flex-col p-4 hidden">
+            <div id="prep-roster" class="scroll-container absolute inset-0 bg-slate-950/95 z-20 flex flex-col p-4 hidden">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-white font-bold">Escolha seu Monstro</h3>
                     <button onclick="document.getElementById('prep-roster').classList.add('hidden')" class="text-white text-xl">✕</button>
                 </div>
-                <div id="prep-grid" class="grid grid-cols-4 gap-3 overflow-y-auto pb-4">
-                    <!-- JS Generated -->
-                </div>
+                <div id="prep-grid" class="grid grid-cols-4 gap-3 overflow-y-auto pb-4"></div>
             </div>
         </main>
 
@@ -357,31 +400,18 @@
         <main id="view-dungeon" class="flex-1 hidden-view bg-slate-950 p-6 flex flex-col">
             <button onclick="changeView('view-home')" class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Voltar</button>
             <h2 class="text-3xl font-black text-white uppercase italic mb-6">Masmorra</h2>
-            <div class="flex-1 overflow-y-auto space-y-3 pr-2" id="dungeon-list">
-                <!-- JS Generated B1-B12 -->
-            </div>
+            <div class="scroll-container flex-1 overflow-y-auto space-y-3 pr-2" id="dungeon-list"></div>
         </main>
 
         <!-- TOWER SELECT -->
         <main id="view-tower" class="flex-1 hidden-view bg-slate-950 p-6 flex flex-col items-center justify-center relative overflow-hidden">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
             <button onclick="changeView('view-home')" class="absolute top-6 left-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max z-10">← Voltar</button>
-            
             <div class="relative z-10 text-center space-y-6">
-                <div class="w-32 h-32 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center border-4 border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.3)]">
-                    <span class="text-6xl">🏰</span>
-                </div>
-                <div>
-                    <p class="text-yellow-500 font-bold uppercase tracking-widest text-sm mb-2">Andar Atual</p>
-                    <h2 class="text-6xl font-black text-white" id="tower-floor-display">1</h2>
-                </div>
-                <div class="glass-panel p-4 rounded-xl max-w-xs mx-auto">
-                    <p class="text-slate-300 text-xs mb-1">Recompensa Prevista</p>
-                    <p class="text-white font-bold">💎 50 Cristais + 💧 100 Mana</p>
-                </div>
-                <button onclick="openPrep('tower', state.towerFloor)" class="px-12 py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-black uppercase rounded-2xl shadow-lg active:scale-95 transition-all">
-                    DESAFIAR
-                </button>
+                <div class="w-32 h-32 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center border-4 border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.3)]"><span class="text-6xl">🏰</span></div>
+                <div><p class="text-yellow-500 font-bold uppercase tracking-widest text-sm mb-2">Andar Atual</p><h2 class="text-6xl font-black text-white" id="tower-floor-display">1</h2></div>
+                <div class="glass-panel p-4 rounded-xl max-w-xs mx-auto"><p class="text-slate-300 text-xs mb-1">Recompensa Prevista</p><p class="text-white font-bold">💎 50 Cristais + 💧 100 Mana</p></div>
+                <button onclick="openPrep('tower', state.towerFloor)" class="px-12 py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-black uppercase rounded-2xl shadow-lg active:scale-95 transition-all">DESAFIAR</button>
             </div>
         </main>
 
@@ -389,49 +419,33 @@
         <main id="view-shop" class="flex-1 hidden-view bg-slate-950 flex flex-col p-6 relative">
             <button onclick="changeView('view-home')" class="mb-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Voltar</button>
             <h2 class="text-3xl font-black text-white uppercase italic mb-8">Loja</h2>
-            
-            <div class="flex-1 space-y-3 overflow-y-auto">
+            <div class="scroll-container flex-1 space-y-3 overflow-y-auto">
                 <h4 class="text-white font-bold text-sm uppercase mt-2">Invocações</h4>
+                <!-- Bilhete Comum - Custa Mana -->
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="text-2xl">🎫</div>
-                        <div><h3 class="text-white font-bold">1x Bilhete</h3></div>
-                    </div>
-                    <button onclick="buyShopItem('ticket1')" class="bg-indigo-600 px-4 py-2 rounded-xl text-white font-bold text-xs">75 💎</button>
+                    <div class="flex items-center space-x-3"><div class="text-2xl">🎫</div><div><h3 class="text-white font-bold">Bilhete Comum</h3><p class="text-[9px] text-slate-400">1-3 Estrelas</p></div></div>
+                    <button onclick="buyShopItem('ticket_common')" class="bg-blue-600 px-4 py-2 rounded-xl text-white font-bold text-xs">2000 💧</button>
                 </div>
+                <!-- Bilhete Epico - Custa Cristais -->
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between border border-amber-500/30">
-                    <div class="flex items-center space-x-3">
-                        <div class="text-2xl">🎫</div>
-                        <div><h3 class="text-white font-bold">10x Bilhetes</h3></div>
-                    </div>
-                    <button onclick="buyShopItem('ticket10')" class="bg-amber-600 px-4 py-2 rounded-xl text-white font-bold text-xs">700 💎</button>
+                    <div class="flex items-center space-x-3"><div class="text-2xl">🎫</div><div><h3 class="text-white font-bold">Bilhete Épico</h3><p class="text-[9px] text-slate-400">3-5 Estrelas</p></div></div>
+                    <button onclick="buyShopItem('ticket_epic')" class="bg-amber-600 px-4 py-2 rounded-xl text-white font-bold text-xs">300 💎</button>
                 </div>
 
                 <h4 class="text-white font-bold text-sm uppercase mt-4">Recursos</h4>
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="text-2xl">⚡</div>
-                        <div><h3 class="text-white font-bold">50 Energia</h3></div>
-                    </div>
-                    <button onclick="buyShopItem('energy')" class="bg-yellow-600 px-4 py-2 rounded-xl text-white font-bold text-xs">30 💎</button>
+                    <div class="flex items-center space-x-3"><div class="text-2xl">⚡</div><div><h3 class="text-white font-bold">50 Energia</h3></div></div>
+                    <button onclick="buyShopItem('energy')" class="bg-yellow-600 px-4 py-2 rounded-xl text-white font-bold text-xs">50 💎</button>
                 </div>
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="text-2xl">🧪</div>
-                        <div><h3 class="text-white font-bold">1x XP Potion</h3><p class="text-[9px] text-slate-400">+1 Nível</p></div>
-                    </div>
+                    <div class="flex items-center space-x-3"><div class="text-2xl">🧪</div><div><h3 class="text-white font-bold">1x XP Potion</h3><p class="text-[9px] text-slate-400">+1 Nível</p></div></div>
                     <button onclick="buyShopItem('xp_pot')" class="bg-blue-600 px-4 py-2 rounded-xl text-white font-bold text-xs">500 💧</button>
                 </div>
-                <!-- NOVO: 10x XP Potions -->
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between border border-blue-500/30">
-                    <div class="flex items-center space-x-3">
-                        <div class="text-2xl">🧪</div>
-                        <div><h3 class="text-white font-bold">10x XP Potions</h3><p class="text-[9px] text-slate-400">Bulk (Desconto)</p></div>
-                    </div>
+                    <div class="flex items-center space-x-3"><div class="text-2xl">🧪</div><div><h3 class="text-white font-bold">10x XP Potions</h3><p class="text-[9px] text-slate-400">Bulk</p></div></div>
                     <button onclick="buyShopItem('xp_pot10')" class="bg-blue-800 px-4 py-2 rounded-xl text-white font-bold text-xs">4500 💧</button>
                 </div>
             </div>
-            
             <div class="mt-4 glass-panel p-4 rounded-xl flex justify-between text-xs">
                 <div>💎 <span id="shop-crystals" class="text-cyan-400 font-bold">0</span></div>
                 <div>💧 <span id="shop-mana" class="text-blue-400 font-bold">0</span></div>
@@ -439,7 +453,7 @@
         </main>
 
         <!-- MONSTER BOX -->
-        <main id="view-collection" class="flex-1 hidden-view bg-slate-950 flex flex-col p-4">
+        <main id="view-collection" class="scroll-container flex-1 hidden-view bg-slate-950 flex flex-col p-4">
             <div class="flex items-center justify-between mb-4">
                 <button onclick="changeView('view-home')" class="text-white font-bold text-xs bg-slate-800 px-3 py-2 rounded-lg">← VOLTAR</button>
                 <span class="text-white font-bold uppercase text-xs">Monstros: <span id="mon-count">0</span></span>
@@ -480,7 +494,7 @@
         </main>
 
         <!-- STORY -->
-        <main id="view-story" class="flex-1 overflow-y-auto hidden-view bg-slate-950 p-6 relative">
+        <main id="view-story" class="scroll-container flex-1 overflow-y-auto hidden-view bg-slate-950 p-6 relative">
             <button onclick="changeView('view-home')" class="mb-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold">← Voltar</button>
             <h2 class="text-3xl font-black text-white uppercase italic mb-8">Campanha</h2>
             <div id="story-nodes" class="space-y-6 relative pl-4 border-l-2 border-slate-800"></div>
@@ -538,16 +552,35 @@
         <!-- SUMMON -->
         <main id="view-summon" class="flex-1 hidden-view bg-slate-950 flex flex-col items-center justify-center p-8 relative overflow-hidden">
             <button onclick="changeView('view-home')" class="absolute top-6 left-6 text-white font-bold text-xs z-20">← VOLTAR</button>
-            <div class="absolute top-6 right-6 flex items-center bg-slate-900/80 px-3 py-1.5 rounded-full border border-white/10">
-                <span class="mr-2 text-xl">🎫</span><span id="summon-tickets" class="text-white font-bold">0</span>
+            <div class="absolute top-6 right-6 flex flex-col items-end space-y-1">
+                <div class="flex items-center bg-slate-900/80 px-3 py-1.5 rounded-full border border-white/10"><span class="mr-2 text-xl">🎫</span><span id="summon-tickets-common" class="text-white font-bold">0</span></div>
+                <div class="flex items-center bg-slate-900/80 px-3 py-1.5 rounded-full border border-amber-500/30"><span class="mr-2 text-xl">🎫</span><span id="summon-tickets-epic" class="text-amber-400 font-bold">0</span></div>
             </div>
-            <div id="summon-circle" class="relative z-10 w-64 h-64 flex items-center justify-center mb-12">
+            
+            <div id="summon-circle" class="relative z-10 w-64 h-64 flex items-center justify-center mb-8">
                 <div class="absolute inset-0 border-2 border-indigo-500/30 rounded-full animate-[spin_10s_linear_infinite]"></div>
                 <div id="summon-box" class="text-6xl animate-bounce cursor-pointer">📦</div>
                 <div id="summon-flash" class="absolute inset-0 bg-white rounded-full scale-0 transition-transform pointer-events-none"></div>
             </div>
-            <button onclick="doSummon()" class="relative z-10 w-full max-w-xs bg-gradient-to-r from-amber-500 to-orange-600 text-white py-5 rounded-2xl font-black uppercase shadow-lg active:scale-95 transition-all">Summon (1 🎫)</button>
+
+            <div class="w-full max-w-sm space-y-3 relative z-10">
+                <div class="flex gap-2">
+                    <button onclick="doSummon('common', 1)" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Comum x1</button>
+                    <button onclick="doSummon('common', 10)" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Comum x10</button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="doSummon('epic', 1)" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Épico x1</button>
+                    <button onclick="doSummon('epic', 10)" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Épico x10</button>
+                </div>
+            </div>
             <p onclick="changeView('view-shop')" class="relative z-10 mt-4 text-xs text-slate-400 underline cursor-pointer">Comprar Bilhetes na Loja</p>
+
+            <!-- RESULTS MODAL -->
+            <div id="summon-results" class="absolute inset-0 bg-slate-950/95 z-50 flex flex-col items-center justify-center p-6 hidden">
+                <h3 class="text-2xl font-black text-white uppercase italic mb-6">Invocação Concluída</h3>
+                <div id="summon-grid" class="grid grid-cols-5 gap-3 w-full max-w-sm mb-8"></div>
+                <button onclick="document.getElementById('summon-results').classList.add('hidden')" class="px-8 py-3 bg-white text-slate-900 font-bold rounded-full">Fechar</button>
+            </div>
         </main>
 
     </div>
@@ -569,12 +602,13 @@
             { id: 'bat', name: 'Bat', type: 'Cave Bat', element: 'void', stars: 1, hp: 500, atk: 90, def: 20, emoji: '🦇', img: '', skills: ['melee'] }
         ];
 
+        // ADDED MP COSTS
         const SKILLS = {
             'melee': { n: 'Ataque', p: 1.0, icon: '⚔️', type: 'phys', mp: 0 },
             'bolt': { n: 'Raio', p: 1.5, icon: '⚡', type: 'lightning', mp: 20 },
             'water': { n: 'Jato', p: 1.4, icon: '💧', type: 'water', mp: 20 },
             'fire': { n: 'Brasa', p: 1.6, icon: '🔥', type: 'fire', mp: 20 },
-            'void_slash': { n: 'Corte Vazio', p: 1.8, icon: '🌑', type: 'phys', mp: 25 },
+            'void_slash': { n: 'Corte Vazio', p: 1.8, icon: '🌑', type: 'void', mp: 25 },
             'rock_throw': { n: 'Rocha', p: 1.5, icon: '🪨', type: 'earth', mp: 20 },
             'leaf_cutter': { n: 'Folha', p: 1.4, icon: '🍃', type: 'nature', mp: 20 },
             'sup_lightning': { n: 'Tempestade', p: 3.0, icon: '🌩️', type: 'lightning_sup', mp: 50 },
@@ -585,7 +619,7 @@
         };
 
         let state = { 
-            user: { name: "", crystals: 200, energy: 100, mana: 0, tickets: 0, lvl: 1, xp: 0, potions: 0 }, 
+            user: { name: "", crystals: 200, energy: 100, mana: 0, tickets_common: 0, tickets_epic: 0, lvl: 1, xp: 0, potions: 0, firstClear: {} }, // firstClear obj
             inventory: [], 
             leaderIdx: 0, 
             storyProgress: 1, 
@@ -595,13 +629,41 @@
         let battleState = { active: false, busy: false, mode: 'dungeon', auto: false, speed: 1 };
         let prepState = { mode: '', level: 1, selectedMonIdx: 0 };
 
+        // --- TOAST SYSTEM ---
+        const showToast = (message, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = '✅';
+            if (type === 'error') icon = '❌';
+            if (type === 'info') icon = 'ℹ️';
+            
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span class="toast-icon">${icon}</span><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Auto remove after animation
+            setTimeout(() => {
+                toast.style.animation = 'toast-fade 0.3s ease-in forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
         // --- CORE ---
         const init = () => {
-            const saved = localStorage.getItem('paperwar_v7'); // Version bump
+            const saved = localStorage.getItem('paperwar_v9'); // Version bump
             if(saved) {
                 state = JSON.parse(saved);
                 if(state.user.potions === undefined) state.user.potions = 0;
                 if(state.user.lvl === undefined) state.user.lvl = 1;
+                if(state.user.firstClear === undefined) state.user.firstClear = {};
+                // Migration logic if needed
+                if(state.user.tickets_common === undefined) {
+                    state.user.tickets_common = state.user.tickets || 0;
+                    state.user.tickets_epic = 0;
+                    delete state.user.tickets;
+                }
                 state.inventory.forEach(m => {
                     const db = MONSTERS_DB.find(x => x.id === m.id);
                     if(db) { 
@@ -611,14 +673,15 @@
                     }
                 });
             } else { 
-                // New Account Bonus
-                state.user.tickets = 10; 
+                // New Account Bonus: 10 Epic Tickets (as requested)
+                state.user.tickets_epic = 10; 
+                state.user.tickets_common = 5; 
                 addMonster('thyron'); addMonster('vireya'); addMonster('slime'); 
             }
             if(state.user.name) { document.getElementById('login-name').value = state.user.name; handleLogin(); }
             updateHeader();
         };
-        const save = () => localStorage.setItem('paperwar_v7', JSON.stringify(state));
+        const save = () => localStorage.setItem('paperwar_v9', JSON.stringify(state));
 
         const handleLogin = () => {
             const val = document.getElementById('login-name').value.trim();
@@ -630,11 +693,23 @@
         };
 
         const changeView = (id) => {
+            const target = document.getElementById(id);
+            if (!target) {
+                console.error(`Tentativa de navegar para vista inexistente: ${id}`);
+                return;
+            }
+
             document.querySelectorAll('main').forEach(el => el.classList.add('hidden-view'));
-            document.getElementById(id).classList.remove('hidden-view');
+            target.classList.remove('hidden-view');
+            
             const h = document.getElementById('ui-header');
-            if(['view-login','view-battle','view-summon','view-shop','view-prep'].includes(id)) { h.classList.remove('flex'); h.classList.add('hidden'); }
-            else { h.classList.remove('hidden'); h.classList.add('flex'); }
+            if(h) {
+                if(['view-login','view-battle','view-summon','view-shop','view-prep'].includes(id)) { 
+                    h.classList.remove('flex'); h.classList.add('hidden'); 
+                } else { 
+                    h.classList.remove('hidden'); h.classList.add('flex'); 
+                }
+            }
             
             if(id === 'view-collection') renderMonsterBox();
             if(id === 'view-story') renderStory();
@@ -657,14 +732,20 @@
             document.getElementById('shop-mana').innerText = state.user.mana;
         };
         const buyShopItem = (item) => {
-            if(item === 'ticket1') { if(state.user.crystals < 75) return alert("Cristais?"); state.user.crystals -= 75; state.user.tickets++; }
-            if(item === 'ticket10') { if(state.user.crystals < 700) return alert("Cristais?"); state.user.crystals -= 700; state.user.tickets+=10; }
-            if(item === 'energy') { if(state.user.crystals < 30) return alert("Cristais?"); state.user.crystals -= 30; state.user.energy+=50; }
-            if(item === 'xp_pot') { if(state.user.mana < 500) return alert("Mana?"); state.user.mana -= 500; state.user.potions++; }
-            if(item === 'xp_pot10') { if(state.user.mana < 4500) return alert("Mana?"); state.user.mana -= 4500; state.user.potions+=10; }
-            save(); updateShopUI(); updateHeader(); alert("Comprado!");
+            // Price Balance
+            if(item === 'ticket_common') { if(state.user.mana < 2000) return showToast("Mana insuficiente!", "error"); state.user.mana -= 2000; state.user.tickets_common++; }
+            if(item === 'ticket_epic') { if(state.user.crystals < 300) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 300; state.user.tickets_epic++; }
+            if(item === 'energy') { if(state.user.crystals < 50) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 50; state.user.energy+=50; }
+            if(item === 'xp_pot') { if(state.user.mana < 500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 500; state.user.potions++; }
+            if(item === 'xp_pot10') { if(state.user.mana < 4500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 4500; state.user.potions+=10; }
+            save(); updateShopUI(); updateHeader(); showToast("Item comprado com sucesso!");
         };
-        const updateSummonUI = () => document.getElementById('summon-tickets').innerText = state.user.tickets;
+        const updateSummonUI = () => {
+            const elC = document.getElementById('summon-tickets-common');
+            const elE = document.getElementById('summon-tickets-epic');
+            if(elC) elC.innerText = state.user.tickets_common;
+            if(elE) elE.innerText = state.user.tickets_epic;
+        };
 
         // --- DUNGEON & PREP ---
         const renderDungeonFloors = () => {
@@ -714,7 +795,7 @@
         // --- BATTLE ---
         const startBattle = (mode, lvl=1) => {
             const cost = (mode === 'dungeon' ? 5 + Math.floor(lvl/2) : 5);
-            if(state.user.energy < cost) return alert("Sem energia!");
+            if(state.user.energy < cost) return showToast("Sem energia!", "error");
             state.user.energy -= cost; updateHeader();
 
             battleState = { active: true, mode: mode, busy: false, auto: false, speed: 1 };
@@ -822,12 +903,12 @@
         };
 
         const toggleAuto = () => {
-            if(state.user.lvl < 2) return alert("Auto libera no Nível 2!");
+            if(state.user.lvl < 2) return showToast("Auto libera no Nível 2!", "info");
             battleState.auto = !battleState.auto; updateBattleControls();
             if(battleState.auto && !battleState.busy) triggerAuto();
         };
         const toggleSpeed = () => {
-            if(state.user.lvl < 5) return alert("3x libera no Nível 5!");
+            if(state.user.lvl < 5) return showToast("3x libera no Nível 5!", "info");
             battleState.speed = battleState.speed === 1 ? 3 : 1; updateBattleControls();
         };
         const updateBattleControls = () => {
@@ -975,10 +1056,23 @@
                 }
                 await sleep(600/spd); projectiles.forEach(p => p.el.remove()); return;
             }
+            // VOID DEVASTATION FIX
             if(type.includes('void')) {
-                const p = document.createElement('div'); p.className = 'projectile vfx-void'; p.style.width = '20px'; p.style.height = '20px'; layer.appendChild(p);
-                const anim = p.animate([{ transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(1)` }, { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(10)` }], { duration: 1000/spd, easing: 'ease-in-out', fill: 'forwards' });
-                await anim.finished; p.style.opacity = '0'; await sleep(200/spd); p.remove(); return;
+                const p = document.createElement('div'); 
+                p.className = 'vfx-blackhole'; // CSS class dedicated
+                layer.appendChild(p);
+                
+                const anim = p.animate([
+                    { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0)` }, 
+                    { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(8)` }
+                ], { duration: 1500/spd, easing: 'ease-out', fill: 'forwards' });
+                
+                await anim.finished; 
+                p.style.transition = 'opacity 0.2s';
+                p.style.opacity = 0;
+                await sleep(200/spd);
+                p.remove(); 
+                return;
             }
         };
 
@@ -1016,24 +1110,42 @@
                 state.user.xp += accXp;
                 if(state.user.xp >= 100 * state.user.lvl) {
                     state.user.xp = 0; state.user.lvl++;
-                    alert(`LEVEL UP! Nível ${state.user.lvl}`);
+                    showToast(`LEVEL UP! Nível ${state.user.lvl}`);
                 }
+
+                let crystalsGained = 0;
+                let manaGained = 0;
 
                 if(battleState.mode === 'dungeon') {
                     const floor = prepState.level;
-                    const mana = 50 * floor;
-                    state.user.mana += mana;
-                    rewards = `+${mana} Mana | +${accXp} Account XP`;
+                    manaGained = 50 * floor;
+                    rewards = `+${manaGained} Mana | +${accXp} XP`;
                 } else if(battleState.mode === 'tower') {
                     state.towerFloor++;
-                    state.user.crystals += 50; state.user.mana += 100;
+                    crystalsGained = 50; 
+                    manaGained = 100;
                     rewards = `Andar ${state.towerFloor-1} Completo!`;
                 } else {
+                    // Campaign First Clear Logic
                     const stage = prepState.level;
-                    if(stage === state.storyProgress) state.storyProgress++;
-                    state.user.mana += 50;
-                    rewards = `Fase ${stage} Completa! | +50 Mana`;
+                    const stageKey = `stage_${stage}`;
+                    
+                    if (!state.user.firstClear[stageKey]) {
+                        // First Clear Bonus
+                        crystalsGained = 100;
+                        state.user.firstClear[stageKey] = true;
+                        if(stage === state.storyProgress) state.storyProgress++;
+                        rewards = `PRIMEIRA VEZ! +100 💎`;
+                    } else {
+                        // Repeat Farm
+                        crystalsGained = 10;
+                        rewards = `+10 💎 | +50 Mana`;
+                    }
+                    manaGained = 50;
                 }
+
+                state.user.crystals += crystalsGained;
+                state.user.mana += manaGained;
                 save();
                 document.getElementById('outcome-rewards').innerText = rewards;
             } else {
@@ -1044,11 +1156,11 @@
 
         const useXpPotion = () => {
             const mon = state.inventory[selectedDetailIdx];
-            if(state.user.potions < 1) return alert("Sem poções de XP!");
+            if(state.user.potions < 1) return showToast("Sem poções de XP!", "error");
             state.user.potions--;
             mon.lvl++;
             save();
-            alert(`${mon.name} subiu para o nível ${mon.lvl}!`);
+            showToast(`${mon.name} subiu para o nível ${mon.lvl}!`);
             openDetail(selectedDetailIdx);
         };
 
@@ -1105,19 +1217,77 @@
             }
         };
 
-        const doSummon = async () => {
-            if(state.user.tickets < 1) return alert("Sem bilhetes! Compre na Loja.");
-            state.user.tickets -= 1; updateSummonUI();
+        const doSummon = async (type, count) => {
+            let cost = 1 * count;
+            let ticketKey = type === 'common' ? 'tickets_common' : 'tickets_epic';
+            
+            if(state.user[ticketKey] < cost) return showToast("Bilhetes insuficientes!", "error");
+            state.user[ticketKey] -= cost; 
+            updateSummonUI();
+
             const box = document.getElementById('summon-box');
             const flash = document.getElementById('summon-flash');
+            
+            // Animation
             flash.style.transform = 'scale(20)'; flash.style.opacity = '1';
             await sleep(200);
-            const m = MONSTERS_DB[Math.floor(Math.random()*MONSTERS_DB.length)];
-            addMonster(m.id);
-            flash.style.opacity = '0'; 
-            box.innerHTML = `<img src="${m.img}" class="w-full h-full object-contain animate-float" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem">${m.emoji}</span>`;
+            
+            let results = [];
+            for(let i=0; i<count; i++) {
+                let pool = [];
+                let rand = Math.random();
+                let stars = 1;
+
+                if (type === 'common') {
+                    if (rand < 0.7) stars = 1;
+                    else if (rand < 0.95) stars = 2;
+                    else stars = 3;
+                } else {
+                    if (rand < 0.7) stars = 3;
+                    else if (rand < 0.95) stars = 4;
+                    else stars = 5;
+                }
+
+                // Filter DB for stars
+                pool = MONSTERS_DB.filter(m => m.stars === stars);
+                if (pool.length === 0) pool = MONSTERS_DB.filter(m => m.stars === (stars > 1 ? stars-1 : 1)); // Fallback
+
+                const mon = pool[Math.floor(Math.random() * pool.length)];
+                addMonster(mon.id);
+                results.push(mon);
+            }
+
+            flash.style.opacity = '0';
+            
+            // Check for 5 stars for shine effect
+            const hasFiveStar = results.some(r => r.stars === 5);
+            if (hasFiveStar) {
+                document.body.classList.add('shine-bg');
+                setTimeout(() => document.body.classList.remove('shine-bg'), 2000);
+                showToast("LENDA INVOCADA! ⭐⭐⭐⭐⭐", "success");
+            }
+
+            // Show results
+            if (count === 1) {
+                const m = results[0];
+                box.innerHTML = `<img src="${m.img}" class="w-full h-full object-contain animate-float"><span style="display:none;font-size:4rem">${m.emoji}</span>`;
+            } else {
+                box.innerHTML = "📦";
+                const modal = document.getElementById('summon-results');
+                const grid = document.getElementById('summon-grid');
+                grid.innerHTML = '';
+                results.forEach(m => {
+                    const el = document.createElement('div');
+                    el.className = 'sw-slot aspect-square flex items-center justify-center bg-slate-800 rounded border border-slate-600';
+                    if (m.stars === 5) el.style.borderColor = '#fbbf24';
+                    el.innerHTML = `<img src="${m.img}" class="w-full h-full object-contain"><div class="star-row bottom-1">${'<span class="star-icon text-[6px]">★</span>'.repeat(m.stars)}</div>`;
+                    grid.appendChild(el);
+                });
+                modal.classList.remove('hidden');
+            }
+
             box.classList.remove('animate-bounce');
-            setTimeout(() => { flash.style.transform = 'scale(0)'; box.innerHTML = "📦"; box.classList.add('animate-bounce'); }, 2500);
+            setTimeout(() => { flash.style.transform = 'scale(0)'; if(count===1) { box.innerHTML = "📦"; box.classList.add('animate-bounce'); } }, 2500);
         };
 
         const addMonster = (id) => {
