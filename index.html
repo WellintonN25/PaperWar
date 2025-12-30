@@ -5,8 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PaperWar - Battle Arena</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'flash': 'flash 0.1s ease-out'
+                    },
+                    keyframes: {
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        flash: { '0%': { opacity: 0 }, '50%': { opacity: 0.8 }, '100%': { opacity: 0 } }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
 
         :root {
             --p-x: 35px; --p-y: 60px; --p-z: 250px;
@@ -24,11 +44,52 @@
 
         .hidden-view { display: none !important; }
 
-        /* --- AMBIENTE 3D --- */
+        /* --- UI ELEMENTS --- */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .sw-slot {
+            position: relative;
+            background: radial-gradient(circle at center, #334155 0%, #0f172a 100%);
+            border: 2px solid #475569;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.1s;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .sw-slot:active { transform: scale(0.95); }
+        .sw-slot.selected { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+        
+        .star-row { 
+            display: flex; gap: 0px; justify-content: center; 
+            position: absolute; bottom: 4px; width: 100%; z-index: 20;
+            filter: drop-shadow(0 1px 2px black);
+        }
+        .star-icon { font-size: 10px; color: #fbbf24; letter-spacing: -2px; }
+
+        .elem-badge {
+            position: absolute; top: 4px; right: 4px;
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.3); z-index: 20;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .bg-fire { background: #ef4444; }
+        .bg-water { background: #3b82f6; }
+        .bg-lightning { background: #eab308; }
+        .bg-earth { background: #a8a29e; }
+        .bg-nature { background: #22c55e; }
+        .bg-void { background: #a855f7; }
+
+        /* --- 3D SCENE --- */
         .battle-scene {
             perspective: 1200px; perspective-origin: 50% 35%;
             overflow: hidden;
-            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.8)), 
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.5), rgba(2, 6, 23, 0.95)), 
                         url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1000') no-repeat center center;
             background-size: cover;
             display: flex; flex-direction: column; height: 100%;
@@ -40,566 +101,963 @@
             display: flex; justify-content: center; align-items: center;
         }
 
+        #effect-layer {
+            position: absolute; top: 50%; left: 50%; width: 0; height: 0;
+            overflow: visible; transform-style: preserve-3d; z-index: 100;
+        }
+
         .ground-plane {
             position: absolute; width: 300%; height: 300%;
             background-image: 
-                radial-gradient(circle at center, rgba(79, 70, 229, 0.2) 0%, transparent 60%),
-                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 100% 100%, 60px 60px, 60px 60px;
+                radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 80px 80px, 80px 80px;
             transform: rotateX(75deg) translateY(25%);
             bottom: -40%; z-index: 1;
         }
 
-        /* --- ANIMAÇÕES DE SPRITE --- */
         .sprite-renderer {
-            width: 120px; height: 120px;
+            width: 160px; height: 160px;
             display: flex; align-items: center; justify-content: center;
             transform-style: preserve-3d;
             transition: transform 0.4s ease;
         }
-
         #player-sprite-container { transform: rotateY(30deg) rotateX(5deg); }
         #enemy-sprite-container { transform: rotateY(-30deg) rotateX(5deg); }
 
-        /* Rotação Apenas para Melee */
-        @keyframes spin-attack {
-            0% { transform: rotateY(30deg) rotateZ(0deg); }
-            50% { transform: rotateY(210deg) rotateZ(15deg) scale(1.2); }
-            100% { transform: rotateY(390deg) rotateZ(0deg); }
-        }
-        .anim-spin-atk { animation: spin-attack 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        /* Recuo de Dano */
-        @keyframes hit-spin {
-            0% { transform: rotateY(30deg) rotateZ(0deg); }
-            20% { transform: rotateY(80deg) rotateZ(-20deg) translateX(20px); }
-            40% { transform: rotateY(-20deg) rotateZ(20deg) translateX(-10px); }
-            100% { transform: rotateY(30deg) rotateZ(0deg); }
-        }
-        .anim-hit-recoil { animation: hit-spin 0.5s ease-out; }
-
-        /* Respiração Padrão */
-        @keyframes breathing {
-            0%, 100% { transform: scale(1) translateY(0); opacity: 0.9; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6)); }
-            50% { transform: scale(1.03) translateY(-4px); opacity: 1; filter: drop-shadow(0 20px 25px rgba(0,0,0,0.7)); }
-        }
-
-        /* Carregamento de Magia (Brilho + Pulso) */
-        @keyframes charge-glow {
-            0% { filter: brightness(1) contrast(1) drop-shadow(0 0 0px transparent); transform: scale(1); }
-            50% { filter: brightness(1.8) contrast(1.2) drop-shadow(0 0 25px rgba(255,255,255,0.9)); transform: scale(1.15); }
-            100% { filter: brightness(1) contrast(1) drop-shadow(0 0 0px transparent); transform: scale(1); }
-        }
-        .anim-charging { animation: charge-glow 0.8s ease-in-out infinite; }
-
-        .sprite-renderer img, .sprite-renderer .emoji-renderer {
+        .sprite-renderer img {
             max-width: 100%; max-height: 100%; object-fit: contain;
+            filter: drop-shadow(0 20px 25px rgba(0,0,0,0.6));
             animation: breathing 3s ease-in-out infinite;
         }
 
-        /* Quando carregando magia, sobrescreve a respiração */
-        .sprite-renderer.anim-charging img, .sprite-renderer.anim-charging .emoji-renderer {
-            animation: none; /* Para a respiração para focar no brilho */
+        @keyframes breathing { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.03) translateY(-4px); } }
+
+        /* VFX Classes */
+        .anim-spin-atk { animation: spin-attack 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes spin-attack { 
+            0% { transform: rotateY(30deg) rotateZ(0deg); } 
+            50% { transform: rotateY(210deg) rotateZ(15deg) scale(1.2); } 
+            100% { transform: rotateY(390deg) rotateZ(0deg); } 
         }
 
-        .emoji-renderer { font-size: 4.5rem; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.4)); user-select: none; }
+        .anim-hit-recoil { animation: hit-recoil 0.4s ease-out; }
+        @keyframes hit-recoil { 
+            0% { filter: brightness(1); transform: translateX(0); } 
+            20% { filter: brightness(5) sepia(1) hue-rotate(-50deg) saturate(5); transform: translateX(-10px) rotateZ(-5deg); } 
+            100% { filter: brightness(1); transform: translateX(0); } 
+        }
 
-        /* --- POSICIONAMENTO 3D --- */
+        .anim-cast { animation: cast-pulse 0.6s ease-in-out; }
+        @keyframes cast-pulse {
+            0% { filter: brightness(1) drop-shadow(0 0 0 transparent); transform: scale(1); }
+            50% { filter: brightness(1.5) drop-shadow(0 0 30px currentColor); transform: scale(1.1); }
+            100% { filter: brightness(1) drop-shadow(0 0 0 transparent); transform: scale(1); }
+        }
+
+        .projectile {
+            position: absolute; width: 40px; height: 40px;
+            z-index: 100; pointer-events: none;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .vfx-fireball { background: radial-gradient(circle, #fff, #fbbf24, #ef4444); border-radius: 50%; width: 50px; height: 50px; box-shadow: 0 0 20px #ef4444; }
+        .vfx-waterball { background: radial-gradient(circle, #fff, #60a5fa, #2563eb); border-radius: 50%; width: 45px; height: 45px; opacity: 0.9; box-shadow: 0 0 20px #3b82f6; }
+        .vfx-rock { background: #57534e; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; width: 45px; height: 45px; border: 2px solid #292524; }
+        .vfx-leaf { background: #4ade80; border-radius: 0 50% 0 50%; width: 30px; height: 30px; border: 1px solid #166534; }
+        .vfx-void { background: #000; border: 2px solid #a855f7; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 0 15px #a855f7; }
+
+        .vfx-lightning-strike {
+            position: absolute; top: -300px; width: 12px; height: 600px;
+            background: white; box-shadow: 0 0 20px #facc15, 0 0 50px #facc15;
+            transform: translateX(-50%) skewX(-5deg);
+            animation: flash 0.15s ease-out forwards;
+            z-index: 101; pointer-events: none;
+        }
+
         .entity-wrapper {
             position: absolute; transform-style: preserve-3d;
-            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Transição suave */
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 10;
         }
-
         .pos-enemy { transform: translateX(var(--e-x)) translateY(var(--e-y)) translateZ(var(--e-z)); }
         .pos-player { transform: translateX(var(--p-x)) translateY(var(--p-y)) translateZ(var(--p-z)); }
 
-        /* Movimento Físico (Agressivo) */
         .anim-melee-player { transform: translateX(-15px) translateY(-50px) translateZ(-350px) scale(1.1); }
         .anim-melee-enemy { transform: translateX(15px) translateY(50px) translateZ(150px) scale(1.1); }
-
-        /* Movimento Mágico (Ajustado: Muito sutil, quase parado) */
-        .anim-magic-step-p { transform: translateX(0px) translateY(-15px) translateZ(-20px) scale(1.05); }
-        .anim-magic-step-e { transform: translateX(0px) translateY(-15px) translateZ(20px) scale(1.05); }
-
-        .character-shadow {
-            position: absolute; bottom: -5px; left: 50%; width: 90px; height: 25px;
-            background: rgba(0, 0, 0, 0.8); border-radius: 50%;
-            transform: translateX(-50%) rotateX(80deg); filter: blur(10px);
-            z-index: -1; pointer-events: none;
-        }
-
-        /* --- HUD --- */
-        .hud-container {
-            background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 4px 8px; border-radius: 8px; width: 90px; opacity: 0.8;
-            backdrop-filter: blur(4px); transition: opacity 0.3s ease;
-        }
-
-        /* --- ELEMENTOS --- */
-        .element-fire { background: linear-gradient(135deg, #ef4444, #7f1d1d); }
-        .element-water { background: linear-gradient(135deg, #3b82f6, #1e3a8a); }
-        .element-lightning { background: linear-gradient(135deg, #eab308, #713f12); }
-        .element-robot { background: linear-gradient(135deg, #64748b, #0f172a); }
-
-        /* --- MOTOR DE PARTÍCULAS --- */
-        @keyframes p-fall { 0% { transform: var(--origin); opacity: 0; } 10% { opacity: 1; } 100% { transform: var(--destination); opacity: 0; } }
-        @keyframes p-travel { 0% { transform: var(--origin) scale(0.2); opacity: 0; } 15% { opacity: 1; scale: 1.2; } 100% { transform: var(--destination) scale(0.6); opacity: 0; } }
-
-        .particle { position: absolute; left: 50%; top: 50%; z-index: 60; pointer-events: none; }
-        .p-fire { width: 45px; height: 45px; border-radius: 50%; background: radial-gradient(circle, #fff, #facc15, #ef4444); box-shadow: 0 0 30px #f97316; animation: p-travel 0.6s linear forwards; }
-        .p-water { width: 25px; height: 25px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 20px #0ea5e9; filter: blur(2px); animation: p-travel 0.5s ease-out forwards; }
-        .p-lightning { width: 8px; height: 600px; background: #fff; box-shadow: 0 0 20px #fff, 0 0 40px #facc15; transform-origin: top center; animation: p-fall 0.4s ease-in forwards; }
-
-        .dmg-text { position: absolute; top: -120px; left: 50%; transform: translateX(-50%); color: #ff4444; font-weight: 900; font-size: 3.5rem; text-shadow: 0 4px 10px black; animation: damage-float 0.8s ease-out forwards; z-index: 100; }
-        @keyframes damage-float { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-80px); } }
-
-        /* --- CONTROLES DE BATALHA --- */
-        .battle-controls {
-            padding: 1.25rem;
-            padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
-            background: linear-gradient(to top, rgba(2, 6, 23, 0.95), transparent);
-            z-index: 100;
-        }
-
-        .hit-ring { position: absolute; border-radius: 50%; border: 10px solid white; animation: hit-ring-anim 0.5s ease-out forwards; }
-        @keyframes hit-ring-anim { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(8); opacity: 0; } }
-
-        .screen-shake { animation: shake-anim 0.2s ease-in-out 3; }
-        @keyframes shake-anim { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(15px, -15px); } }
-
-        ::-webkit-scrollbar { width: 0px; }
         
-        .monster-slot {
-            aspect-ratio: 1 / 1;
-            position: relative;
-            border: 2px solid #334155;
-            background: #1e293b;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.2s ease;
-            cursor: pointer;
+        .character-shadow {
+            position: absolute; bottom: -5px; left: 50%; width: 120px; height: 30px;
+            background: rgba(0, 0, 0, 0.8); border-radius: 50%;
+            transform: translateX(-50%) rotateX(80deg); filter: blur(12px);
+            z-index: -1;
+        }
+
+        .hud-bar { background: rgba(0,0,0,0.8); border-radius: 99px; height: 6px; overflow: hidden; }
+        .hud-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease-out; }
+
+        @keyframes float-dmg { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-80px) scale(1.5); } }
+        .dmg-text { 
+            position: absolute; color: #f87171; font-weight: 900; font-size: 3rem; 
+            text-shadow: 2px 2px 0px #000, 0 0 10px #7f1d1d;
+            animation: float-dmg 0.8s ease-out forwards; z-index: 100;
+            left: 50%; top: -100px; margin-left: -50px; width: 100px; text-align: center;
+        }
+        
+        .flash-screen {
+            position: absolute; inset: 0; background: white; z-index: 200; pointer-events: none;
+            animation: flash 0.15s ease-out forwards;
         }
     </style>
 </head>
 <body>
 
-    <div id="flash-effect" class="fixed inset-0 bg-white z-[1000] pointer-events-none opacity-0"></div>
+    <div id="app" class="w-full h-full max-w-md bg-slate-950 relative shadow-2xl overflow-hidden flex flex-col sm:h-[94vh] sm:rounded-[2.5rem] border-slate-800 border-[8px]">
 
-    <div id="app" class="w-full h-full max-w-md bg-white relative shadow-2xl overflow-hidden flex flex-col sm:h-[94vh] sm:rounded-[3rem] border-slate-900 border-[6px]">
+        <div id="screen-flash" class="hidden"></div>
 
-        <!-- LOGIN VIEW -->
-        <main id="view-login" class="flex-1 flex flex-col items-center justify-center p-8 bg-slate-900 text-white">
-            <h1 class="text-6xl font-black uppercase italic tracking-tighter text-indigo-500 mb-8">PaperWar</h1>
-            <input type="text" id="login-name" placeholder="Comandante..." class="w-full bg-slate-800 border-2 border-slate-700 rounded-2xl px-6 py-4 font-bold text-white mb-4 outline-none focus:border-indigo-500">
-            <button onclick="handleLogin()" class="w-full bg-indigo-600 py-5 rounded-3xl font-black uppercase shadow-xl active:scale-95 transition-all">Entrar</button>
+        <!-- LOGIN -->
+        <main id="view-login" class="flex-1 flex flex-col items-center justify-center p-8 bg-[url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=1000')] bg-cover bg-center relative">
+            <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"></div>
+            <div class="relative z-10 w-full flex flex-col items-center">
+                <h1 class="text-7xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-cyan-300 mb-2 drop-shadow-lg">PAPER<br>WAR</h1>
+                <p class="text-indigo-200 uppercase tracking-[0.3em] text-[10px] font-bold mb-12">Tactical RPG Simulator</p>
+                <div class="w-full glass-panel p-6 rounded-3xl space-y-4">
+                    <input type="text" id="login-name" placeholder="Nome do Comandante..." class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl px-5 py-4 font-bold text-white outline-none focus:border-indigo-500 transition-colors">
+                    <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black uppercase tracking-wider shadow-lg active:scale-95 transition-all">Jogar</button>
+                </div>
+            </div>
         </main>
 
-        <!-- HEADER UI -->
-        <header id="ui-header" class="p-4 bg-white border-b hidden justify-between items-center z-[100] shrink-0">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-xl">👤</div>
-                <p id="player-name-ui" class="font-bold text-slate-800 text-sm truncate max-w-[100px]">---</p>
+        <!-- HEADER -->
+        <header id="ui-header" class="px-5 py-4 bg-slate-950/90 backdrop-blur-md border-b border-white/5 hidden justify-between items-center z-[50] shrink-0">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="changeView('view-home')">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                    <span id="header-initial">P</span>
+                </div>
+                <div class="leading-tight">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase">Comandante</p>
+                    <p id="player-name-ui" class="font-bold text-white text-sm truncate max-w-[100px]">---</p>
+                </div>
             </div>
-            <div class="flex space-x-2 font-bold text-[10px]">
-                <div class="bg-indigo-50 px-3 py-1.5 rounded-full text-indigo-700">⚡ <span id="val-energy">100</span></div>
-                <div class="bg-amber-50 px-3 py-1.5 rounded-full text-amber-700">💎 <span id="val-crystals">0</span></div>
-                <div class="bg-slate-100 px-3 py-1.5 rounded-full text-slate-700">💰 <span id="val-mana">0</span></div>
+            <div class="flex items-center space-x-2">
+                <div class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1" title="Energia"><span class="text-xs">⚡</span><span id="val-energy" class="text-[10px] font-bold text-yellow-400">0</span></div>
+                <div class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1" title="Mana"><span class="text-xs">💧</span><span id="val-mana" class="text-[10px] font-bold text-blue-400">0</span></div>
+                <div class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1" title="Cristais"><span class="text-xs">💎</span><span id="val-crystals" class="text-[10px] font-bold text-cyan-400">0</span></div>
             </div>
         </header>
 
-        <!-- HOME VIEW -->
-        <main id="view-home" class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50 hidden-view">
-            <div class="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
-                <h2 class="text-3xl font-black italic uppercase mb-2">Aventura</h2>
-                <div class="flex space-x-3">
-                    <button onclick="changeView('view-story')" class="bg-white text-indigo-700 px-6 py-4 rounded-2xl font-black text-xs uppercase shadow-xl active:scale-95 transition-all">Modo História</button>
-                    <button onclick="startBattle()" class="bg-indigo-500/30 border border-white/20 text-white px-6 py-4 rounded-2xl font-black text-xs uppercase active:scale-95">Boss Solo</button>
+        <!-- HOME -->
+        <main id="view-home" class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-950 hidden-view scroll-smooth pb-24">
+            <div class="relative w-full h-40 rounded-[2rem] overflow-hidden group cursor-pointer shadow-2xl" onclick="changeView('view-story')">
+                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                <div class="absolute bottom-6 left-6">
+                    <p class="text-indigo-400 font-bold text-[10px] uppercase tracking-widest mb-1">Modo História</p>
+                    <h2 class="text-3xl font-black text-white italic uppercase leading-none">Campanha</h2>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="changeView('view-collection')" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-center space-y-3">
-                    <div class="text-4xl">🎴</div>
-                    <span class="text-xs font-black uppercase text-slate-800">Monster Box</span>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="changeView('view-dungeon')" class="glass-panel p-4 rounded-3xl text-left active:scale-95 transition-all relative overflow-hidden">
+                    <div class="absolute right-[-10px] top-[-10px] text-6xl opacity-10">🗝️</div>
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl mb-3">🗝️</div>
+                    <h3 class="text-white font-bold uppercase text-sm">Masmorra</h3>
+                    <p class="text-slate-400 text-[10px] mt-1">Farm de Mana</p>
                 </button>
-                <button onclick="changeView('view-summon')" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-center space-y-3">
-                    <div class="text-4xl">📦</div>
-                    <span class="text-xs font-black uppercase text-slate-800">Summon</span>
+                <button onclick="changeView('view-tower')" class="glass-panel p-4 rounded-3xl text-left active:scale-95 transition-all border-yellow-500/20 relative overflow-hidden">
+                    <div class="absolute right-[-10px] top-[-10px] text-6xl opacity-10">🏰</div>
+                    <div class="w-10 h-10 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-xl mb-3">🏰</div>
+                    <h3 class="text-white font-bold uppercase text-sm">Torre</h3>
+                    <p class="text-slate-400 text-[10px] mt-1">Ascensão</p>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div onclick="changeView('view-shop')" class="glass-panel p-4 rounded-2xl flex items-center space-x-4 cursor-pointer bg-gradient-to-r from-amber-900/40 to-slate-900">
+                    <div class="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center text-2xl">🛒</div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-bold uppercase">Loja</h4>
+                        <p class="text-amber-200 text-xs">Comprar Bilhetes</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div onclick="changeView('view-collection')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center">
+                        <div class="text-2xl mb-2">🎴</div>
+                        <h4 class="text-white font-bold uppercase text-xs">Monstros</h4>
+                    </div>
+                    <div onclick="changeView('view-summon')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center">
+                        <div class="text-2xl mb-2">📦</div>
+                        <h4 class="text-white font-bold uppercase text-xs">Summon</h4>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- PRE-BATTLE PREPARATION -->
+        <main id="view-prep" class="flex-1 hidden-view bg-slate-950 flex flex-col p-6 relative">
+            <button onclick="changeView('view-home')" class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Cancelar</button>
+            
+            <h2 class="text-2xl font-black text-white uppercase italic mb-1">Batalha</h2>
+            <p id="prep-title" class="text-indigo-400 text-xs font-bold uppercase mb-6">Masmorra B10</p>
+
+            <div class="flex-1 flex flex-col space-y-6">
+                <!-- Selected Unit -->
+                <div class="glass-panel p-6 rounded-3xl flex flex-col items-center relative">
+                    <div class="text-white text-xs font-bold uppercase mb-2">Seu Campeão</div>
+                    <div class="w-24 h-24 rounded-full bg-slate-800 border-2 border-indigo-500 overflow-hidden relative mb-4">
+                        <img id="prep-img" src="" class="w-full h-full object-contain">
+                        <div id="prep-el" class="absolute top-0 right-0 w-6 h-6 rounded-full bg-red-500 border border-white flex items-center justify-center text-xs">🔥</div>
+                    </div>
+                    <h3 id="prep-name" class="text-xl font-bold text-white mb-1">Nome</h3>
+                    <p id="prep-stats" class="text-xs text-slate-400">Atk: 0 | HP: 0</p>
+                    
+                    <button onclick="document.getElementById('prep-roster').classList.remove('hidden')" class="absolute top-4 right-4 bg-slate-700/50 p-2 rounded-lg text-xs text-white hover:bg-slate-600">↺ Trocar</button>
+                </div>
+
+                <!-- Start Button -->
+                <div class="mt-auto">
+                    <div class="flex justify-between text-xs text-slate-400 font-bold mb-2 px-2">
+                        <span>Custo Energia:</span>
+                        <span class="text-yellow-400" id="prep-cost">5 ⚡</span>
+                    </div>
+                    <button onclick="confirmBattle()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl text-white font-black uppercase text-lg shadow-lg active:scale-95 transition-transform">
+                        INICIAR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mini Roster Selector Overlay -->
+            <div id="prep-roster" class="absolute inset-0 bg-slate-950/95 z-20 flex flex-col p-4 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-white font-bold">Escolha seu Monstro</h3>
+                    <button onclick="document.getElementById('prep-roster').classList.add('hidden')" class="text-white text-xl">✕</button>
+                </div>
+                <div id="prep-grid" class="grid grid-cols-4 gap-3 overflow-y-auto pb-4">
+                    <!-- JS Generated -->
+                </div>
+            </div>
+        </main>
+
+        <!-- MASMORRA (DUNGEON SELECT) -->
+        <main id="view-dungeon" class="flex-1 hidden-view bg-slate-950 p-6 flex flex-col">
+            <button onclick="changeView('view-home')" class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Voltar</button>
+            <h2 class="text-3xl font-black text-white uppercase italic mb-6">Masmorra</h2>
+            <div class="flex-1 overflow-y-auto space-y-3 pr-2" id="dungeon-list">
+                <!-- JS Generated B1-B12 -->
+            </div>
+        </main>
+
+        <!-- TOWER SELECT -->
+        <main id="view-tower" class="flex-1 hidden-view bg-slate-950 p-6 flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            <button onclick="changeView('view-home')" class="absolute top-6 left-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max z-10">← Voltar</button>
+            
+            <div class="relative z-10 text-center space-y-6">
+                <div class="w-32 h-32 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center border-4 border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.3)]">
+                    <span class="text-6xl">🏰</span>
+                </div>
+                <div>
+                    <p class="text-yellow-500 font-bold uppercase tracking-widest text-sm mb-2">Andar Atual</p>
+                    <h2 class="text-6xl font-black text-white" id="tower-floor-display">1</h2>
+                </div>
+                <div class="glass-panel p-4 rounded-xl max-w-xs mx-auto">
+                    <p class="text-slate-300 text-xs mb-1">Recompensa Prevista</p>
+                    <p class="text-white font-bold">💎 50 Cristais + 💧 100 Mana</p>
+                </div>
+                <button onclick="openPrep('tower', state.towerFloor)" class="px-12 py-4 bg-yellow-600 hover:bg-yellow-500 text-white font-black uppercase rounded-2xl shadow-lg active:scale-95 transition-all">
+                    DESAFIAR
                 </button>
             </div>
         </main>
 
-        <!-- BATTLE VIEW -->
-        <main id="view-battle" class="flex-1 hidden-view battle-scene">
-            <div id="arena" class="arena-container">
-                <div class="ground-plane"></div>
-                
-                <!-- Inimigo -->
-                <div id="ent-enemy" class="entity-wrapper pos-enemy">
-                    <div class="flex flex-col items-center">
-                        <div id="enemy-hud" class="hud-container mb-2">
-                             <div class="flex justify-between text-[7px] text-white font-black mb-1 uppercase tracking-tighter"><span id="enemy-name-lbl">BOSS</span><span id="enemy-hp-pct">100%</span></div>
-                             <div class="h-1 w-full bg-black/40 rounded-full overflow-hidden"><div id="enemy-hp-fill" class="h-full bg-red-500 transition-all duration-300" style="width: 100%"></div></div>
-                        </div>
-                        <div id="enemy-sprite-container" class="sprite-renderer"></div>
-                        <div class="character-shadow"></div>
-                    </div>
+        <!-- SHOP -->
+        <main id="view-shop" class="flex-1 hidden-view bg-slate-950 flex flex-col p-6 relative">
+            <button onclick="changeView('view-home')" class="mb-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Voltar</button>
+            <h2 class="text-3xl font-black text-white uppercase italic mb-8">Loja</h2>
+            <div class="flex-1 space-y-4">
+                <div class="glass-panel p-6 rounded-3xl flex flex-col items-center text-center">
+                    <div class="text-4xl mb-2">🎫</div>
+                    <h3 class="text-white font-bold text-xl">1x Bilhete</h3>
+                    <p class="text-slate-400 text-xs mb-4">Invocação Comum</p>
+                    <button onclick="buyTicket(1)" class="bg-indigo-600 hover:bg-indigo-500 w-full py-3 rounded-xl text-white font-bold uppercase text-xs flex justify-center items-center gap-2"><span>75</span> <span>💎</span></button>
                 </div>
-
-                <div id="effect-layer" class="absolute inset-0 pointer-events-none" style="transform-style: preserve-3d;"></div>
-
-                <!-- Jogador -->
-                <div id="ent-player" class="entity-wrapper pos-player">
-                    <div class="flex flex-col items-center">
-                        <div id="player-hud" class="hud-container mb-2">
-                             <div class="flex justify-between text-[7px] text-white font-black mb-1 uppercase tracking-tighter"><span id="player-lvl-lbl">Lv. 1</span><span id="player-hp-pct">100%</span></div>
-                             <div class="h-1 w-full bg-black/40 rounded-full overflow-hidden"><div id="player-hp-fill" class="h-full bg-emerald-500 transition-all duration-300" style="width: 100%"></div></div>
-                        </div>
-                        <div id="player-sprite-container" class="sprite-renderer"></div>
-                        <div class="character-shadow"></div>
-                    </div>
+                <div class="glass-panel p-6 rounded-3xl flex flex-col items-center text-center border border-amber-500/30">
+                    <div class="text-4xl mb-2">🎫x10</div>
+                    <h3 class="text-white font-bold text-xl">10x Bilhetes</h3>
+                    <p class="text-slate-400 text-xs mb-4">Pacote Promocional</p>
+                    <button onclick="buyTicket(10)" class="bg-amber-600 hover:bg-amber-500 w-full py-3 rounded-xl text-white font-bold uppercase text-xs flex justify-center items-center gap-2"><span>700</span> <span>💎</span></button>
                 </div>
             </div>
-
-            <div class="battle-controls">
-                <div id="combat-log" class="text-[10px] text-white font-black text-center mb-4 uppercase tracking-[0.2em] italic drop-shadow-lg">Tua Vez!</div>
-                <div id="skill-grid" class="grid grid-cols-3 gap-3"></div>
-            </div>
-        </main>
-
-        <!-- STORY VIEW -->
-        <main id="view-story" class="flex-1 overflow-y-auto p-6 hidden-view bg-slate-50">
-            <button onclick="changeView('view-home')" class="mb-4 text-slate-500 font-bold">← VOLTAR</button>
-            <div id="story-list" class="space-y-4"></div>
+            <div class="mt-auto glass-panel p-4 rounded-xl text-center"><span class="text-slate-400 text-xs">Seus Cristais:</span><span id="shop-crystals" class="text-cyan-400 font-bold ml-2">0</span></div>
         </main>
 
         <!-- MONSTER BOX -->
-        <main id="view-collection" class="flex-1 overflow-hidden hidden-view bg-slate-900 flex flex-col">
-            <div class="p-4 bg-slate-800 flex justify-between items-center shrink-0">
-                <button onclick="changeView('view-home')" class="text-white font-bold text-xs">← VOLTAR</button>
-                <div class="text-[10px] text-slate-400 font-bold uppercase">BAÚ: <span id="box-count">0</span>/100</div>
+        <main id="view-collection" class="flex-1 hidden-view bg-slate-950 flex flex-col p-4">
+            <div class="flex items-center justify-between mb-4">
+                <button onclick="changeView('view-home')" class="text-white font-bold text-xs bg-slate-800 px-3 py-2 rounded-lg">← VOLTAR</button>
+                <span class="text-white font-bold uppercase text-xs">Monstros: <span id="mon-count">0</span></span>
             </div>
-            <div id="list-monsters" class="flex-1 overflow-y-auto p-4 grid grid-cols-4 gap-2 content-start"></div>
+            <div id="roster-grid" class="grid grid-cols-5 gap-2 content-start overflow-y-auto pb-20"></div>
+            <div id="mon-detail-overlay" class="absolute inset-0 z-50 bg-slate-950/95 hidden flex-col">
+                <div class="flex-1 relative flex flex-col p-6">
+                    <button onclick="closeDetail()" class="absolute top-4 right-4 text-white text-2xl z-20">✕</button>
+                    <div class="flex justify-between items-start mb-2 relative z-10">
+                        <div>
+                            <div class="flex space-x-1 mb-1 text-yellow-400 text-xs" id="det-stars">⭐⭐⭐⭐⭐</div>
+                            <h2 id="det-name" class="text-3xl font-black text-white italic uppercase leading-none">NAME</h2>
+                            <div class="flex items-center space-x-2 mt-1"><span id="det-nat-grade" class="bg-indigo-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20">NAT 5</span><p id="det-type" class="text-indigo-400 font-bold text-xs uppercase tracking-widest">Type</p></div>
+                        </div>
+                        <div id="det-element-badge" class="w-10 h-10 rounded-full flex items-center justify-center text-xl bg-slate-800 border border-white/20">🔥</div>
+                    </div>
+                    <div class="flex-1 flex items-center justify-center relative my-4">
+                        <div class="absolute inset-0 bg-gradient-to-t from-indigo-500/20 to-transparent rounded-full blur-3xl"></div>
+                        <img id="det-img" src="" class="h-64 object-contain drop-shadow-2xl animate-float relative z-10" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                        <span style="display:none;font-size:6rem" class="relative z-10 filter drop-shadow-2xl animate-float" id="det-emoji">🐉</span>
+                    </div>
+                    <div class="glass-panel p-5 rounded-3xl space-y-3">
+                        <div class="flex justify-between text-white font-bold text-sm border-b border-white/10 pb-2 mb-2"><span>Status</span><span id="det-lvl" class="text-slate-400">Lv. MAX</span></div>
+                        <div class="grid grid-cols-2 gap-4 text-xs">
+                            <div><span class="text-slate-400 font-bold block">HP</span><span id="val-hp" class="text-white font-mono text-lg">0</span></div>
+                            <div><span class="text-slate-400 font-bold block">ATK</span><span id="val-atk" class="text-white font-mono text-lg">0</span></div>
+                            <div><span class="text-slate-400 font-bold block">DEF</span><span id="val-def" class="text-white font-mono text-lg">0</span></div>
+                            <div><span class="text-slate-400 font-bold block">SPD</span><span class="text-white font-mono text-lg">100</span></div>
+                        </div>
+                        <button onclick="equipLeader()" id="btn-equip" class="w-full py-3 mt-2 bg-white text-slate-900 font-black uppercase rounded-xl hover:bg-indigo-50 active:scale-95 transition-all">Definir Líder</button>
+                    </div>
+                </div>
+            </div>
         </main>
 
-        <!-- SUMMON VIEW -->
-        <main id="view-summon" class="flex-1 hidden-view bg-slate-950 flex flex-col items-center justify-center p-12">
-            <div id="summon-box" class="w-48 h-48 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-7xl shadow-[0_0_50px_rgba(79,70,229,0.4)] mb-12 overflow-hidden relative">🎁</div>
-            <button onclick="doSummon()" class="w-full bg-amber-500 text-white py-6 rounded-[2rem] font-black uppercase shadow-2xl active:scale-95 transition-all">Summon (75 💎)</button>
-            <button onclick="changeView('view-home')" class="mt-6 text-slate-500 font-bold text-[10px] uppercase">Sair</button>
+        <!-- STORY -->
+        <main id="view-story" class="flex-1 overflow-y-auto hidden-view bg-slate-950 p-6 relative">
+            <button onclick="changeView('view-home')" class="mb-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold">← Voltar</button>
+            <h2 class="text-3xl font-black text-white uppercase italic mb-8">Campanha</h2>
+            <div id="story-nodes" class="space-y-6 relative pl-4 border-l-2 border-slate-800"></div>
+        </main>
+
+        <!-- BATTLE -->
+        <main id="view-battle" class="flex-1 hidden-view battle-scene relative">
+            <div class="absolute top-0 w-full p-4 z-50 flex justify-between items-start">
+                <div class="glass-panel px-3 py-2 rounded-2xl w-32">
+                    <div class="flex justify-between text-[9px] text-white font-bold mb-1"><span id="hud-p-name">HERO</span> <span id="hud-p-hp-txt">100%</span></div>
+                    <div class="hud-bar bg-black"><div id="hud-p-hp-bar" class="hud-fill bg-emerald-500" style="width: 100%"></div></div>
+                </div>
+                <div class="glass-panel px-3 py-1 rounded-full"><span id="battle-info" class="text-[10px] font-black text-white uppercase tracking-widest">VS</span></div>
+                <div class="glass-panel px-3 py-2 rounded-2xl w-32 text-right">
+                    <div class="flex justify-between text-[9px] text-white font-bold mb-1"><span id="hud-e-hp-txt">100%</span> <span id="hud-e-name">BOSS</span></div>
+                    <div class="hud-bar bg-black"><div id="hud-e-hp-bar" class="hud-fill bg-red-500" style="width: 100%"></div></div>
+                </div>
+            </div>
+            <div id="arena" class="arena-container">
+                <div class="ground-plane"></div>
+                <div id="ent-enemy" class="entity-wrapper pos-enemy">
+                    <div id="enemy-sprite-container" class="sprite-renderer"></div>
+                    <div class="character-shadow"></div>
+                </div>
+                <div id="effect-layer"></div>
+                <div id="ent-player" class="entity-wrapper pos-player">
+                    <div id="player-sprite-container" class="sprite-renderer"></div>
+                    <div class="character-shadow"></div>
+                </div>
+            </div>
+            <div class="glass-panel m-4 mb-6 p-4 rounded-[2rem] z-50">
+                <div id="combat-log" class="text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-3 h-4">...</div>
+                <div id="skill-grid" class="grid grid-cols-4 gap-2"></div>
+            </div>
+            <div id="battle-overlay" class="absolute inset-0 z-[60] bg-slate-950/90 backdrop-blur-md hidden flex-col items-center justify-center p-8 opacity-0 transition-opacity duration-300">
+                <h2 id="outcome-title" class="text-5xl font-black text-white italic uppercase mb-2">FIM</h2>
+                <div id="outcome-rewards" class="text-indigo-300 font-bold uppercase text-xs mb-8">Rewards</div>
+                <button onclick="closeBattle()" class="px-8 py-3 bg-white text-slate-900 font-black uppercase rounded-full hover:scale-105 transition-transform">Continuar</button>
+            </div>
+        </main>
+
+        <!-- SUMMON -->
+        <main id="view-summon" class="flex-1 hidden-view bg-slate-950 flex flex-col items-center justify-center p-8 relative overflow-hidden">
+            <button onclick="changeView('view-home')" class="absolute top-6 left-6 text-white font-bold text-xs z-20">← VOLTAR</button>
+            <div class="absolute top-6 right-6 flex items-center bg-slate-900/80 px-3 py-1.5 rounded-full border border-white/10">
+                <span class="mr-2 text-xl">🎫</span><span id="summon-tickets" class="text-white font-bold">0</span>
+            </div>
+            <div id="summon-circle" class="relative z-10 w-64 h-64 flex items-center justify-center mb-12">
+                <div class="absolute inset-0 border-2 border-indigo-500/30 rounded-full animate-[spin_10s_linear_infinite]"></div>
+                <div id="summon-box" class="text-6xl animate-bounce cursor-pointer">📦</div>
+                <div id="summon-flash" class="absolute inset-0 bg-white rounded-full scale-0 transition-transform pointer-events-none"></div>
+            </div>
+            <button onclick="doSummon()" class="relative z-10 w-full max-w-xs bg-gradient-to-r from-amber-500 to-orange-600 text-white py-5 rounded-2xl font-black uppercase shadow-lg active:scale-95 transition-all">Summon (1 🎫)</button>
+            <p onclick="changeView('view-shop')" class="relative z-10 mt-4 text-xs text-slate-400 underline cursor-pointer">Comprar Bilhetes na Loja</p>
         </main>
 
     </div>
 
     <script>
-        const SKILL_LIBRARY = {
-            'melee': { n: 'Investida', t: 'melee', p: 1.2, icon: '⚔️' },
-            'bolt': { n: 'Raio Neon', t: 'lightning', p: 1.8, icon: '⚡' },
-            'water': { n: 'Jato d\'Água', t: 'water', p: 1.6, icon: '🌊' },
-            'fire': { n: 'Bola Fogo', t: 'fire', p: 1.7, icon: '🔥' },
-            'sup_lightning': { n: 'Calamidade', t: 'lightning', p: 3.2, icon: '💥' },
-            'sup_water': { n: 'Dilúvio', t: 'water', p: 2.8, icon: '🌊' },
-            'sup_fire': { n: 'Meteoro', t: 'fire', p: 3.5, icon: '🌋' }
-        };
-
-        const MONSTERS_DATABASE = [
-            { id: 'thunder', name: 'Thunder Lord', element: 'lightning', emoji: '🦄', spriteUrl: 'src/Thyron.png', hp: 1400, atk: 210, def: 80, stars: 5, skills: ['melee', 'bolt', 'sup_lightning'] },
-            { id: 'water', name: 'Leviathan', element: 'water', emoji: '🐋', spriteUrl: 'src/Neriah.png', hp: 1800, atk: 140, def: 120, stars: 5, skills: ['melee', 'water', 'sup_water'] },
-            { id: 'fire', name: 'Magma Titan', element: 'fire', emoji: '🌋', spriteUrl: 'src/Aelyra.png', hp: 1600, atk: 185, def: 100, stars: 5, skills: ['melee', 'fire', 'sup_fire'] }
+        // --- DATABASE ---
+        const MONSTERS_DB = [
+            // 5 STARS
+            { id: 'thyron', name: 'Thyron', type: 'Storm Bringer', element: 'lightning', stars: 5, hp: 1400, atk: 210, def: 80, emoji: '⚡', img: 'src/Thyron.png', skills: ['melee', 'bolt', 'sup_lightning'] },
+            { id: 'neriah', name: 'Neriah', type: 'Ocean Guardian', element: 'water', stars: 5, hp: 1800, atk: 140, def: 120, emoji: '🌊', img: 'src/Neriah.png', skills: ['melee', 'water', 'sup_water'] },
+            { id: 'aelyra', name: 'Aelyra', type: 'Flame Witch', element: 'fire', stars: 5, hp: 1300, atk: 230, def: 60, emoji: '🔥', img: 'src/Aelyra.png', skills: ['melee', 'fire', 'sup_fire'] },
+            // 4 STARS
+            { id: 'kaelthar', name: 'Kaelthar', type: 'Shadow Knight', element: 'void', stars: 4, hp: 1600, atk: 180, def: 100, emoji: '🌑', img: 'src/Kaelthar.png', skills: ['melee', 'void_slash', 'sup_void'] },
+            { id: 'dhorak', name: 'Dhorak', type: 'Earth Golem', element: 'earth', stars: 4, hp: 2200, atk: 110, def: 180, emoji: '🗿', img: 'src/Dhorak.png', skills: ['melee', 'rock_throw', 'sup_earth'] },
+            // 3 STARS
+            { id: 'vireya', name: 'Vireya', type: 'Nature Spirit', element: 'nature', stars: 3, hp: 1200, atk: 150, def: 90, emoji: '🍃', img: 'src/Vireya.png', skills: ['melee', 'leaf_cutter'] },
+            { id: 'brann', name: 'Brann', type: 'Fire Warrior', element: 'fire', stars: 3, hp: 1100, atk: 160, def: 70, emoji: '🔥', img: 'src/Brann.png', skills: ['melee', 'fire'] },
+            { id: 'lysara', name: 'Lysara', type: 'Frost Mage', element: 'water', stars: 3, hp: 1050, atk: 170, def: 60, emoji: '❄️', img: 'src/Lysara.png', skills: ['melee', 'water'] },
+            // 2 STARS
+            { id: 'lumem', name: 'Lumem', type: 'Light Fairy', element: 'lightning', stars: 2, hp: 900, atk: 190, def: 50, emoji: '✨', img: 'src/Lumem.png', skills: ['melee', 'bolt'] },
+            { id: 'ravok', name: 'Ravok', type: 'Orc Grunt', element: 'earth', stars: 2, hp: 1200, atk: 130, def: 60, emoji: '👹', img: 'src/Ravok.png', skills: ['melee', 'rock_throw'] },
+            // 1 STAR
+            { id: 'slime', name: 'Slime', type: 'Blob', element: 'water', stars: 1, hp: 600, atk: 80, def: 40, emoji: '💧', img: '', skills: ['melee'] },
+            { id: 'bat', name: 'Bat', type: 'Cave Bat', element: 'void', stars: 1, hp: 500, atk: 90, def: 20, emoji: '🦇', img: '', skills: ['melee'] }
         ];
 
-        let state = {
-            playerName: "", crystals: 1000, energy: 100, mana: 5000,
-            inventory: [], leaderIdx: 0, storyProgress: 1,
-            battle: { p: null, e: null, turn: 'player', busy: false }
+        const SKILLS = {
+            'melee': { n: 'Ataque', p: 1.0, icon: '⚔️', type: 'phys' },
+            'bolt': { n: 'Raio', p: 1.5, icon: '⚡', type: 'lightning' },
+            'water': { n: 'Jato', p: 1.4, icon: '💧', type: 'water' },
+            'fire': { n: 'Brasa', p: 1.6, icon: '🔥', type: 'fire' },
+            'void_slash': { n: 'Corte Vazio', p: 1.8, icon: '🌑', type: 'phys' },
+            'rock_throw': { n: 'Rocha', p: 1.5, icon: '🪨', type: 'earth' },
+            'leaf_cutter': { n: 'Folha', p: 1.4, icon: '🍃', type: 'nature' },
+            'sup_lightning': { n: 'Tempestade', p: 3.0, icon: '🌩️', type: 'lightning_sup' },
+            'sup_water': { n: 'Tsunami', p: 2.8, icon: '🌊', type: 'water_sup' },
+            'sup_fire': { n: 'Chuva Meteoros', p: 3.2, icon: '🌋', type: 'fire_sup' },
+            'sup_earth': { n: 'Avalanche', p: 3.0, icon: '🏚️', type: 'earth_sup' },
+            'sup_void': { n: 'Devastação', p: 3.5, icon: '⚫', type: 'void_sup' }
         };
 
+        let state = { user: { name: "", crystals: 200, energy: 100, mana: 0, tickets: 0 }, inventory: [], leaderIdx: 0, storyProgress: 1, towerFloor: 1 };
+        let battleState = { active: false, busy: false, mode: 'dungeon' };
+        
+        // Preparation Volatile State
+        let prepState = { mode: '', level: 1, selectedMonIdx: 0 };
+
+        // --- CORE ---
         const init = () => {
-            const saved = localStorage.getItem('paperwar_v8');
-            if (saved) state = JSON.parse(saved);
-            
-            if (state.inventory.length > 0) {
+            const saved = localStorage.getItem('paperwar_v5');
+            if(saved) {
+                state = JSON.parse(saved);
+                if(state.user.mana === undefined) state.user.mana = 0;
+                if(state.user.tickets === undefined) state.user.tickets = 0;
+                if(state.towerFloor === undefined) state.towerFloor = 1;
                 state.inventory.forEach(m => {
-                    const dbMon = MONSTERS_DATABASE.find(dm => dm.emoji === m.emoji);
-                    if(dbMon) {
-                        if(dbMon.skills.length > m.skills.length) m.skills = dbMon.skills;
-                        if(!m.spriteUrl) m.spriteUrl = dbMon.spriteUrl;
+                    const db = MONSTERS_DB.find(x => x.id === m.id);
+                    if(db) { 
+                        if(!m.img) m.img = db.img; 
+                        if(!m.emoji) m.emoji = db.emoji; 
+                        m.skills = db.skills; m.stars = db.stars;
                     }
                 });
-            } else {
-                state.inventory.push({...MONSTERS_DATABASE[0], lvl: 15, curHp: MONSTERS_DATABASE[0].hp + 150});
-            }
-
-            if (state.playerName) {
-                document.getElementById('player-name-ui').innerText = state.playerName;
-                changeView('view-home');
-            }
-            updateStats();
+            } else { addMonster('thyron'); addMonster('vireya'); addMonster('slime'); }
+            if(state.user.name) { document.getElementById('login-name').value = state.user.name; handleLogin(); }
+            updateHeader();
         };
+        const save = () => localStorage.setItem('paperwar_v5', JSON.stringify(state));
 
         const handleLogin = () => {
-            const name = document.getElementById('login-name').value.trim();
-            if (name.length < 2) return;
-            state.playerName = name;
-            document.getElementById('player-name-ui').innerText = name;
+            const val = document.getElementById('login-name').value.trim();
+            if(!val) return;
+            state.user.name = val;
+            document.getElementById('player-name-ui').innerText = val;
+            document.getElementById('header-initial').innerText = val[0].toUpperCase();
             save(); changeView('view-home');
         };
 
-        const updateStats = () => {
-            document.getElementById('val-crystals').innerText = state.crystals;
-            document.getElementById('val-energy').innerText = state.energy;
-            document.getElementById('val-mana').innerText = state.mana.toLocaleString();
-        };
-
-        const save = () => localStorage.setItem('paperwar_v8', JSON.stringify(state));
-
         const changeView = (id) => {
-            document.querySelectorAll('main').forEach(m => m.classList.add('hidden-view'));
+            document.querySelectorAll('main').forEach(el => el.classList.add('hidden-view'));
             document.getElementById(id).classList.remove('hidden-view');
-            const header = document.getElementById('ui-header');
-            if (['view-login', 'view-battle', 'view-summon'].includes(id)) { header.classList.add('hidden'); header.classList.remove('flex'); }
-            else { header.classList.remove('hidden'); header.classList.add('flex'); }
-            if (id === 'view-collection') renderInventory();
-            if (id === 'view-story') renderStory();
+            const h = document.getElementById('ui-header');
+            if(['view-login','view-battle','view-summon','view-shop','view-prep'].includes(id)) { h.classList.remove('flex'); h.classList.add('hidden'); }
+            else { h.classList.remove('hidden'); h.classList.add('flex'); }
+            
+            if(id === 'view-collection') renderMonsterBox();
+            if(id === 'view-story') renderStory();
+            if(id === 'view-summon') updateSummonUI();
+            if(id === 'view-shop') updateShopUI();
+            if(id === 'view-dungeon') renderDungeonFloors();
+            if(id === 'view-tower') document.getElementById('tower-floor-display').innerText = state.towerFloor;
         };
 
-        const renderCharacter = (monster, containerId) => {
-            const container = document.getElementById(containerId);
-            if(!container) return;
-            if(monster.spriteUrl) {
-                container.innerHTML = `
-                    <img src="${monster.spriteUrl}" alt="${monster.name}" class="character-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="emoji-renderer" style="display:none">${monster.emoji}</span>
+        const updateHeader = () => {
+            document.getElementById('val-crystals').innerText = state.user.crystals;
+            document.getElementById('val-energy').innerText = state.user.energy;
+            document.getElementById('val-mana').innerText = state.user.mana;
+        };
+
+        // --- SHOP & ECONOMY ---
+        const updateShopUI = () => document.getElementById('shop-crystals').innerText = state.user.crystals;
+        const buyTicket = (amount) => {
+            const cost = amount === 1 ? 75 : 700;
+            if(state.user.crystals < cost) return alert("Cristais insuficientes!");
+            state.user.crystals -= cost; state.user.tickets += amount;
+            save(); updateShopUI(); alert(`Comprou ${amount} Bilhete(s)!`);
+        };
+        const updateSummonUI = () => document.getElementById('summon-tickets').innerText = state.user.tickets;
+
+        // --- DUNGEON & PREP ---
+        const renderDungeonFloors = () => {
+            const c = document.getElementById('dungeon-list'); c.innerHTML = '';
+            for(let i=1; i<=12; i++) {
+                const btn = document.createElement('div');
+                btn.className = "glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer active:scale-95 transition-transform border border-white/5 hover:bg-white/5";
+                btn.innerHTML = `
+                    <div><h4 class="text-white font-bold">Masmorra B${i}</h4><p class="text-xs text-purple-400">Lv. ${i*5} • ${5+Math.floor(i/2)} ⚡</p></div>
+                    <div class="text-white">▶</div>
                 `;
-            } else {
-                container.innerHTML = `<span class="emoji-renderer">${monster.emoji}</span>`;
+                btn.onclick = () => openPrep('dungeon', i);
+                c.appendChild(btn);
             }
         };
 
-        const renderInventory = () => {
-            const list = document.getElementById('list-monsters'); list.innerHTML = '';
-            document.getElementById('box-count').innerText = state.inventory.length;
-            state.inventory.forEach((m, i) => {
+        // --- NEW PREP SYSTEM ---
+        const openPrep = (mode, lvl) => {
+            prepState = { mode, level: lvl, selectedMonIdx: state.leaderIdx };
+            changeView('view-prep');
+            
+            // Set UI
+            const titles = { dungeon: `Masmorra B${lvl}`, tower: `Torre Andar ${lvl}`, story: `Campanha Fase ${lvl}` };
+            const costs = { dungeon: 5 + Math.floor(lvl/2), tower: 5, story: 5 };
+            
+            document.getElementById('prep-title').innerText = titles[mode];
+            document.getElementById('prep-cost').innerText = `${costs[mode]} ⚡`;
+            
+            renderPrepUnit();
+            renderPrepRoster();
+        };
+
+        const renderPrepUnit = () => {
+            const mon = state.inventory[prepState.selectedMonIdx];
+            document.getElementById('prep-img').src = mon.img;
+            document.getElementById('prep-name').innerText = mon.name;
+            document.getElementById('prep-el').innerText = {fire:'🔥', water:'🌊', lightning:'⚡', earth:'🗿', nature:'🍃', void:'🌑'}[mon.element];
+            const m = 1 + (mon.lvl*0.1);
+            document.getElementById('prep-stats').innerText = `Atk: ${Math.floor(mon.atk*m)} | HP: ${Math.floor(mon.hp*m)}`;
+        };
+
+        const renderPrepRoster = () => {
+            const grid = document.getElementById('prep-grid'); grid.innerHTML = '';
+            state.inventory.forEach((mon, idx) => {
                 const el = document.createElement('div');
-                const isLeader = state.leaderIdx === i;
-                el.className = `monster-slot ${isLeader ? 'border-amber-400 border-[3px]' : ''} element-${m.element}`;
-                
-                let visual = m.spriteUrl ? `<img src="${m.spriteUrl}" class="w-10 h-10 object-contain drop-shadow-md" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"><span class="text-3xl hidden">${m.emoji}</span>` : `<span class="text-3xl">${m.emoji}</span>`;
-
-                el.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center p-1">${visual}<span class="text-[8px] font-black text-white uppercase mt-1">Lv.${m.lvl}</span></div>`;
-                el.onclick = () => { state.leaderIdx = i; save(); renderInventory(); };
-                list.appendChild(el);
+                const isSel = idx === prepState.selectedMonIdx;
+                el.className = `aspect-square bg-slate-800 rounded-lg p-1 border-2 cursor-pointer ${isSel?'border-green-500':'border-transparent'}`;
+                el.innerHTML = `<img src="${mon.img}" class="w-full h-full object-contain">`;
+                el.onclick = () => {
+                    prepState.selectedMonIdx = idx;
+                    renderPrepUnit();
+                    renderPrepRoster(); // Refresh highlight
+                    document.getElementById('prep-roster').classList.add('hidden');
+                };
+                grid.appendChild(el);
             });
         };
 
-        const renderStory = () => {
-            const list = document.getElementById('story-list'); list.innerHTML = '';
-            [1,2,3,4].forEach(lv => {
-                const locked = lv > state.storyProgress;
-                const div = document.createElement('div');
-                div.className = `p-5 rounded-[2rem] border-2 ${locked ? 'bg-slate-100 border-slate-200' : 'bg-white border-indigo-100 shadow-md'}`;
-                div.innerHTML = `<div class="mb-4"><p class="text-[9px] font-black text-indigo-500 uppercase">Stage ${lv}</p><h3 class="font-black text-slate-800 text-lg">Invasão ${lv}</h3></div>
-                                 <button onclick="${locked ? '' : `startBattle()`}" class="w-full ${locked ? 'bg-slate-300' : 'bg-indigo-600 shadow-lg'} text-white py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest">${locked ? 'Bloqueado' : 'Combater'}</button>`;
-                list.appendChild(div);
-            });
+        const confirmBattle = () => {
+            startBattle(prepState.mode, prepState.level);
         };
 
-        const updateHUD = () => {
-            const pPct = (state.battle.p.curHp / state.battle.p.maxHp) * 100;
-            const ePct = (state.battle.e.curHp / state.battle.e.maxHp) * 100;
-            document.getElementById('player-hp-fill').style.width = `${pPct}%`;
-            document.getElementById('enemy-hp-fill').style.width = `${ePct}%`;
-            document.getElementById('player-hp-pct').innerText = `${Math.ceil(pPct)}%`;
-            document.getElementById('enemy-hp-pct').innerText = `${Math.ceil(ePct)}%`;
-        };
+        // --- BATTLE ---
+        const startBattle = (mode, lvl=1) => {
+            const cost = (mode === 'dungeon' ? 5 + Math.floor(lvl/2) : 5);
+            if(state.user.energy < cost) return alert("Sem energia!");
+            state.user.energy -= cost; updateHeader();
 
-        const startBattle = () => {
-            const pMon = state.inventory[state.leaderIdx];
-            const dbData = MONSTERS_DATABASE.find(m => m.emoji === pMon.emoji);
-            if(dbData) { pMon.skills = dbData.skills; if(!pMon.spriteUrl) pMon.spriteUrl = dbData.spriteUrl; }
+            battleState = { active: true, mode: mode, busy: false };
+            
+            // Use the unit selected in Prep
+            const pBase = state.inventory[prepState.selectedMonIdx];
+            const m = 1 + (pBase.lvl * 0.1);
+            battleState.player = { ...pBase, curHp: Math.floor(pBase.hp * m), maxHp: Math.floor(pBase.hp * m), atk: Math.floor(pBase.atk * m) };
 
-            const eData = MONSTERS_DATABASE[Math.floor(Math.random()*3)];
-            state.battle.p = {...pMon, curHp: pMon.hp + (pMon.lvl*10), maxHp: pMon.hp + (pMon.lvl*10), atk: pMon.atk + (pMon.lvl*2)};
-            state.battle.e = {...eData, curHp: eData.hp, maxHp: eData.hp, lvl: 15};
-            
-            renderCharacter(state.battle.p, 'player-sprite-container');
-            renderCharacter(state.battle.e, 'enemy-sprite-container');
-            
-            document.getElementById('enemy-name-lbl').innerText = eData.name;
-            document.getElementById('player-lvl-lbl').innerText = `Lv. ${pMon.lvl}`;
-            
-            renderSkills(); updateHUD();
-            state.battle.busy = false; state.battle.turn = 'player';
-            document.getElementById('combat-log').innerText = "Tua Vez!";
+            setupEnemy(mode, lvl);
             changeView('view-battle');
+            renderBattleScene();
+            document.getElementById('battle-overlay').classList.add('hidden');
+            document.getElementById('battle-overlay').style.opacity = '0';
         };
 
-        const renderSkills = () => {
-            const grid = document.getElementById('skill-grid'); grid.innerHTML = '';
-            state.battle.p.skills.forEach(sk => {
-                const s = SKILL_LIBRARY[sk];
-                const isSup = sk.includes('sup');
+        const setupEnemy = (mode, lvlArg) => {
+            const template = MONSTERS_DB[Math.floor(Math.random() * MONSTERS_DB.length)];
+            let lvl = 1;
+            if(mode === 'dungeon') lvl = lvlArg * 5;
+            else if(mode === 'tower') lvl = lvlArg * 2;
+            else lvl = lvlArg * 3;
+            
+            const m = 1 + (lvl * 0.15);
+            battleState.enemy = { ...template, lvl: lvl, curHp: Math.floor(template.hp * m), maxHp: Math.floor(template.hp * m), atk: Math.floor(template.atk * m) };
+            
+            updateBattleHUD();
+            const el = document.getElementById('enemy-sprite-container');
+            el.innerHTML = `<img src="${template.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem;filter:drop-shadow(0 10px 10px rgba(0,0,0,0.5))">${template.emoji}</span>`;
+        };
+
+        const renderBattleScene = () => {
+            const pl = document.getElementById('player-sprite-container');
+            pl.innerHTML = `<img src="${battleState.player.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem;filter:drop-shadow(0 10px 10px rgba(0,0,0,0.5))">${battleState.player.emoji}</span>`;
+            
+            const grid = document.getElementById('skill-grid');
+            grid.innerHTML = '';
+            grid.className = `grid gap-2 ${battleState.player.skills.length > 2 ? 'grid-cols-3' : 'grid-cols-2'}`;
+            
+            battleState.player.skills.forEach(k => {
+                const s = SKILLS[k]; if(!s) return;
                 const btn = document.createElement('button');
-                btn.className = `backdrop-blur-md border p-4 rounded-3xl flex flex-col items-center justify-center space-y-1 active:scale-90 transition-all ${isSup ? 'bg-amber-500/20 border-amber-300/40 shadow-[0_0_15px_rgba(251,191,36,0.2)]' : 'bg-white/10 border-white/20'}`;
-                btn.innerHTML = `<span class="text-2xl drop-shadow-md">${s.icon}</span><span class="text-[8px] font-black text-white uppercase">${s.n}</span>`;
-                btn.onclick = () => performSequence(sk);
+                btn.className = "bg-slate-800/80 border border-white/10 rounded-xl p-2 flex flex-col items-center hover:bg-white/10 active:scale-90 transition-all";
+                btn.innerHTML = `<span class="text-xl mb-1">${s.icon}</span><span class="text-[8px] font-black uppercase text-white">${s.n}</span>`;
+                btn.onclick = () => doPlayerTurn(k);
                 grid.appendChild(btn);
             });
         };
 
-        const performSequence = async (skillKey) => {
-            if(state.battle.busy || state.battle.turn !== 'player') return;
-            state.battle.busy = true;
-            const pEnt = document.getElementById('ent-player');
-            const pVis = document.getElementById('player-sprite-container');
-            const skill = SKILL_LIBRARY[skillKey];
-            const isSup = skillKey.includes('sup');
+        const doPlayerTurn = async (skillKey) => {
+            if(battleState.busy) return;
+            battleState.busy = true;
+            try {
+                await executeAction(battleState.player, battleState.enemy, skillKey, true);
+                if(battleState.enemy.curHp <= 0) winBattle();
+                else {
+                    document.getElementById('combat-log').innerText = "Turno Inimigo";
+                    setTimeout(doEnemyTurn, 1000);
+                }
+            } catch(e) { console.error(e); battleState.busy = false; }
+        };
 
-            document.getElementById('combat-log').innerText = `USANDO ${skill.n.toUpperCase()}!`;
+        const doEnemyTurn = async () => {
+            try {
+                const skills = battleState.enemy.skills;
+                await executeAction(battleState.enemy, battleState.player, skills[Math.floor(Math.random()*skills.length)], false);
+                if(battleState.player.curHp <= 0) loseBattle();
+                else {
+                    document.getElementById('combat-log').innerText = "Sua Vez!";
+                    battleState.busy = false;
+                }
+            } catch(e) { console.error(e); battleState.busy = false; }
+        };
 
-            if(skill.t === 'melee') {
-                // Físico: Gira e Avança
-                pVis.classList.add('anim-spin-atk');
-                pEnt.classList.add('anim-melee-player');
+        const executeAction = async (att, def, skKey, isPlayer) => {
+            const skill = SKILLS[skKey];
+            document.getElementById('combat-log').innerText = `${att.name} usou ${skill.n}!`;
+            const attackerEl = document.getElementById(isPlayer ? 'player-sprite-container' : 'enemy-sprite-container');
+            const defenderEl = document.getElementById(isPlayer ? 'enemy-sprite-container' : 'player-sprite-container');
+            const wrapperAtt = document.getElementById(isPlayer ? 'ent-player' : 'ent-enemy');
+
+            if(skill.type === 'phys') {
+                wrapperAtt.classList.add(isPlayer ? 'anim-melee-player' : 'anim-melee-enemy');
+                attackerEl.classList.add('anim-spin-atk');
                 await sleep(500);
+                wrapperAtt.classList.remove(isPlayer ? 'anim-melee-player' : 'anim-melee-enemy');
+                attackerEl.classList.remove('anim-spin-atk');
             } else {
-                // Magia: Passo Suave + Brilho Intenso
-                pEnt.classList.add('anim-magic-step-p'); // Move o corpo (wrapper)
-                pVis.classList.add('anim-charging');     // Brilha o visual (sprite)
-                await sleep(600); // Tempo de "casting/escolha"
-                await spawnParticles(true, skill.t, isSup ? 10 : 1);
+                attackerEl.classList.add('anim-cast');
+                await sleep(500);
+                if(skill.type.endsWith('_sup')) await spawnUltimateVFX(skill.type, isPlayer);
+                else await spawnVFX(skill.type, isPlayer);
+                attackerEl.classList.remove('anim-cast');
             }
 
-            triggerImpact('ent-enemy');
-            applyDmg(state.battle.p, state.battle.e, skill, 'ent-enemy');
+            defenderEl.classList.add('anim-hit-recoil');
+            setTimeout(() => defenderEl.classList.remove('anim-hit-recoil'), 400);
 
-            setTimeout(() => {
-                pVis.classList.remove('anim-spin-atk', 'anim-charging');
-                pEnt.classList.remove('anim-melee-player', 'anim-magic-step-p');
-            }, 200);
-
-            if(state.battle.e.curHp <= 0) {
-                document.getElementById('combat-log').innerText = "VITÓRIA!";
-                state.crystals += 60; state.mana += 350; save(); updateStats();
-                setTimeout(() => changeView('view-home'), 2000);
-            } else {
-                state.battle.turn = 'enemy';
-                setTimeout(enemyTurn, 1200);
-            }
-        };
-
-        const enemyTurn = async () => {
-            const eEnt = document.getElementById('ent-enemy');
-            const eVis = document.getElementById('enemy-sprite-container');
-            const skillKey = state.battle.e.skills[Math.floor(Math.random() * state.battle.e.skills.length)];
-            const skill = SKILL_LIBRARY[skillKey];
-            const isSup = skillKey.includes('sup');
-            
-            document.getElementById('combat-log').innerText = `${state.battle.e.name} usou ${skill.n}!`;
-
-            if(skill.t === 'melee') {
-                 // Inimigo Físico: Gira e Avança
-                 eVis.classList.add('anim-spin-atk');
-                 eEnt.classList.add('anim-melee-enemy');
-                 await sleep(500);
-            } else {
-                 // Inimigo Magia: Passo Suave + Brilho
-                 eEnt.classList.add('anim-magic-step-e');
-                 eVis.classList.add('anim-charging');
-                 await sleep(600);
-                 await spawnParticles(false, skill.t, isSup ? 10 : 1);
-            }
-
-            triggerImpact('ent-player');
-            applyDmg(state.battle.e, state.battle.p, skill, 'ent-player');
-
-            setTimeout(() => {
-                eVis.classList.remove('anim-spin-atk', 'anim-charging');
-                eEnt.classList.remove('anim-melee-enemy', 'anim-magic-step-e');
-            }, 200);
-
-            if(state.battle.p.curHp <= 0) {
-                document.getElementById('combat-log').innerText = "DERROTA...";
-                setTimeout(() => changeView('view-home'), 2000);
-            } else {
-                state.battle.turn = 'player';
-                state.battle.busy = false;
-                document.getElementById('combat-log').innerText = "TUA VEZ!";
-            }
-        };
-
-        const applyDmg = (att, def, s, tid) => {
-            const dmg = Math.floor(att.atk * s.p * (0.9 + Math.random() * 0.2));
+            const raw = att.atk * skill.p;
+            const dmg = Math.floor(Math.max(10, raw - (def.def * 0.5)));
             def.curHp = Math.max(0, def.curHp - dmg);
-            updateHUD();
-            
-            const visual = document.getElementById(tid === 'ent-player' ? 'player-sprite-container' : 'enemy-sprite-container');
-            visual.classList.add('anim-hit-recoil');
-            setTimeout(() => visual.classList.remove('anim-hit-recoil'), 500);
-
-            const pop = document.createElement('div');
-            pop.className = 'dmg-text'; pop.innerText = `-${dmg}`;
-            document.getElementById(tid).appendChild(pop);
-            setTimeout(() => pop.remove(), 800);
+            updateBattleHUD();
+            showDmgText(dmg, isPlayer ? 'ent-enemy' : 'ent-player');
+            await sleep(300);
         };
 
-        const spawnParticles = async (toEnemy, type, count = 1) => {
+        // --- VFX ---
+        const spawnVFX = async (type, fromPlayer) => {
             const layer = document.getElementById('effect-layer');
-            const tX = toEnemy ? 'var(--e-x)' : 'var(--p-x)';
-            const tY = toEnemy ? 'var(--e-y)' : 'var(--p-y)';
-            const oX = toEnemy ? 'var(--p-x)' : 'var(--e-x)';
-            const oY = toEnemy ? 'var(--p-y)' : 'var(--e-y)';
-            
-            for(let i=0; i < (count === 1 ? 3 : 15); i++) {
-                const p = document.createElement('div');
-                p.className = `particle p-${type}`;
-                const randX = count > 1 ? (Math.random() * 60 - 30) : 0;
-                const randY = count > 1 ? (Math.random() * 60 - 30) : 0;
-                p.style.setProperty('--origin', `translateX(${oX}) translateY(${oY}) translateZ(0)`);
-                p.style.setProperty('--destination', `translateX(calc(${tX} + ${randX}px)) translateY(calc(${tY} + ${randY}px)) translateZ(${toEnemy ? '-400px' : '200px'})`);
-                if(i > 0) p.style.animationDelay = `${i * 0.05}s`;
-                layer.appendChild(p);
-                setTimeout(() => p.remove(), 1000);
-            }
+            const pPos = { x: 35, y: 60, z: 250 };
+            const ePos = { x: -35, y: -100, z: -450 };
+            const start = fromPlayer ? pPos : ePos;
+            const end = fromPlayer ? ePos : pPos;
+
             if(type === 'lightning') {
-                const f = document.getElementById('flash-effect');
-                f.style.opacity = "0.6"; setTimeout(() => f.style.opacity = "0", 150);
+                const flash = document.getElementById('screen-flash');
+                flash.className = 'flash-screen';
+                const strike = document.createElement('div');
+                strike.className = 'vfx-lightning-strike';
+                const tx = fromPlayer ? -35 : 35;
+                const ty = fromPlayer ? -100 : 60; 
+                strike.style.transform = `translateX(${tx}px) translateY(${ty}px) skewX(-5deg)`;
+                layer.appendChild(strike);
+                setTimeout(() => { flash.className = 'hidden'; strike.remove(); }, 300);
+                await sleep(300);
+                return;
+            }
+
+            const proj = document.createElement('div');
+            proj.className = 'projectile';
+            if(type.includes('fire')) proj.classList.add('vfx-fireball');
+            else if(type.includes('water')) proj.classList.add('vfx-waterball');
+            else if(type.includes('earth')) proj.classList.add('vfx-rock');
+            else if(type.includes('nature')) proj.classList.add('vfx-leaf');
+            else if(type.includes('void')) proj.classList.add('vfx-void');
+            else proj.classList.add('vfx-fireball');
+
+            layer.appendChild(proj);
+            const anim = proj.animate([
+                { transform: `translateX(${start.x}px) translateY(${start.y}px) translateZ(${start.z}px) scale(0.5)` },
+                { transform: `translateX(${end.x}px) translateY(${end.y}px) translateZ(${end.z}px) scale(1)` }
+            ], { duration: 500, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', fill: 'forwards' });
+            await anim.finished;
+            proj.remove();
+        };
+
+        const spawnUltimateVFX = async (type, fromPlayer) => {
+            const layer = document.getElementById('effect-layer');
+            const flash = document.getElementById('screen-flash');
+            const pPos = { x: 35, y: 60, z: 250 };
+            const ePos = { x: -35, y: -100, z: -450 };
+            const targetPos = fromPlayer ? ePos : pPos;
+            const startPos = fromPlayer ? pPos : ePos;
+
+            flash.className = 'flash-screen';
+            setTimeout(() => flash.className = 'hidden', 300);
+
+            if(type.includes('lightning')) {
+                for(let i=0; i<6; i++) {
+                    const strike = document.createElement('div');
+                    strike.className = 'vfx-lightning-strike';
+                    const offX = (Math.random() - 0.5) * 100;
+                    strike.style.transform = `translateX(${targetPos.x + offX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) skewX(-5deg)`;
+                    layer.appendChild(strike);
+                    setTimeout(() => strike.remove(), 200);
+                    await sleep(80);
+                }
+                return;
+            }
+            if(type.includes('fire')) {
+                const projectiles = [];
+                for(let i=0; i<8; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'projectile vfx-fireball';
+                    p.style.width = '60px'; p.style.height = '60px';
+                    layer.appendChild(p);
+                    const sX = startPos.x + (Math.random() - 0.5) * 100;
+                    const eX = targetPos.x + (Math.random() - 0.5) * 80;
+                    const anim = p.animate([
+                        { transform: `translateX(${sX}px) translateY(${startPos.y - 200}px) translateZ(${startPos.z}px) scale(0.5)` },
+                        { transform: `translateX(${eX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(1.2)` }
+                    ], { duration: 400 + Math.random()*200, easing: 'ease-in', fill: 'forwards' });
+                    projectiles.push({el: p, anim: anim});
+                    await sleep(50);
+                }
+                await Promise.all(projectiles.map(p => p.anim.finished));
+                projectiles.forEach(p => p.el.remove());
+                return;
+            }
+             if(type.includes('water')) {
+                const projectiles = [];
+                for(let i=0; i<10; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'projectile vfx-waterball';
+                    layer.appendChild(p);
+                    const eX = targetPos.x + (Math.random() - 0.5) * 120;
+                    const eY = targetPos.y + (Math.random() - 0.5) * 60;
+                    const anim = p.animate([
+                        { transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(0.2)` },
+                        { transform: `translateX(${eX}px) translateY(${eY}px) translateZ(${targetPos.z}px) scale(1)` }
+                    ], { duration: 600, easing: 'cubic-bezier(0,0.5,0.5,1)', fill: 'forwards' });
+                    projectiles.push({el: p, anim: anim});
+                    await sleep(30);
+                }
+                await sleep(500);
+                projectiles.forEach(p => p.el.remove());
+                return;
+            }
+            if(type.includes('earth')) {
+                const projectiles = [];
+                for(let i=0; i<5; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'projectile vfx-rock';
+                    p.style.width = '70px'; p.style.height = '70px';
+                    layer.appendChild(p);
+                    const sX = startPos.x + (Math.random() - 0.5) * 150;
+                    const eX = targetPos.x + (Math.random() - 0.5) * 50;
+                    const anim = p.animate([
+                        { transform: `translateX(${sX}px) translateY(${startPos.y - 150}px) translateZ(${startPos.z}px) scale(0.5) rotate(0deg)` },
+                        { transform: `translateX(${eX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(1.5) rotate(360deg)` }
+                    ], { duration: 700, easing: 'ease-in', fill: 'forwards' });
+                    projectiles.push({el: p, anim: anim});
+                    await sleep(100);
+                }
+                await sleep(600);
+                projectiles.forEach(p => p.el.remove());
+                return;
+            }
+            if(type.includes('void')) {
+                const p = document.createElement('div');
+                p.className = 'projectile vfx-void';
+                p.style.width = '20px'; p.style.height = '20px';
+                layer.appendChild(p);
+                const anim = p.animate([
+                    { transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(1)` },
+                    { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(8)` }
+                ], { duration: 1000, easing: 'ease-in-out', fill: 'forwards' });
+                await anim.finished;
+                p.style.opacity = '0'; await sleep(200); p.remove();
+                return;
             }
         };
 
-        const triggerImpact = (tid) => {
-            const arena = document.getElementById('arena');
-            arena.classList.add('screen-shake');
-            setTimeout(() => arena.classList.remove('screen-shake'), 300);
-            const r = document.createElement('div'); r.className = 'hit-ring';
-            document.getElementById(tid).appendChild(r);
-            setTimeout(() => r.remove(), 500);
+        const showDmgText = (val, targetId) => {
+            const el = document.createElement('div');
+            el.className = 'dmg-text'; el.innerText = val;
+            document.getElementById(targetId).appendChild(el);
+            setTimeout(() => el.remove(), 800);
         };
 
-        const doSummon = () => {
-            if (state.crystals < 75) return;
-            state.crystals -= 75;
-            const res = MONSTERS_DATABASE[Math.floor(Math.random()*3)];
-            state.inventory.push({...res, lvl: 1, curHp: res.hp});
+        const updateBattleHUD = () => {
+            const pPct = (battleState.player.curHp / battleState.player.maxHp) * 100;
+            const ePct = (battleState.enemy.curHp / battleState.enemy.maxHp) * 100;
+            document.getElementById('hud-p-hp-bar').style.width = `${pPct}%`;
+            document.getElementById('hud-p-hp-txt').innerText = Math.ceil(pPct) + "%";
+            document.getElementById('hud-e-hp-bar').style.width = `${ePct}%`;
+            document.getElementById('hud-e-hp-txt').innerText = Math.ceil(ePct) + "%";
+            document.getElementById('hud-e-name').innerText = battleState.enemy.name;
+        };
+
+        const winBattle = () => endScreen(true);
+        const loseBattle = () => endScreen(false);
+        
+        const endScreen = (win) => {
+            const ov = document.getElementById('battle-overlay');
+            ov.classList.remove('hidden'); ov.classList.add('flex');
+            void ov.offsetWidth; ov.style.opacity = '1';
+            document.getElementById('outcome-title').innerText = win ? "VITÓRIA" : "DERROTA";
             
-            // Summon com Sprite
-            const box = document.getElementById('summon-box');
-            if (res.spriteUrl) {
-                box.innerHTML = `<img src="${res.spriteUrl}" class="w-full h-full object-contain drop-shadow-lg animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"> <span style="display:none" class="text-7xl">${res.emoji}</span>`;
+            if(win) {
+                let rewards = "";
+                if(battleState.mode === 'dungeon') {
+                    // Reward varies by floor
+                    const floor = prepState.level; // From prep state, not battle mode string
+                    const mana = 50 * floor;
+                    const crystals = 5 * floor;
+                    state.user.mana += mana;
+                    state.user.crystals += crystals;
+                    rewards = `+${mana} Mana | +${crystals} Cristais`;
+                } else if(battleState.mode === 'tower') {
+                    state.towerFloor++;
+                    state.user.crystals += 50;
+                    state.user.mana += 100;
+                    rewards = `Andar ${state.towerFloor-1} Completo! | +50 Cristais`;
+                } else {
+                    state.user.crystals += 20;
+                    state.user.mana += 50;
+                    rewards = "+50 Mana | +20 Cristais";
+                }
+                save();
+                document.getElementById('outcome-rewards').innerText = rewards;
             } else {
-                box.innerHTML = res.emoji;
+                document.getElementById('outcome-rewards').innerText = "Tente melhorar seu time";
             }
+        };
+        const closeBattle = () => { changeView('view-home'); updateHeader(); };
+
+        const renderMonsterBox = () => {
+            const grid = document.getElementById('roster-grid');
+            grid.innerHTML = '';
+            document.getElementById('mon-count').innerText = state.inventory.length;
+
+            state.inventory.forEach((mon, idx) => {
+                const slot = document.createElement('div');
+                const isLeader = idx === state.leaderIdx;
+                slot.className = `sw-slot aspect-square cursor-pointer flex items-center justify-center ${isLeader ? 'selected' : ''}`;
+                const elColor = {fire:'bg-fire', water:'bg-water', lightning:'bg-lightning', earth:'bg-earth', nature:'bg-nature', void:'bg-void'}[mon.element] || 'bg-slate-500';
+
+                slot.innerHTML = `
+                    <div class="elem-badge ${elColor}"></div>
+                    <img src="${mon.img}" class="w-[90%] h-[90%] object-contain filter drop-shadow-lg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                    <span style="display:none;font-size:3rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${mon.emoji}</span>
+                    <div class="star-row">${'<span class="star-icon">★</span>'.repeat(mon.stars)}</div>
+                    <div class="absolute top-1 left-1 text-[8px] font-bold text-white bg-black/50 px-1 rounded">Lv.${mon.lvl}</div>
+                `;
+                slot.onclick = () => openDetail(idx);
+                grid.appendChild(slot);
+            });
+        };
+
+        let selectedDetailIdx = 0;
+        const openDetail = (idx) => {
+            selectedDetailIdx = idx;
+            const mon = state.inventory[idx];
+            document.getElementById('mon-detail-overlay').classList.remove('hidden'); document.getElementById('mon-detail-overlay').classList.add('flex');
             
-            save(); updateStats();
-            setTimeout(() => { box.innerHTML = '🎁'; }, 2000);
+            document.getElementById('det-name').innerText = mon.name;
+            document.getElementById('det-type').innerText = mon.type;
+            document.getElementById('det-lvl').innerText = `Lv. ${mon.lvl}`;
+            document.getElementById('det-stars').innerHTML = '★'.repeat(mon.stars);
+            document.getElementById('det-nat-grade').innerText = `NAT ${mon.stars}`;
+            document.getElementById('det-element-badge').innerText = {fire:'🔥', water:'🌊', lightning:'⚡', earth:'🗿', nature:'🍃', void:'🌑'}[mon.element];
+            document.getElementById('det-emoji').innerText = mon.emoji;
+            
+            const img = document.getElementById('det-img');
+            img.style.display = 'block'; document.getElementById('det-emoji').style.display = 'none';
+            img.src = mon.img;
+            
+            const m = 1 + (mon.lvl * 0.1);
+            document.getElementById('val-hp').innerText = Math.floor(mon.hp * m);
+            document.getElementById('val-atk').innerText = Math.floor(mon.atk * m);
+            document.getElementById('val-def').innerText = Math.floor(mon.def * m);
+
+            const btn = document.getElementById('btn-equip');
+            if(state.leaderIdx === idx) {
+                btn.innerText = "Líder Atual";
+                btn.className = "w-full py-3 mt-2 bg-green-500 text-white font-black uppercase rounded-xl opacity-90";
+            } else {
+                btn.innerText = "Definir Líder";
+                btn.className = "w-full py-3 mt-2 bg-white text-slate-900 font-black uppercase rounded-xl active:scale-95";
+                btn.onclick = equipLeader;
+            }
+        };
+
+        const closeDetail = () => document.getElementById('mon-detail-overlay').classList.add('hidden');
+        const equipLeader = () => { state.leaderIdx = selectedDetailIdx; save(); closeDetail(); renderMonsterBox(); };
+
+        const renderStory = () => {
+            const c = document.getElementById('story-nodes'); c.innerHTML = '';
+            [1,2,3,4,5].forEach(i => {
+                const locked = state.storyProgress < i;
+                const node = document.createElement('div');
+                node.className = `relative pl-6 ${locked?'opacity-50 grayscale':''}`;
+                node.innerHTML = `
+                    <div class="absolute left-[-5px] top-3 w-3 h-3 rounded-full ${locked?'bg-slate-700':'bg-indigo-500'}"></div>
+                    <button onclick="${locked?'':'openPrep(\'story\','+i+')'}" class="glass-panel w-full p-4 rounded-xl text-left">
+                        <h3 class="text-white font-bold">Capítulo ${i}</h3>
+                        <p class="text-xs text-slate-400">Inimigos nível ${i*3}</p>
+                    </button>`;
+                c.appendChild(node);
+            });
+        };
+
+        const doSummon = async () => {
+            if(state.user.tickets < 1) return alert("Sem bilhetes! Compre na Loja.");
+            state.user.tickets -= 1; updateSummonUI();
+            
+            const box = document.getElementById('summon-box');
+            const flash = document.getElementById('summon-flash');
+            flash.style.transform = 'scale(20)'; flash.style.opacity = '1';
+            await sleep(200);
+            const m = MONSTERS_DB[Math.floor(Math.random()*MONSTERS_DB.length)];
+            addMonster(m.id);
+            flash.style.opacity = '0'; 
+            box.innerHTML = `<img src="${m.img}" class="w-full h-full object-contain animate-float" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem">${m.emoji}</span>`;
+            box.classList.remove('animate-bounce');
+            setTimeout(() => { flash.style.transform = 'scale(0)'; box.innerHTML = "📦"; box.classList.add('animate-bounce'); }, 2500);
+        };
+
+        const addMonster = (id) => {
+            const base = MONSTERS_DB.find(m => m.id === id);
+            state.inventory.push({...base, lvl: 1, exp: 0, skills: [...base.skills]});
+            save();
         };
 
         const sleep = ms => new Promise(r => setTimeout(r, ms));
-
         window.onload = init;
     </script>
 </body>
 </html>
-
-
