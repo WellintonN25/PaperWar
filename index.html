@@ -18,14 +18,16 @@
                         'flash': 'flash 0.1s ease-out',
                         'toast-slide': 'toast-slide 0.3s ease-out forwards',
                         'toast-fade': 'toast-fade 0.3s ease-in forwards',
-                        'shine-gold': 'shine-gold 1s ease-in-out infinite'
+                        'shine-gold': 'shine-gold 1s ease-in-out infinite',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both'
                     },
                     keyframes: {
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
                         flash: { '0%': { opacity: 0 }, '50%': { opacity: 0.8 }, '100%': { opacity: 0 } },
                         'toast-slide': { '0%': { transform: 'translateY(-20px)', opacity: 0 }, '100%': { transform: 'translateY(0)', opacity: 1 } },
                         'toast-fade': { '0%': { opacity: 1 }, '100%': { opacity: 0 } },
-                        'shine-gold': { '0%, 100%': { boxShadow: '0 0 20px #fbbf24' }, '50%': { boxShadow: '0 0 50px #fbbf24, 0 0 20px white' } }
+                        'shine-gold': { '0%, 100%': { boxShadow: '0 0 20px #fbbf24' }, '50%': { boxShadow: '0 0 50px #fbbf24, 0 0 20px white' } },
+                        shake: { '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' }, '20%, 80%': { transform: 'translate3d(2px, 0, 0)' }, '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' }, '40%, 60%': { transform: 'translate3d(4px, 0, 0)' } }
                     }
                 }
             }
@@ -85,6 +87,19 @@
         .sw-slot:active { transform: scale(0.95); }
         .sw-slot.selected { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
         
+        .eq-slot {
+            width: 50px; height: 50px;
+            background: #1e293b; border: 1px dashed #475569;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; cursor: pointer; position: relative;
+        }
+        .eq-slot.filled { border-style: solid; background: #0f172a; }
+        
+        .rarity-common { border-color: #94a3b8; color: #94a3b8; }
+        .rarity-rare { border-color: #3b82f6; color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .rarity-epic { border-color: #a855f7; color: #a855f7; background: rgba(168, 85, 247, 0.1); }
+        .rarity-legendary { border-color: #fbbf24; color: #fbbf24; background: rgba(251, 191, 36, 0.1); box-shadow: 0 0 10px rgba(251,191,36,0.2); }
+
         .star-row { 
             display: flex; gap: 0px; justify-content: center; 
             position: absolute; bottom: 4px; width: 100%; z-index: 20;
@@ -240,6 +255,7 @@
             animation: float-dmg 0.8s ease-out forwards; z-index: 100;
             left: 50%; top: -100px; margin-left: -50px; width: 100px; text-align: center;
         }
+        .dmg-crit { color: #facc15 !important; font-size: 4rem !important; text-shadow: 0 0 15px #ca8a04 !important; }
         
         .flash-screen {
             position: absolute; inset: 0; background: white; z-index: 200; pointer-events: none;
@@ -340,7 +356,7 @@
                     <div class="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center text-2xl">🛒</div>
                     <div class="flex-1">
                         <h4 class="text-white font-bold uppercase">Loja</h4>
-                        <p class="text-amber-200 text-xs">Comprar Recursos</p>
+                        <p class="text-amber-200 text-xs">Equipamentos e Recursos</p>
                     </div>
                 </div>
 
@@ -349,7 +365,6 @@
                         <div class="text-2xl mb-2">🎴</div>
                         <h4 class="text-white font-bold uppercase text-xs">Monstros</h4>
                     </div>
-                    <!-- The button that caused the error: corrected to point to existing view-summon -->
                     <div onclick="changeView('view-summon')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center">
                         <div class="text-2xl mb-2">📦</div>
                         <h4 class="text-white font-bold uppercase text-xs">Summon</h4>
@@ -425,13 +440,20 @@
             <button onclick="changeView('view-home')" class="mb-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Voltar</button>
             <h2 class="text-3xl font-black text-white uppercase italic mb-8">Loja</h2>
             <div class="scroll-container flex-1 space-y-3 overflow-y-auto">
-                <h4 class="text-white font-bold text-sm uppercase mt-2">Invocações</h4>
-                <!-- Bilhete Comum - Custa Mana -->
+                <!-- Forja de Equipamentos -->
+                <h4 class="text-white font-bold text-sm uppercase mt-2 text-indigo-400">Forja de Equipamentos</h4>
+                <div class="glass-panel p-4 rounded-3xl flex flex-col space-y-2 border border-indigo-500/30">
+                    <div class="flex justify-between items-center">
+                         <div class="flex items-center space-x-3"><div class="text-2xl">🔨</div><div><h3 class="text-white font-bold">Forjar Equipamento</h3><p class="text-[9px] text-slate-400">Aleatório (Comum-Lendário)</p></div></div>
+                    </div>
+                    <button onclick="buyShopItem('forge_eq')" class="w-full bg-indigo-600 px-4 py-2 rounded-xl text-white font-bold text-xs mt-2">1000 💧 Forjar</button>
+                </div>
+
+                <h4 class="text-white font-bold text-sm uppercase mt-4">Invocações</h4>
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
                     <div class="flex items-center space-x-3"><div class="text-2xl">📜</div><div><h3 class="text-white font-bold">Bilhete Comum</h3><p class="text-[9px] text-slate-400">1-3 Estrelas</p></div></div>
                     <button onclick="buyShopItem('ticket_common')" class="bg-blue-600 px-4 py-2 rounded-xl text-white font-bold text-xs">2000 💧</button>
                 </div>
-                <!-- Bilhete Epico - Custa Cristais -->
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between border border-amber-500/30">
                     <div class="flex items-center space-x-3"><div class="text-2xl">🎫</div><div><h3 class="text-white font-bold">Bilhete Épico</h3><p class="text-[9px] text-slate-400">3-5 Estrelas</p></div></div>
                     <button onclick="buyShopItem('ticket_epic')" class="bg-amber-600 px-4 py-2 rounded-xl text-white font-bold text-xs">300 💎</button>
@@ -445,10 +467,6 @@
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
                     <div class="flex items-center space-x-3"><div class="text-2xl">🧪</div><div><h3 class="text-white font-bold">1x XP Potion</h3><p class="text-[9px] text-slate-400">+1 Nível</p></div></div>
                     <button onclick="buyShopItem('xp_pot')" class="bg-blue-600 px-4 py-2 rounded-xl text-white font-bold text-xs">500 💧</button>
-                </div>
-                <div class="glass-panel p-4 rounded-3xl flex items-center justify-between border border-blue-500/30">
-                    <div class="flex items-center space-x-3"><div class="text-2xl">🧪</div><div><h3 class="text-white font-bold">10x XP Potions</h3><p class="text-[9px] text-slate-400">Bulk</p></div></div>
-                    <button onclick="buyShopItem('xp_pot10')" class="bg-blue-800 px-4 py-2 rounded-xl text-white font-bold text-xs">4500 💧</button>
                 </div>
             </div>
             <div class="mt-4 glass-panel p-4 rounded-xl flex justify-between text-xs">
@@ -465,8 +483,8 @@
             </div>
             <div id="roster-grid" class="grid grid-cols-5 gap-2 content-start overflow-y-auto pb-20"></div>
             <!-- Detail Overlay -->
-            <div id="mon-detail-overlay" class="absolute inset-0 z-50 bg-slate-950/95 hidden flex-col">
-                <div class="flex-1 relative flex flex-col p-6">
+            <div id="mon-detail-overlay" class="absolute inset-0 z-50 bg-slate-950/95 hidden flex-col overflow-y-auto">
+                <div class="flex-1 relative flex flex-col p-6 min-h-[700px]">
                     <button onclick="closeDetail()" class="absolute top-4 right-4 text-white text-2xl z-20">✕</button>
                     <div class="flex justify-between items-start mb-2 relative z-10">
                         <div>
@@ -476,17 +494,28 @@
                         </div>
                         <div id="det-element-badge" class="w-10 h-10 rounded-full flex items-center justify-center text-xl bg-slate-800 border border-white/20">🔥</div>
                     </div>
+                    
                     <div class="flex-1 flex items-center justify-center relative my-4">
                         <div class="absolute inset-0 bg-gradient-to-t from-indigo-500/20 to-transparent rounded-full blur-3xl"></div>
-                        <img id="det-img" src="" class="h-64 object-contain drop-shadow-2xl animate-float relative z-10" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                        <img id="det-img" src="" class="h-48 object-contain drop-shadow-2xl animate-float relative z-10" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
                         <span style="display:none;font-size:6rem" class="relative z-10 filter drop-shadow-2xl animate-float" id="det-emoji">🐉</span>
                     </div>
-                    <div class="glass-panel p-5 rounded-3xl space-y-3">
+
+                    <!-- Equipment Slots -->
+                    <div class="flex justify-center gap-4 mb-4 relative z-20">
+                        <div id="eq-slot-weapon" class="eq-slot" onclick="handleEqClick('weapon')"><span class="text-slate-600">⚔️</span></div>
+                        <div id="eq-slot-armor" class="eq-slot" onclick="handleEqClick('armor')"><span class="text-slate-600">🛡️</span></div>
+                        <div id="eq-slot-acc" class="eq-slot" onclick="handleEqClick('acc')"><span class="text-slate-600">💍</span></div>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-3xl space-y-3 relative z-10">
                         <div class="flex justify-between text-white font-bold text-sm border-b border-white/10 pb-2 mb-2"><span>Status</span><span id="det-lvl" class="text-slate-400">Lv. MAX</span></div>
                         <div class="grid grid-cols-2 gap-4 text-xs">
                             <div><span class="text-slate-400 font-bold block">HP</span><span id="val-hp" class="text-white font-mono text-lg">0</span></div>
                             <div><span class="text-slate-400 font-bold block">ATK</span><span id="val-atk" class="text-white font-mono text-lg">0</span></div>
                             <div><span class="text-slate-400 font-bold block">DEF</span><span id="val-def" class="text-white font-mono text-lg">0</span></div>
+                            <div><span class="text-slate-400 font-bold block">CRIT</span><span id="val-crit" class="text-white font-mono text-lg">0%</span></div>
+                            <div><span class="text-slate-400 font-bold block">CDMG</span><span id="val-cdmg" class="text-white font-mono text-lg">0%</span></div>
                             <div><span class="text-slate-400 font-bold block">SPD</span><span class="text-white font-mono text-lg">100</span></div>
                         </div>
                         <div class="flex gap-2 mt-2">
@@ -494,6 +523,27 @@
                              <button onclick="useXpPotion()" id="btn-xp" class="flex-1 py-3 bg-blue-600 text-white font-black uppercase rounded-xl active:scale-95 transition-all text-xs">Usar Potion</button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Upgrade Modal -->
+            <div id="eq-modal" class="absolute inset-0 z-[60] bg-slate-950/95 hidden flex-col items-center justify-center p-6">
+                <div class="glass-panel w-full max-w-sm p-6 rounded-3xl flex flex-col items-center relative">
+                    <button onclick="document.getElementById('eq-modal').classList.add('hidden')" class="absolute top-4 right-4 text-white">✕</button>
+                    <h3 id="eq-modal-title" class="text-xl font-bold text-white mb-2">Espada Comum</h3>
+                    <div id="eq-modal-level" class="text-xs font-bold px-2 py-1 bg-black rounded mb-4">+0</div>
+                    
+                    <div class="w-full space-y-2 mb-6 text-sm">
+                        <div class="flex justify-between"><span class="text-slate-400">ATK</span><span id="eq-stat-atk" class="text-white font-mono">0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">DEF</span><span id="eq-stat-def" class="text-white font-mono">0</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">CRIT</span><span id="eq-stat-crit" class="text-white font-mono">0%</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">CDMG</span><span id="eq-stat-cdmg" class="text-white font-mono">0%</span></div>
+                    </div>
+
+                    <button id="btn-upgrade" onclick="performUpgrade()" class="w-full py-3 bg-green-600 rounded-xl text-white font-bold mb-2 disabled:opacity-50 disabled:grayscale">
+                        Upgrade (<span id="upg-cost">100</span> 💧)
+                    </button>
+                    <p id="upg-chance" class="text-[10px] text-slate-400 text-center">Chance: 100%</p>
                 </div>
             </div>
         </main>
@@ -623,9 +673,17 @@
             'sup_void': { n: 'Devastação', p: 3.5, icon: '⚫', type: 'void_sup', mp: 60 }
         };
 
+        const EQ_RARITY = {
+            common: { name: 'Comum', mult: 1, color: 'rarity-common' },
+            rare: { name: 'Raro', mult: 1.5, color: 'rarity-rare' },
+            epic: { name: 'Épico', mult: 2.2, color: 'rarity-epic' },
+            legendary: { name: 'Lendário', mult: 3.5, color: 'rarity-legendary' }
+        };
+
         let state = { 
             user: { name: "", crystals: 200, energy: 100, mana: 0, tickets_common: 0, tickets_epic: 0, lvl: 1, xp: 0, potions: 0, firstClear: {} },
-            inventory: [], 
+            inventory: [],
+            equipment: [], // Global Equipment Storage
             leaderIdx: 0, 
             storyProgress: 1, 
             towerFloor: 1 
@@ -633,6 +691,7 @@
         
         let battleState = { active: false, busy: false, mode: 'dungeon', auto: false, speed: 1 };
         let prepState = { mode: '', level: 1, selectedMonIdx: 0 };
+        let currentEqId = null; // for modal
 
         // --- TOAST SYSTEM ---
         const showToast = (message, type = 'success') => {
@@ -648,7 +707,6 @@
             
             container.appendChild(toast);
             
-            // Auto remove after animation
             setTimeout(() => {
                 toast.style.animation = 'toast-fade 0.3s ease-in forwards';
                 setTimeout(() => toast.remove(), 300);
@@ -657,9 +715,11 @@
 
         // --- CORE ---
         const init = () => {
-            const saved = localStorage.getItem('paperwar_v11');
+            const saved = localStorage.getItem('paperwar_v12');
             if(saved) {
                 state = JSON.parse(saved);
+                if(!state.equipment) state.equipment = [];
+                // Migration checks
                 if(state.user.potions === undefined) state.user.potions = 0;
                 if(state.user.lvl === undefined) state.user.lvl = 1;
                 if(state.user.firstClear === undefined) state.user.firstClear = {};
@@ -675,6 +735,7 @@
                         if(!m.emoji) m.emoji = db.emoji; 
                         m.skills = db.skills; m.stars = db.stars;
                     }
+                    if(!m.equipped) m.equipped = { weapon: null, armor: null, acc: null };
                 });
             } else { 
                 state.user.tickets_epic = 10; 
@@ -684,7 +745,7 @@
             if(state.user.name) { document.getElementById('login-name').value = state.user.name; handleLogin(); }
             updateHeader();
         };
-        const save = () => localStorage.setItem('paperwar_v11', JSON.stringify(state));
+        const save = () => localStorage.setItem('paperwar_v12', JSON.stringify(state));
 
         const handleLogin = () => {
             const val = document.getElementById('login-name').value.trim();
@@ -733,7 +794,7 @@
             document.getElementById('header-xp-bar').style.width = `${pct}%`;
         };
 
-        // --- SHOP ---
+        // --- SHOP & EQUIPMENT ---
         const updateShopUI = () => {
             document.getElementById('shop-crystals').innerText = state.user.crystals;
             document.getElementById('shop-mana').innerText = state.user.mana;
@@ -743,9 +804,128 @@
             if(item === 'ticket_epic') { if(state.user.crystals < 300) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 300; state.user.tickets_epic++; }
             if(item === 'energy') { if(state.user.crystals < 50) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 50; state.user.energy+=50; }
             if(item === 'xp_pot') { if(state.user.mana < 500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 500; state.user.potions++; }
-            if(item === 'xp_pot10') { if(state.user.mana < 4500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 4500; state.user.potions+=10; }
-            save(); updateShopUI(); updateHeader(); showToast("Item comprado com sucesso!");
+            if(item === 'forge_eq') { 
+                if(state.user.mana < 1000) return showToast("Mana insuficiente!", "error"); 
+                state.user.mana -= 1000; 
+                createEquipment(); 
+            }
+            save(); updateShopUI(); updateHeader(); showToast("Item adquirido!");
         };
+
+        const createEquipment = () => {
+            const types = ['weapon', 'armor', 'acc'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            
+            let rarity = 'common';
+            const r = Math.random();
+            if(r < 0.6) rarity = 'common';
+            else if(r < 0.9) rarity = 'rare';
+            else if(r < 0.98) rarity = 'epic';
+            else rarity = 'legendary';
+
+            const base = EQ_RARITY[rarity];
+            const eq = {
+                id: 'eq_' + Date.now() + Math.random().toString(36).substr(2, 9),
+                type: type,
+                rarity: rarity,
+                lvl: 0,
+                stats: { atk: 0, def: 0, crit: 0, cdmg: 0 }
+            };
+
+            // Stat Generation Logic
+            if(type === 'weapon') eq.stats.atk = Math.floor(10 * base.mult);
+            if(type === 'armor') { eq.stats.def = Math.floor(5 * base.mult); eq.stats.hp = Math.floor(50 * base.mult); }
+            if(type === 'acc') { eq.stats.crit = Math.floor(2 * base.mult); eq.stats.cdmg = Math.floor(5 * base.mult); }
+
+            // Random Substats based on rarity
+            const subStatCount = rarity === 'legendary' ? 3 : (rarity === 'epic' ? 2 : (rarity === 'rare' ? 1 : 0));
+            for(let i=0; i<subStatCount; i++) {
+                const sub = Math.random();
+                if(sub < 0.25) eq.stats.atk = (eq.stats.atk || 0) + Math.floor(5 * base.mult);
+                else if(sub < 0.5) eq.stats.def = (eq.stats.def || 0) + Math.floor(3 * base.mult);
+                else if(sub < 0.75) eq.stats.crit = (eq.stats.crit || 0) + 1;
+                else eq.stats.cdmg = (eq.stats.cdmg || 0) + 2;
+            }
+
+            state.equipment.push(eq);
+            showToast(`Forjado: ${type.toUpperCase()} ${base.name}!`, 'success');
+            return eq;
+        };
+
+        const handleEqClick = (slot) => {
+            const mon = state.inventory[selectedDetailIdx];
+            const equippedId = mon.equipped[slot];
+
+            if(equippedId) {
+                // Open Upgrade Modal
+                currentEqId = equippedId;
+                renderUpgradeModal();
+            } else {
+                // Equip logic (Simple: Auto equip first available or just create one for demo if empty?)
+                // For this implementation, let's find the first unequippped item of type
+                const item = state.equipment.find(e => e.type === slot && !isEquipped(e.id));
+                if(item) {
+                    mon.equipped[slot] = item.id;
+                    save(); openDetail(selectedDetailIdx); showToast("Equipado!");
+                } else {
+                    showToast("Nenhum item disponível. Use a Forja na Loja!", "info");
+                }
+            }
+        };
+
+        const isEquipped = (id) => {
+            return state.inventory.some(m => m.equipped.weapon === id || m.equipped.armor === id || m.equipped.acc === id);
+        };
+
+        const renderUpgradeModal = () => {
+            const eq = state.equipment.find(e => e.id === currentEqId);
+            if(!eq) return;
+
+            const modal = document.getElementById('eq-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            
+            const conf = EQ_RARITY[eq.rarity];
+            document.getElementById('eq-modal-title').innerText = `${conf.name} ${eq.type.toUpperCase()}`;
+            document.getElementById('eq-modal-title').className = `text-xl font-bold mb-2 ${conf.color.replace('border-color:', 'text-')}`;
+            document.getElementById('eq-modal-level').innerText = `+${eq.lvl}`;
+
+            document.getElementById('eq-stat-atk').innerText = eq.stats.atk || 0;
+            document.getElementById('eq-stat-def').innerText = eq.stats.def || 0;
+            document.getElementById('eq-stat-crit').innerText = (eq.stats.crit || 0) + '%';
+            document.getElementById('eq-stat-cdmg').innerText = (eq.stats.cdmg || 0) + '%';
+
+            const cost = 100 * (eq.lvl + 1);
+            const chance = Math.max(5, 100 - (eq.lvl * 5));
+            
+            const btn = document.getElementById('btn-upgrade');
+            document.getElementById('upg-cost').innerText = cost;
+            document.getElementById('upg-chance').innerText = `Sucesso: ${chance}%`;
+            
+            btn.onclick = () => performUpgrade(eq, cost, chance);
+        };
+
+        const performUpgrade = (eq, cost, chance) => {
+            if(state.user.mana < cost) return showToast("Mana insuficiente!", "error");
+            state.user.mana -= cost;
+
+            const roll = Math.random() * 100;
+            if(roll <= chance) {
+                eq.lvl++;
+                // Boost Stats
+                if(eq.stats.atk) eq.stats.atk += Math.ceil(eq.stats.atk * 0.1) + 2;
+                if(eq.stats.def) eq.stats.def += Math.ceil(eq.stats.def * 0.1) + 1;
+                if(eq.stats.crit) eq.stats.crit += 1;
+                if(eq.stats.cdmg) eq.stats.cdmg += 2;
+                
+                showToast("Upgrade Sucesso! +" + eq.lvl, "success");
+            } else {
+                showToast("Falha no Upgrade...", "error");
+                document.getElementById('eq-modal').classList.add('animate-shake');
+                setTimeout(() => document.getElementById('eq-modal').classList.remove('animate-shake'), 500);
+            }
+            save(); updateShopUI(); renderUpgradeModal(); openDetail(selectedDetailIdx); // Refresh UI
+        };
+
         const updateSummonUI = () => {
             const elC = document.getElementById('summon-tickets-common');
             const elE = document.getElementById('summon-tickets-epic');
@@ -777,11 +957,39 @@
 
         const renderPrepUnit = () => {
             const mon = state.inventory[prepState.selectedMonIdx];
+            // Calculate Total Stats (Base + Equip)
+            const stats = calculateStats(mon);
+            
             document.getElementById('prep-img').src = mon.img;
             document.getElementById('prep-name').innerText = mon.name;
             document.getElementById('prep-el').innerText = {fire:'🔥', water:'🌊', lightning:'⚡', earth:'🗿', nature:'🍃', void:'🌑'}[mon.element];
-            const m = 1 + (mon.lvl*0.1);
-            document.getElementById('prep-stats').innerText = `Atk: ${Math.floor(mon.atk*m)} | HP: ${Math.floor(mon.hp*m)}`;
+            document.getElementById('prep-stats').innerText = `Atk: ${stats.atk} | HP: ${stats.hp}`;
+        };
+
+        const calculateStats = (mon) => {
+            const m = 1 + (mon.lvl * 0.1);
+            let s = {
+                hp: Math.floor(mon.hp * m),
+                atk: Math.floor(mon.atk * m),
+                def: Math.floor(mon.def * m),
+                crit: 10, // Base 10%
+                cdmg: 50 // Base 50%
+            };
+
+            // Add Equipment Stats
+            ['weapon', 'armor', 'acc'].forEach(slot => {
+                if(mon.equipped && mon.equipped[slot]) {
+                    const eq = state.equipment.find(e => e.id === mon.equipped[slot]);
+                    if(eq) {
+                        if(eq.stats.hp) s.hp += eq.stats.hp;
+                        if(eq.stats.atk) s.atk += eq.stats.atk;
+                        if(eq.stats.def) s.def += eq.stats.def;
+                        if(eq.stats.crit) s.crit += eq.stats.crit;
+                        if(eq.stats.cdmg) s.cdmg += eq.stats.cdmg;
+                    }
+                }
+            });
+            return s;
         };
 
         const renderPrepRoster = () => {
@@ -808,12 +1016,16 @@
             updateBattleControls();
             
             const pBase = state.inventory[prepState.selectedMonIdx];
-            const m = 1 + (pBase.lvl * 0.1);
+            const stats = calculateStats(pBase); // Use calculated stats with equipment
+
             battleState.player = { 
                 ...pBase, 
-                curHp: Math.floor(pBase.hp * m), 
-                maxHp: Math.floor(pBase.hp * m), 
-                atk: Math.floor(pBase.atk * m),
+                curHp: stats.hp, 
+                maxHp: stats.hp, 
+                atk: stats.atk,
+                def: stats.def,
+                crit: stats.crit,
+                cdmg: stats.cdmg,
                 mp: 50, maxMp: 100 
             };
 
@@ -832,7 +1044,13 @@
             else lvl = lvlArg * 3;
             
             const m = 1 + (lvl * 0.15);
-            battleState.enemy = { ...template, lvl: lvl, curHp: Math.floor(template.hp * m), maxHp: Math.floor(template.hp * m), atk: Math.floor(template.atk * m) };
+            // Enemy simple scaling
+            battleState.enemy = { 
+                ...template, lvl: lvl, 
+                curHp: Math.floor(template.hp * m), maxHp: Math.floor(template.hp * m), 
+                atk: Math.floor(template.atk * m), def: Math.floor(template.def * m),
+                crit: 5, cdmg: 50
+            };
             
             updateBattleHUD();
             const el = document.getElementById('enemy-sprite-container');
@@ -933,6 +1151,7 @@
             const defenderEl = document.getElementById(isPlayer ? 'enemy-sprite-container' : 'player-sprite-container');
             const wrapperAtt = document.getElementById(isPlayer ? 'ent-player' : 'ent-enemy');
 
+            // Animation
             if(skill.type === 'phys') {
                 wrapperAtt.classList.add(isPlayer ? 'anim-melee-player' : 'anim-melee-enemy');
                 attackerEl.classList.add('anim-spin-atk');
@@ -955,11 +1174,21 @@
                 defenderEl.querySelector('img').classList.remove('anim-hit-spin');
             }, 600 / spd);
 
+            // DAMAGE CALCULATION
             const raw = att.atk * skill.p;
-            const dmg = Math.floor(Math.max(10, raw - (def.def * 0.5)));
+            let dmg = Math.max(10, raw - (def.def * 0.5));
+            
+            // Critical Hit Logic
+            let isCrit = false;
+            if(att.crit && Math.random() * 100 < att.crit) {
+                isCrit = true;
+                dmg = dmg * (1 + (att.cdmg || 50) / 100);
+            }
+            dmg = Math.floor(dmg);
+
             def.curHp = Math.max(0, def.curHp - dmg);
             updateBattleHUD();
-            showDmgText(dmg, isPlayer ? 'ent-enemy' : 'ent-player');
+            showDmgText(dmg, isPlayer ? 'ent-enemy' : 'ent-player', isCrit);
             await sleep(300 / spd);
         };
 
@@ -1079,9 +1308,11 @@
             }
         };
 
-        const showDmgText = (val, targetId) => {
+        const showDmgText = (val, targetId, isCrit) => {
             const el = document.createElement('div');
-            el.className = 'dmg-text'; el.innerText = val;
+            el.className = 'dmg-text'; 
+            if(isCrit) el.classList.add('dmg-crit');
+            el.innerText = val + (isCrit ? "!" : "");
             document.getElementById(targetId).appendChild(el);
             setTimeout(() => el.remove(), 800 / battleState.speed);
         };
@@ -1200,6 +1431,8 @@
         const openDetail = (idx) => {
             selectedDetailIdx = idx;
             const mon = state.inventory[idx];
+            if(!mon.equipped) mon.equipped = { weapon: null, armor: null, acc: null }; // Ensure structure
+
             document.getElementById('mon-detail-overlay').classList.remove('hidden'); document.getElementById('mon-detail-overlay').classList.add('flex');
             document.getElementById('det-name').innerText = mon.name;
             document.getElementById('det-type').innerText = mon.type;
@@ -1209,15 +1442,38 @@
             document.getElementById('det-element-badge').innerText = {fire:'🔥', water:'🌊', lightning:'⚡', earth:'🗿', nature:'🍃', void:'🌑'}[mon.element];
             document.getElementById('det-emoji').innerText = mon.emoji;
             const img = document.getElementById('det-img'); img.style.display = 'block'; document.getElementById('det-emoji').style.display = 'none'; img.src = mon.img;
-            const m = 1 + (mon.lvl * 0.1);
-            document.getElementById('val-hp').innerText = Math.floor(mon.hp * m);
-            document.getElementById('val-atk').innerText = Math.floor(mon.atk * m);
-            document.getElementById('val-def').innerText = Math.floor(mon.def * m);
             
+            // Calculate total stats
+            const stats = calculateStats(mon);
+            document.getElementById('val-hp').innerText = stats.hp;
+            document.getElementById('val-atk').innerText = stats.atk;
+            document.getElementById('val-def').innerText = stats.def;
+            document.getElementById('val-crit').innerText = stats.crit + "%";
+            document.getElementById('val-cdmg').innerText = stats.cdmg + "%";
+            
+            // Render Equipment Slots Status
+            renderEqSlot('weapon', mon.equipped.weapon);
+            renderEqSlot('armor', mon.equipped.armor);
+            renderEqSlot('acc', mon.equipped.acc);
+
             const btn = document.getElementById('btn-equip');
             if(state.leaderIdx === idx) { btn.innerText = "Líder Atual"; btn.className = "w-full py-3 mt-2 bg-green-500 text-white font-black uppercase rounded-xl opacity-90"; }
             else { btn.innerText = "Definir Líder"; btn.className = "w-full py-3 mt-2 bg-white text-slate-900 font-black uppercase rounded-xl active:scale-95"; btn.onclick = equipLeader; }
             document.getElementById('btn-xp').innerText = `Usar Potion (${state.user.potions})`;
+        };
+
+        const renderEqSlot = (type, id) => {
+            const el = document.getElementById(`eq-slot-${type}`);
+            if(id) {
+                const eq = state.equipment.find(e => e.id === id);
+                if(eq) {
+                    el.className = `eq-slot filled ${EQ_RARITY[eq.rarity].color}`;
+                    el.innerHTML = `<span class="text-xs font-bold absolute bottom-0 right-1">+${eq.lvl}</span>${type === 'weapon' ? '⚔️' : (type === 'armor' ? '🛡️' : '💍')}`;
+                    return;
+                }
+            }
+            el.className = 'eq-slot';
+            el.innerHTML = `<span class="opacity-20">${type === 'weapon' ? '⚔️' : (type === 'armor' ? '🛡️' : '💍')}</span>`;
         };
 
         const closeDetail = () => document.getElementById('mon-detail-overlay').classList.add('hidden');
@@ -1305,7 +1561,13 @@
 
         const addMonster = (id) => {
             const base = MONSTERS_DB.find(m => m.id === id);
-            state.inventory.push({...base, lvl: 1, exp: 0, skills: [...base.skills]});
+            state.inventory.push({
+                ...base, 
+                lvl: 1, 
+                exp: 0, 
+                skills: [...base.skills],
+                equipped: { weapon: null, armor: null, acc: null } // Ensure new monsters have slots
+            });
             save();
         };
 
