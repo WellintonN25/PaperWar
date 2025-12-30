@@ -149,6 +149,16 @@
             100% { filter: brightness(1); transform: translateX(0); } 
         }
 
+        /* NEW: Hit Spin Animation */
+        .anim-hit-spin { animation: hit-spin 0.6s ease-out; }
+        @keyframes hit-spin {
+            0% { filter: brightness(1); transform: rotateY(0deg) translateX(0); }
+            15% { filter: brightness(5) sepia(1) hue-rotate(-50deg) saturate(5); transform: rotateY(180deg) translateX(-15px) scale(0.9); }
+            40% { transform: rotateY(360deg) translateX(-5px) scale(1); }
+            60% { transform: rotateY(380deg) translateX(0); }
+            100% { filter: brightness(1); transform: rotateY(360deg) translateX(0); }
+        }
+
         .anim-cast { animation: cast-pulse 0.6s ease-in-out; }
         @keyframes cast-pulse {
             0% { filter: brightness(1) drop-shadow(0 0 0 transparent); transform: scale(1); }
@@ -233,14 +243,16 @@
         <!-- HEADER -->
         <header id="ui-header" class="px-5 py-4 bg-slate-950/90 backdrop-blur-md border-b border-white/5 hidden justify-between items-center z-[50] shrink-0">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="changeView('view-home')">
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg relative">
                     <span id="header-initial">P</span>
+                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-black rounded-full flex items-center justify-center text-[9px] font-bold border border-white" id="header-lvl">1</div>
                 </div>
                 <div class="leading-tight">
                     <p class="text-[9px] font-bold text-slate-400 uppercase">Comandante</p>
                     <p id="player-name-ui" class="font-bold text-white text-sm truncate max-w-[100px]">---</p>
                 </div>
             </div>
+            <!-- Economia Atualizada -->
             <div class="flex items-center space-x-2">
                 <div class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1" title="Energia"><span class="text-xs">⚡</span><span id="val-energy" class="text-[10px] font-bold text-yellow-400">0</span></div>
                 <div class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1" title="Mana"><span class="text-xs">💧</span><span id="val-mana" class="text-[10px] font-bold text-blue-400">0</span></div>
@@ -279,7 +291,7 @@
                     <div class="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center text-2xl">🛒</div>
                     <div class="flex-1">
                         <h4 class="text-white font-bold uppercase">Loja</h4>
-                        <p class="text-amber-200 text-xs">Comprar Bilhetes</p>
+                        <p class="text-amber-200 text-xs">Comprar Recursos</p>
                     </div>
                 </div>
 
@@ -377,21 +389,53 @@
         <main id="view-shop" class="flex-1 hidden-view bg-slate-950 flex flex-col p-6 relative">
             <button onclick="changeView('view-home')" class="mb-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Voltar</button>
             <h2 class="text-3xl font-black text-white uppercase italic mb-8">Loja</h2>
-            <div class="flex-1 space-y-4">
-                <div class="glass-panel p-6 rounded-3xl flex flex-col items-center text-center">
-                    <div class="text-4xl mb-2">🎫</div>
-                    <h3 class="text-white font-bold text-xl">1x Bilhete</h3>
-                    <p class="text-slate-400 text-xs mb-4">Invocação Comum</p>
-                    <button onclick="buyTicket(1)" class="bg-indigo-600 hover:bg-indigo-500 w-full py-3 rounded-xl text-white font-bold uppercase text-xs flex justify-center items-center gap-2"><span>75</span> <span>💎</span></button>
+            
+            <div class="flex-1 space-y-3 overflow-y-auto">
+                <h4 class="text-white font-bold text-sm uppercase mt-2">Invocações</h4>
+                <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">🎫</div>
+                        <div><h3 class="text-white font-bold">1x Bilhete</h3></div>
+                    </div>
+                    <button onclick="buyShopItem('ticket1')" class="bg-indigo-600 px-4 py-2 rounded-xl text-white font-bold text-xs">75 💎</button>
                 </div>
-                <div class="glass-panel p-6 rounded-3xl flex flex-col items-center text-center border border-amber-500/30">
-                    <div class="text-4xl mb-2">🎫x10</div>
-                    <h3 class="text-white font-bold text-xl">10x Bilhetes</h3>
-                    <p class="text-slate-400 text-xs mb-4">Pacote Promocional</p>
-                    <button onclick="buyTicket(10)" class="bg-amber-600 hover:bg-amber-500 w-full py-3 rounded-xl text-white font-bold uppercase text-xs flex justify-center items-center gap-2"><span>700</span> <span>💎</span></button>
+                <div class="glass-panel p-4 rounded-3xl flex items-center justify-between border border-amber-500/30">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">🎫</div>
+                        <div><h3 class="text-white font-bold">10x Bilhetes</h3></div>
+                    </div>
+                    <button onclick="buyShopItem('ticket10')" class="bg-amber-600 px-4 py-2 rounded-xl text-white font-bold text-xs">700 💎</button>
+                </div>
+
+                <h4 class="text-white font-bold text-sm uppercase mt-4">Recursos</h4>
+                <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">⚡</div>
+                        <div><h3 class="text-white font-bold">50 Energia</h3></div>
+                    </div>
+                    <button onclick="buyShopItem('energy')" class="bg-yellow-600 px-4 py-2 rounded-xl text-white font-bold text-xs">30 💎</button>
+                </div>
+                <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">🧪</div>
+                        <div><h3 class="text-white font-bold">1x XP Potion</h3><p class="text-[9px] text-slate-400">+1 Nível</p></div>
+                    </div>
+                    <button onclick="buyShopItem('xp_pot')" class="bg-blue-600 px-4 py-2 rounded-xl text-white font-bold text-xs">500 💧</button>
+                </div>
+                <!-- NOVO: 10x XP Potions -->
+                <div class="glass-panel p-4 rounded-3xl flex items-center justify-between border border-blue-500/30">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">🧪</div>
+                        <div><h3 class="text-white font-bold">10x XP Potions</h3><p class="text-[9px] text-slate-400">Bulk (Desconto)</p></div>
+                    </div>
+                    <button onclick="buyShopItem('xp_pot10')" class="bg-blue-800 px-4 py-2 rounded-xl text-white font-bold text-xs">4500 💧</button>
                 </div>
             </div>
-            <div class="mt-auto glass-panel p-4 rounded-xl text-center"><span class="text-slate-400 text-xs">Seus Cristais:</span><span id="shop-crystals" class="text-cyan-400 font-bold ml-2">0</span></div>
+            
+            <div class="mt-4 glass-panel p-4 rounded-xl flex justify-between text-xs">
+                <div>💎 <span id="shop-crystals" class="text-cyan-400 font-bold">0</span></div>
+                <div>💧 <span id="shop-mana" class="text-blue-400 font-bold">0</span></div>
+            </div>
         </main>
 
         <!-- MONSTER BOX -->
@@ -401,6 +445,7 @@
                 <span class="text-white font-bold uppercase text-xs">Monstros: <span id="mon-count">0</span></span>
             </div>
             <div id="roster-grid" class="grid grid-cols-5 gap-2 content-start overflow-y-auto pb-20"></div>
+            <!-- Detail Overlay -->
             <div id="mon-detail-overlay" class="absolute inset-0 z-50 bg-slate-950/95 hidden flex-col">
                 <div class="flex-1 relative flex flex-col p-6">
                     <button onclick="closeDetail()" class="absolute top-4 right-4 text-white text-2xl z-20">✕</button>
@@ -425,7 +470,10 @@
                             <div><span class="text-slate-400 font-bold block">DEF</span><span id="val-def" class="text-white font-mono text-lg">0</span></div>
                             <div><span class="text-slate-400 font-bold block">SPD</span><span class="text-white font-mono text-lg">100</span></div>
                         </div>
-                        <button onclick="equipLeader()" id="btn-equip" class="w-full py-3 mt-2 bg-white text-slate-900 font-black uppercase rounded-xl hover:bg-indigo-50 active:scale-95 transition-all">Definir Líder</button>
+                        <div class="flex gap-2 mt-2">
+                             <button onclick="equipLeader()" id="btn-equip" class="flex-1 py-3 bg-white text-slate-900 font-black uppercase rounded-xl active:scale-95 transition-all text-xs">Definir Líder</button>
+                             <button onclick="useXpPotion()" id="btn-xp" class="flex-1 py-3 bg-blue-600 text-white font-black uppercase rounded-xl active:scale-95 transition-all text-xs">Usar Potion</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -440,10 +488,16 @@
 
         <!-- BATTLE -->
         <main id="view-battle" class="flex-1 hidden-view battle-scene relative">
+            <!-- Top HUD -->
             <div class="absolute top-0 w-full p-4 z-50 flex justify-between items-start">
                 <div class="glass-panel px-3 py-2 rounded-2xl w-32">
                     <div class="flex justify-between text-[9px] text-white font-bold mb-1"><span id="hud-p-name">HERO</span> <span id="hud-p-hp-txt">100%</span></div>
                     <div class="hud-bar bg-black"><div id="hud-p-hp-bar" class="hud-fill bg-emerald-500" style="width: 100%"></div></div>
+                    <!-- Mana Bar -->
+                    <div class="mt-1 flex items-center space-x-1">
+                        <span class="text-[8px] text-blue-300">MP</span>
+                        <div class="flex-1 h-1 bg-black rounded-full overflow-hidden"><div id="hud-p-mp-bar" class="h-full bg-blue-500 transition-all duration-500" style="width: 100%"></div></div>
+                    </div>
                 </div>
                 <div class="glass-panel px-3 py-1 rounded-full"><span id="battle-info" class="text-[10px] font-black text-white uppercase tracking-widest">VS</span></div>
                 <div class="glass-panel px-3 py-2 rounded-2xl w-32 text-right">
@@ -451,6 +505,13 @@
                     <div class="hud-bar bg-black"><div id="hud-e-hp-bar" class="hud-fill bg-red-500" style="width: 100%"></div></div>
                 </div>
             </div>
+
+            <!-- Auto/Speed Controls -->
+            <div class="absolute top-20 right-4 z-50 flex flex-col space-y-2">
+                <button id="btn-auto" onclick="toggleAuto()" class="w-10 h-10 rounded-full bg-slate-900/80 border border-white/20 text-xs font-bold text-white flex items-center justify-center opacity-50">AUTO</button>
+                <button id="btn-speed" onclick="toggleSpeed()" class="w-10 h-10 rounded-full bg-slate-900/80 border border-white/20 text-xs font-bold text-white flex items-center justify-center opacity-50">1x</button>
+            </div>
+
             <div id="arena" class="arena-container">
                 <div class="ground-plane"></div>
                 <div id="ent-enemy" class="entity-wrapper pos-enemy">
@@ -494,54 +555,53 @@
     <script>
         // --- DATABASE ---
         const MONSTERS_DB = [
-            // 5 STARS
             { id: 'thyron', name: 'Thyron', type: 'Storm Bringer', element: 'lightning', stars: 5, hp: 1400, atk: 210, def: 80, emoji: '⚡', img: 'src/Thyron.png', skills: ['melee', 'bolt', 'sup_lightning'] },
             { id: 'neriah', name: 'Neriah', type: 'Ocean Guardian', element: 'water', stars: 5, hp: 1800, atk: 140, def: 120, emoji: '🌊', img: 'src/Neriah.png', skills: ['melee', 'water', 'sup_water'] },
             { id: 'aelyra', name: 'Aelyra', type: 'Flame Witch', element: 'fire', stars: 5, hp: 1300, atk: 230, def: 60, emoji: '🔥', img: 'src/Aelyra.png', skills: ['melee', 'fire', 'sup_fire'] },
-            // 4 STARS
             { id: 'kaelthar', name: 'Kaelthar', type: 'Shadow Knight', element: 'void', stars: 4, hp: 1600, atk: 180, def: 100, emoji: '🌑', img: 'src/Kaelthar.png', skills: ['melee', 'void_slash', 'sup_void'] },
             { id: 'dhorak', name: 'Dhorak', type: 'Earth Golem', element: 'earth', stars: 4, hp: 2200, atk: 110, def: 180, emoji: '🗿', img: 'src/Dhorak.png', skills: ['melee', 'rock_throw', 'sup_earth'] },
-            // 3 STARS
             { id: 'vireya', name: 'Vireya', type: 'Nature Spirit', element: 'nature', stars: 3, hp: 1200, atk: 150, def: 90, emoji: '🍃', img: 'src/Vireya.png', skills: ['melee', 'leaf_cutter'] },
             { id: 'brann', name: 'Brann', type: 'Fire Warrior', element: 'fire', stars: 3, hp: 1100, atk: 160, def: 70, emoji: '🔥', img: 'src/Brann.png', skills: ['melee', 'fire'] },
             { id: 'lysara', name: 'Lysara', type: 'Frost Mage', element: 'water', stars: 3, hp: 1050, atk: 170, def: 60, emoji: '❄️', img: 'src/Lysara.png', skills: ['melee', 'water'] },
-            // 2 STARS
             { id: 'lumem', name: 'Lumem', type: 'Light Fairy', element: 'lightning', stars: 2, hp: 900, atk: 190, def: 50, emoji: '✨', img: 'src/Lumem.png', skills: ['melee', 'bolt'] },
             { id: 'ravok', name: 'Ravok', type: 'Orc Grunt', element: 'earth', stars: 2, hp: 1200, atk: 130, def: 60, emoji: '👹', img: 'src/Ravok.png', skills: ['melee', 'rock_throw'] },
-            // 1 STAR
             { id: 'slime', name: 'Slime', type: 'Blob', element: 'water', stars: 1, hp: 600, atk: 80, def: 40, emoji: '💧', img: '', skills: ['melee'] },
             { id: 'bat', name: 'Bat', type: 'Cave Bat', element: 'void', stars: 1, hp: 500, atk: 90, def: 20, emoji: '🦇', img: '', skills: ['melee'] }
         ];
 
         const SKILLS = {
-            'melee': { n: 'Ataque', p: 1.0, icon: '⚔️', type: 'phys' },
-            'bolt': { n: 'Raio', p: 1.5, icon: '⚡', type: 'lightning' },
-            'water': { n: 'Jato', p: 1.4, icon: '💧', type: 'water' },
-            'fire': { n: 'Brasa', p: 1.6, icon: '🔥', type: 'fire' },
-            'void_slash': { n: 'Corte Vazio', p: 1.8, icon: '🌑', type: 'phys' },
-            'rock_throw': { n: 'Rocha', p: 1.5, icon: '🪨', type: 'earth' },
-            'leaf_cutter': { n: 'Folha', p: 1.4, icon: '🍃', type: 'nature' },
-            'sup_lightning': { n: 'Tempestade', p: 3.0, icon: '🌩️', type: 'lightning_sup' },
-            'sup_water': { n: 'Tsunami', p: 2.8, icon: '🌊', type: 'water_sup' },
-            'sup_fire': { n: 'Chuva Meteoros', p: 3.2, icon: '🌋', type: 'fire_sup' },
-            'sup_earth': { n: 'Avalanche', p: 3.0, icon: '🏚️', type: 'earth_sup' },
-            'sup_void': { n: 'Devastação', p: 3.5, icon: '⚫', type: 'void_sup' }
+            'melee': { n: 'Ataque', p: 1.0, icon: '⚔️', type: 'phys', mp: 0 },
+            'bolt': { n: 'Raio', p: 1.5, icon: '⚡', type: 'lightning', mp: 20 },
+            'water': { n: 'Jato', p: 1.4, icon: '💧', type: 'water', mp: 20 },
+            'fire': { n: 'Brasa', p: 1.6, icon: '🔥', type: 'fire', mp: 20 },
+            'void_slash': { n: 'Corte Vazio', p: 1.8, icon: '🌑', type: 'phys', mp: 25 },
+            'rock_throw': { n: 'Rocha', p: 1.5, icon: '🪨', type: 'earth', mp: 20 },
+            'leaf_cutter': { n: 'Folha', p: 1.4, icon: '🍃', type: 'nature', mp: 20 },
+            'sup_lightning': { n: 'Tempestade', p: 3.0, icon: '🌩️', type: 'lightning_sup', mp: 50 },
+            'sup_water': { n: 'Tsunami', p: 2.8, icon: '🌊', type: 'water_sup', mp: 50 },
+            'sup_fire': { n: 'Chuva Meteoros', p: 3.2, icon: '🌋', type: 'fire_sup', mp: 50 },
+            'sup_earth': { n: 'Avalanche', p: 3.0, icon: '🏚️', type: 'earth_sup', mp: 50 },
+            'sup_void': { n: 'Devastação', p: 3.5, icon: '⚫', type: 'void_sup', mp: 60 }
         };
 
-        let state = { user: { name: "", crystals: 200, energy: 100, mana: 0, tickets: 0 }, inventory: [], leaderIdx: 0, storyProgress: 1, towerFloor: 1 };
-        let battleState = { active: false, busy: false, mode: 'dungeon' };
+        let state = { 
+            user: { name: "", crystals: 200, energy: 100, mana: 0, tickets: 0, lvl: 1, xp: 0, potions: 0 }, 
+            inventory: [], 
+            leaderIdx: 0, 
+            storyProgress: 1, 
+            towerFloor: 1 
+        };
         
-        // Preparation Volatile State
+        let battleState = { active: false, busy: false, mode: 'dungeon', auto: false, speed: 1 };
         let prepState = { mode: '', level: 1, selectedMonIdx: 0 };
 
         // --- CORE ---
         const init = () => {
-            const saved = localStorage.getItem('paperwar_v5');
+            const saved = localStorage.getItem('paperwar_v7'); // Version bump
             if(saved) {
                 state = JSON.parse(saved);
-                if(state.user.mana === undefined) state.user.mana = 0;
-                if(state.user.tickets === undefined) state.user.tickets = 0;
-                if(state.towerFloor === undefined) state.towerFloor = 1;
+                if(state.user.potions === undefined) state.user.potions = 0;
+                if(state.user.lvl === undefined) state.user.lvl = 1;
                 state.inventory.forEach(m => {
                     const db = MONSTERS_DB.find(x => x.id === m.id);
                     if(db) { 
@@ -550,11 +610,15 @@
                         m.skills = db.skills; m.stars = db.stars;
                     }
                 });
-            } else { addMonster('thyron'); addMonster('vireya'); addMonster('slime'); }
+            } else { 
+                // New Account Bonus
+                state.user.tickets = 10; 
+                addMonster('thyron'); addMonster('vireya'); addMonster('slime'); 
+            }
             if(state.user.name) { document.getElementById('login-name').value = state.user.name; handleLogin(); }
             updateHeader();
         };
-        const save = () => localStorage.setItem('paperwar_v5', JSON.stringify(state));
+        const save = () => localStorage.setItem('paperwar_v7', JSON.stringify(state));
 
         const handleLogin = () => {
             const val = document.getElementById('login-name').value.trim();
@@ -584,15 +648,21 @@
             document.getElementById('val-crystals').innerText = state.user.crystals;
             document.getElementById('val-energy').innerText = state.user.energy;
             document.getElementById('val-mana').innerText = state.user.mana;
+            document.getElementById('header-lvl').innerText = state.user.lvl;
         };
 
-        // --- SHOP & ECONOMY ---
-        const updateShopUI = () => document.getElementById('shop-crystals').innerText = state.user.crystals;
-        const buyTicket = (amount) => {
-            const cost = amount === 1 ? 75 : 700;
-            if(state.user.crystals < cost) return alert("Cristais insuficientes!");
-            state.user.crystals -= cost; state.user.tickets += amount;
-            save(); updateShopUI(); alert(`Comprou ${amount} Bilhete(s)!`);
+        // --- SHOP ---
+        const updateShopUI = () => {
+            document.getElementById('shop-crystals').innerText = state.user.crystals;
+            document.getElementById('shop-mana').innerText = state.user.mana;
+        };
+        const buyShopItem = (item) => {
+            if(item === 'ticket1') { if(state.user.crystals < 75) return alert("Cristais?"); state.user.crystals -= 75; state.user.tickets++; }
+            if(item === 'ticket10') { if(state.user.crystals < 700) return alert("Cristais?"); state.user.crystals -= 700; state.user.tickets+=10; }
+            if(item === 'energy') { if(state.user.crystals < 30) return alert("Cristais?"); state.user.crystals -= 30; state.user.energy+=50; }
+            if(item === 'xp_pot') { if(state.user.mana < 500) return alert("Mana?"); state.user.mana -= 500; state.user.potions++; }
+            if(item === 'xp_pot10') { if(state.user.mana < 4500) return alert("Mana?"); state.user.mana -= 4500; state.user.potions+=10; }
+            save(); updateShopUI(); updateHeader(); alert("Comprado!");
         };
         const updateSummonUI = () => document.getElementById('summon-tickets').innerText = state.user.tickets;
 
@@ -602,29 +672,20 @@
             for(let i=1; i<=12; i++) {
                 const btn = document.createElement('div');
                 btn.className = "glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer active:scale-95 transition-transform border border-white/5 hover:bg-white/5";
-                btn.innerHTML = `
-                    <div><h4 class="text-white font-bold">Masmorra B${i}</h4><p class="text-xs text-purple-400">Lv. ${i*5} • ${5+Math.floor(i/2)} ⚡</p></div>
-                    <div class="text-white">▶</div>
-                `;
+                btn.innerHTML = `<div><h4 class="text-white font-bold">Masmorra B${i}</h4><p class="text-xs text-purple-400">Lv. ${i*5} • ${5+Math.floor(i/2)} ⚡</p></div><div class="text-white">▶</div>`;
                 btn.onclick = () => openPrep('dungeon', i);
                 c.appendChild(btn);
             }
         };
 
-        // --- NEW PREP SYSTEM ---
         const openPrep = (mode, lvl) => {
             prepState = { mode, level: lvl, selectedMonIdx: state.leaderIdx };
             changeView('view-prep');
-            
-            // Set UI
             const titles = { dungeon: `Masmorra B${lvl}`, tower: `Torre Andar ${lvl}`, story: `Campanha Fase ${lvl}` };
             const costs = { dungeon: 5 + Math.floor(lvl/2), tower: 5, story: 5 };
-            
             document.getElementById('prep-title').innerText = titles[mode];
             document.getElementById('prep-cost').innerText = `${costs[mode]} ⚡`;
-            
-            renderPrepUnit();
-            renderPrepRoster();
+            renderPrepUnit(); renderPrepRoster();
         };
 
         const renderPrepUnit = () => {
@@ -643,19 +704,12 @@
                 const isSel = idx === prepState.selectedMonIdx;
                 el.className = `aspect-square bg-slate-800 rounded-lg p-1 border-2 cursor-pointer ${isSel?'border-green-500':'border-transparent'}`;
                 el.innerHTML = `<img src="${mon.img}" class="w-full h-full object-contain">`;
-                el.onclick = () => {
-                    prepState.selectedMonIdx = idx;
-                    renderPrepUnit();
-                    renderPrepRoster(); // Refresh highlight
-                    document.getElementById('prep-roster').classList.add('hidden');
-                };
+                el.onclick = () => { prepState.selectedMonIdx = idx; renderPrepUnit(); renderPrepRoster(); document.getElementById('prep-roster').classList.add('hidden'); };
                 grid.appendChild(el);
             });
         };
 
-        const confirmBattle = () => {
-            startBattle(prepState.mode, prepState.level);
-        };
+        const confirmBattle = () => startBattle(prepState.mode, prepState.level);
 
         // --- BATTLE ---
         const startBattle = (mode, lvl=1) => {
@@ -663,12 +717,18 @@
             if(state.user.energy < cost) return alert("Sem energia!");
             state.user.energy -= cost; updateHeader();
 
-            battleState = { active: true, mode: mode, busy: false };
+            battleState = { active: true, mode: mode, busy: false, auto: false, speed: 1 };
+            updateBattleControls();
             
-            // Use the unit selected in Prep
             const pBase = state.inventory[prepState.selectedMonIdx];
             const m = 1 + (pBase.lvl * 0.1);
-            battleState.player = { ...pBase, curHp: Math.floor(pBase.hp * m), maxHp: Math.floor(pBase.hp * m), atk: Math.floor(pBase.atk * m) };
+            battleState.player = { 
+                ...pBase, 
+                curHp: Math.floor(pBase.hp * m), 
+                maxHp: Math.floor(pBase.hp * m), 
+                atk: Math.floor(pBase.atk * m),
+                mp: 50, maxMp: 100 
+            };
 
             setupEnemy(mode, lvl);
             changeView('view-battle');
@@ -695,17 +755,25 @@
         const renderBattleScene = () => {
             const pl = document.getElementById('player-sprite-container');
             pl.innerHTML = `<img src="${battleState.player.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem;filter:drop-shadow(0 10px 10px rgba(0,0,0,0.5))">${battleState.player.emoji}</span>`;
-            
+            renderSkillGrid();
+        };
+
+        const renderSkillGrid = () => {
             const grid = document.getElementById('skill-grid');
             grid.innerHTML = '';
             grid.className = `grid gap-2 ${battleState.player.skills.length > 2 ? 'grid-cols-3' : 'grid-cols-2'}`;
             
             battleState.player.skills.forEach(k => {
                 const s = SKILLS[k]; if(!s) return;
+                const canAfford = battleState.player.mp >= s.mp;
                 const btn = document.createElement('button');
-                btn.className = "bg-slate-800/80 border border-white/10 rounded-xl p-2 flex flex-col items-center hover:bg-white/10 active:scale-90 transition-all";
-                btn.innerHTML = `<span class="text-xl mb-1">${s.icon}</span><span class="text-[8px] font-black uppercase text-white">${s.n}</span>`;
-                btn.onclick = () => doPlayerTurn(k);
+                btn.className = `bg-slate-800/80 border border-white/10 rounded-xl p-2 flex flex-col items-center transition-all ${canAfford ? 'hover:bg-white/10 active:scale-90' : 'opacity-50 grayscale cursor-not-allowed'}`;
+                btn.innerHTML = `
+                    <span class="text-xl mb-1">${s.icon}</span>
+                    <span class="text-[8px] font-black uppercase text-white">${s.n}</span>
+                    ${s.mp > 0 ? `<span class="text-[8px] text-blue-300 font-bold">${s.mp} MP</span>` : ''}
+                `;
+                btn.onclick = () => { if(canAfford) doPlayerTurn(k); };
                 grid.appendChild(btn);
             });
         };
@@ -714,11 +782,15 @@
             if(battleState.busy) return;
             battleState.busy = true;
             try {
+                const skill = SKILLS[skillKey];
+                battleState.player.mp -= skill.mp;
+                updateBattleHUD(); renderSkillGrid();
+
                 await executeAction(battleState.player, battleState.enemy, skillKey, true);
                 if(battleState.enemy.curHp <= 0) winBattle();
                 else {
                     document.getElementById('combat-log').innerText = "Turno Inimigo";
-                    setTimeout(doEnemyTurn, 1000);
+                    setTimeout(doEnemyTurn, 1000 / battleState.speed);
                 }
             } catch(e) { console.error(e); battleState.busy = false; }
         };
@@ -727,16 +799,48 @@
             try {
                 const skills = battleState.enemy.skills;
                 await executeAction(battleState.enemy, battleState.player, skills[Math.floor(Math.random()*skills.length)], false);
+                
+                battleState.player.mp = Math.min(battleState.player.maxMp, battleState.player.mp + 10);
+                updateBattleHUD();
+                renderSkillGrid();
+
                 if(battleState.player.curHp <= 0) loseBattle();
                 else {
                     document.getElementById('combat-log').innerText = "Sua Vez!";
                     battleState.busy = false;
+                    if(battleState.auto) triggerAuto();
                 }
             } catch(e) { console.error(e); battleState.busy = false; }
         };
 
+        const triggerAuto = () => {
+            const skills = battleState.player.skills;
+            for(let i = skills.length - 1; i >= 0; i--) {
+                if(battleState.player.mp >= SKILLS[skills[i]].mp) { doPlayerTurn(skills[i]); return; }
+            }
+            doPlayerTurn('melee');
+        };
+
+        const toggleAuto = () => {
+            if(state.user.lvl < 2) return alert("Auto libera no Nível 2!");
+            battleState.auto = !battleState.auto; updateBattleControls();
+            if(battleState.auto && !battleState.busy) triggerAuto();
+        };
+        const toggleSpeed = () => {
+            if(state.user.lvl < 5) return alert("3x libera no Nível 5!");
+            battleState.speed = battleState.speed === 1 ? 3 : 1; updateBattleControls();
+        };
+        const updateBattleControls = () => {
+            const btnA = document.getElementById('btn-auto');
+            const btnS = document.getElementById('btn-speed');
+            btnA.className = `w-10 h-10 rounded-full border border-white/20 text-xs font-bold text-white flex items-center justify-center transition-all ${battleState.auto ? 'bg-green-600 opacity-100' : 'bg-slate-900/80 opacity-50'}`;
+            btnS.className = `w-10 h-10 rounded-full border border-white/20 text-xs font-bold text-white flex items-center justify-center transition-all ${battleState.speed > 1 ? 'bg-yellow-600 opacity-100' : 'bg-slate-900/80 opacity-50'}`;
+            btnS.innerText = battleState.speed + 'x';
+        };
+
         const executeAction = async (att, def, skKey, isPlayer) => {
             const skill = SKILLS[skKey];
+            const spd = battleState.speed;
             document.getElementById('combat-log').innerText = `${att.name} usou ${skill.n}!`;
             const attackerEl = document.getElementById(isPlayer ? 'player-sprite-container' : 'enemy-sprite-container');
             const defenderEl = document.getElementById(isPlayer ? 'enemy-sprite-container' : 'player-sprite-container');
@@ -745,30 +849,37 @@
             if(skill.type === 'phys') {
                 wrapperAtt.classList.add(isPlayer ? 'anim-melee-player' : 'anim-melee-enemy');
                 attackerEl.classList.add('anim-spin-atk');
-                await sleep(500);
+                await sleep(500 / spd);
                 wrapperAtt.classList.remove(isPlayer ? 'anim-melee-player' : 'anim-melee-enemy');
                 attackerEl.classList.remove('anim-spin-atk');
             } else {
                 attackerEl.classList.add('anim-cast');
-                await sleep(500);
+                await sleep(500 / spd);
                 if(skill.type.endsWith('_sup')) await spawnUltimateVFX(skill.type, isPlayer);
                 else await spawnVFX(skill.type, isPlayer);
                 attackerEl.classList.remove('anim-cast');
             }
 
+            // HIT IMPACT (SPIN ADDED)
             defenderEl.classList.add('anim-hit-recoil');
-            setTimeout(() => defenderEl.classList.remove('anim-hit-recoil'), 400);
+            // Adding Spin animation class
+            defenderEl.querySelector('img').classList.add('anim-hit-spin'); 
+            
+            setTimeout(() => {
+                defenderEl.classList.remove('anim-hit-recoil');
+                defenderEl.querySelector('img').classList.remove('anim-hit-spin');
+            }, 600 / spd);
 
             const raw = att.atk * skill.p;
             const dmg = Math.floor(Math.max(10, raw - (def.def * 0.5)));
             def.curHp = Math.max(0, def.curHp - dmg);
             updateBattleHUD();
             showDmgText(dmg, isPlayer ? 'ent-enemy' : 'ent-player');
-            await sleep(300);
+            await sleep(300 / spd);
         };
 
-        // --- VFX ---
         const spawnVFX = async (type, fromPlayer) => {
+            const spd = battleState.speed;
             const layer = document.getElementById('effect-layer');
             const pPos = { x: 35, y: 60, z: 250 };
             const ePos = { x: -35, y: -100, z: -450 };
@@ -784,8 +895,8 @@
                 const ty = fromPlayer ? -100 : 60; 
                 strike.style.transform = `translateX(${tx}px) translateY(${ty}px) skewX(-5deg)`;
                 layer.appendChild(strike);
-                setTimeout(() => { flash.className = 'hidden'; strike.remove(); }, 300);
-                await sleep(300);
+                setTimeout(() => { flash.className = 'hidden'; strike.remove(); }, 300 / spd);
+                await sleep(300 / spd);
                 return;
             }
 
@@ -802,12 +913,13 @@
             const anim = proj.animate([
                 { transform: `translateX(${start.x}px) translateY(${start.y}px) translateZ(${start.z}px) scale(0.5)` },
                 { transform: `translateX(${end.x}px) translateY(${end.y}px) translateZ(${end.z}px) scale(1)` }
-            ], { duration: 500, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', fill: 'forwards' });
+            ], { duration: 500 / spd, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', fill: 'forwards' });
             await anim.finished;
             proj.remove();
         };
 
         const spawnUltimateVFX = async (type, fromPlayer) => {
+            const spd = battleState.speed;
             const layer = document.getElementById('effect-layer');
             const flash = document.getElementById('screen-flash');
             const pPos = { x: 35, y: 60, z: 250 };
@@ -816,91 +928,57 @@
             const startPos = fromPlayer ? pPos : ePos;
 
             flash.className = 'flash-screen';
-            setTimeout(() => flash.className = 'hidden', 300);
+            setTimeout(() => flash.className = 'hidden', 300 / spd);
 
             if(type.includes('lightning')) {
                 for(let i=0; i<6; i++) {
-                    const strike = document.createElement('div');
-                    strike.className = 'vfx-lightning-strike';
+                    const strike = document.createElement('div'); strike.className = 'vfx-lightning-strike';
                     const offX = (Math.random() - 0.5) * 100;
                     strike.style.transform = `translateX(${targetPos.x + offX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) skewX(-5deg)`;
                     layer.appendChild(strike);
-                    setTimeout(() => strike.remove(), 200);
-                    await sleep(80);
+                    setTimeout(() => strike.remove(), 200 / spd);
+                    await sleep(80 / spd);
                 }
                 return;
             }
             if(type.includes('fire')) {
                 const projectiles = [];
                 for(let i=0; i<8; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'projectile vfx-fireball';
-                    p.style.width = '60px'; p.style.height = '60px';
-                    layer.appendChild(p);
+                    const p = document.createElement('div'); p.className = 'projectile vfx-fireball';
+                    p.style.width = '60px'; p.style.height = '60px'; layer.appendChild(p);
                     const sX = startPos.x + (Math.random() - 0.5) * 100;
                     const eX = targetPos.x + (Math.random() - 0.5) * 80;
-                    const anim = p.animate([
-                        { transform: `translateX(${sX}px) translateY(${startPos.y - 200}px) translateZ(${startPos.z}px) scale(0.5)` },
-                        { transform: `translateX(${eX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(1.2)` }
-                    ], { duration: 400 + Math.random()*200, easing: 'ease-in', fill: 'forwards' });
-                    projectiles.push({el: p, anim: anim});
-                    await sleep(50);
+                    const anim = p.animate([{ transform: `translateX(${sX}px) translateY(${startPos.y - 200}px) translateZ(${startPos.z}px) scale(0.5)` }, { transform: `translateX(${eX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(1.2)` }], { duration: (400 + Math.random()*200)/spd, easing: 'ease-in', fill: 'forwards' });
+                    projectiles.push({el: p, anim: anim}); await sleep(50 / spd);
                 }
                 await Promise.all(projectiles.map(p => p.anim.finished));
-                projectiles.forEach(p => p.el.remove());
-                return;
+                projectiles.forEach(p => p.el.remove()); return;
             }
-             if(type.includes('water')) {
+            if(type.includes('water')) {
                 const projectiles = [];
                 for(let i=0; i<10; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'projectile vfx-waterball';
-                    layer.appendChild(p);
+                    const p = document.createElement('div'); p.className = 'projectile vfx-waterball'; layer.appendChild(p);
                     const eX = targetPos.x + (Math.random() - 0.5) * 120;
-                    const eY = targetPos.y + (Math.random() - 0.5) * 60;
-                    const anim = p.animate([
-                        { transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(0.2)` },
-                        { transform: `translateX(${eX}px) translateY(${eY}px) translateZ(${targetPos.z}px) scale(1)` }
-                    ], { duration: 600, easing: 'cubic-bezier(0,0.5,0.5,1)', fill: 'forwards' });
-                    projectiles.push({el: p, anim: anim});
-                    await sleep(30);
+                    const anim = p.animate([{ transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(0.2)` }, { transform: `translateX(${eX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(1)` }], { duration: 600/spd, easing: 'cubic-bezier(0,0.5,0.5,1)', fill: 'forwards' });
+                    projectiles.push({el: p, anim: anim}); await sleep(30 / spd);
                 }
-                await sleep(500);
-                projectiles.forEach(p => p.el.remove());
-                return;
+                await sleep(500/spd); projectiles.forEach(p => p.el.remove()); return;
             }
             if(type.includes('earth')) {
                 const projectiles = [];
                 for(let i=0; i<5; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'projectile vfx-rock';
-                    p.style.width = '70px'; p.style.height = '70px';
-                    layer.appendChild(p);
+                    const p = document.createElement('div'); p.className = 'projectile vfx-rock'; p.style.width = '70px'; p.style.height = '70px'; layer.appendChild(p);
                     const sX = startPos.x + (Math.random() - 0.5) * 150;
                     const eX = targetPos.x + (Math.random() - 0.5) * 50;
-                    const anim = p.animate([
-                        { transform: `translateX(${sX}px) translateY(${startPos.y - 150}px) translateZ(${startPos.z}px) scale(0.5) rotate(0deg)` },
-                        { transform: `translateX(${eX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(1.5) rotate(360deg)` }
-                    ], { duration: 700, easing: 'ease-in', fill: 'forwards' });
-                    projectiles.push({el: p, anim: anim});
-                    await sleep(100);
+                    const anim = p.animate([{ transform: `translateX(${sX}px) translateY(${startPos.y - 150}px) translateZ(${startPos.z}px) scale(0.5) rotate(0deg)` }, { transform: `translateX(${eX}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(1.5) rotate(360deg)` }], { duration: 700/spd, easing: 'ease-in', fill: 'forwards' });
+                    projectiles.push({el: p, anim: anim}); await sleep(100/spd);
                 }
-                await sleep(600);
-                projectiles.forEach(p => p.el.remove());
-                return;
+                await sleep(600/spd); projectiles.forEach(p => p.el.remove()); return;
             }
             if(type.includes('void')) {
-                const p = document.createElement('div');
-                p.className = 'projectile vfx-void';
-                p.style.width = '20px'; p.style.height = '20px';
-                layer.appendChild(p);
-                const anim = p.animate([
-                    { transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(1)` },
-                    { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(8)` }
-                ], { duration: 1000, easing: 'ease-in-out', fill: 'forwards' });
-                await anim.finished;
-                p.style.opacity = '0'; await sleep(200); p.remove();
-                return;
+                const p = document.createElement('div'); p.className = 'projectile vfx-void'; p.style.width = '20px'; p.style.height = '20px'; layer.appendChild(p);
+                const anim = p.animate([{ transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(1)` }, { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(10)` }], { duration: 1000/spd, easing: 'ease-in-out', fill: 'forwards' });
+                await anim.finished; p.style.opacity = '0'; await sleep(200/spd); p.remove(); return;
             }
         };
 
@@ -908,14 +986,16 @@
             const el = document.createElement('div');
             el.className = 'dmg-text'; el.innerText = val;
             document.getElementById(targetId).appendChild(el);
-            setTimeout(() => el.remove(), 800);
+            setTimeout(() => el.remove(), 800 / battleState.speed);
         };
 
         const updateBattleHUD = () => {
             const pPct = (battleState.player.curHp / battleState.player.maxHp) * 100;
+            const mPct = (battleState.player.mp / battleState.player.maxMp) * 100;
             const ePct = (battleState.enemy.curHp / battleState.enemy.maxHp) * 100;
             document.getElementById('hud-p-hp-bar').style.width = `${pPct}%`;
             document.getElementById('hud-p-hp-txt').innerText = Math.ceil(pPct) + "%";
+            document.getElementById('hud-p-mp-bar').style.width = `${mPct}%`; 
             document.getElementById('hud-e-hp-bar').style.width = `${ePct}%`;
             document.getElementById('hud-e-hp-txt').innerText = Math.ceil(ePct) + "%";
             document.getElementById('hud-e-name').innerText = battleState.enemy.name;
@@ -932,23 +1012,27 @@
             
             if(win) {
                 let rewards = "";
+                const accXp = 50; 
+                state.user.xp += accXp;
+                if(state.user.xp >= 100 * state.user.lvl) {
+                    state.user.xp = 0; state.user.lvl++;
+                    alert(`LEVEL UP! Nível ${state.user.lvl}`);
+                }
+
                 if(battleState.mode === 'dungeon') {
-                    // Reward varies by floor
-                    const floor = prepState.level; // From prep state, not battle mode string
+                    const floor = prepState.level;
                     const mana = 50 * floor;
-                    const crystals = 5 * floor;
                     state.user.mana += mana;
-                    state.user.crystals += crystals;
-                    rewards = `+${mana} Mana | +${crystals} Cristais`;
+                    rewards = `+${mana} Mana | +${accXp} Account XP`;
                 } else if(battleState.mode === 'tower') {
                     state.towerFloor++;
-                    state.user.crystals += 50;
-                    state.user.mana += 100;
-                    rewards = `Andar ${state.towerFloor-1} Completo! | +50 Cristais`;
+                    state.user.crystals += 50; state.user.mana += 100;
+                    rewards = `Andar ${state.towerFloor-1} Completo!`;
                 } else {
-                    state.user.crystals += 20;
+                    const stage = prepState.level;
+                    if(stage === state.storyProgress) state.storyProgress++;
                     state.user.mana += 50;
-                    rewards = "+50 Mana | +20 Cristais";
+                    rewards = `Fase ${stage} Completa! | +50 Mana`;
                 }
                 save();
                 document.getElementById('outcome-rewards').innerText = rewards;
@@ -958,24 +1042,26 @@
         };
         const closeBattle = () => { changeView('view-home'); updateHeader(); };
 
+        const useXpPotion = () => {
+            const mon = state.inventory[selectedDetailIdx];
+            if(state.user.potions < 1) return alert("Sem poções de XP!");
+            state.user.potions--;
+            mon.lvl++;
+            save();
+            alert(`${mon.name} subiu para o nível ${mon.lvl}!`);
+            openDetail(selectedDetailIdx);
+        };
+
         const renderMonsterBox = () => {
             const grid = document.getElementById('roster-grid');
             grid.innerHTML = '';
             document.getElementById('mon-count').innerText = state.inventory.length;
-
             state.inventory.forEach((mon, idx) => {
                 const slot = document.createElement('div');
                 const isLeader = idx === state.leaderIdx;
                 slot.className = `sw-slot aspect-square cursor-pointer flex items-center justify-center ${isLeader ? 'selected' : ''}`;
                 const elColor = {fire:'bg-fire', water:'bg-water', lightning:'bg-lightning', earth:'bg-earth', nature:'bg-nature', void:'bg-void'}[mon.element] || 'bg-slate-500';
-
-                slot.innerHTML = `
-                    <div class="elem-badge ${elColor}"></div>
-                    <img src="${mon.img}" class="w-[90%] h-[90%] object-contain filter drop-shadow-lg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-                    <span style="display:none;font-size:3rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${mon.emoji}</span>
-                    <div class="star-row">${'<span class="star-icon">★</span>'.repeat(mon.stars)}</div>
-                    <div class="absolute top-1 left-1 text-[8px] font-bold text-white bg-black/50 px-1 rounded">Lv.${mon.lvl}</div>
-                `;
+                slot.innerHTML = `<div class="elem-badge ${elColor}"></div><img src="${mon.img}" class="w-[90%] h-[90%] object-contain filter drop-shadow-lg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:3rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${mon.emoji}</span><div class="star-row">${'<span class="star-icon">★</span>'.repeat(mon.stars)}</div><div class="absolute top-1 left-1 text-[8px] font-bold text-white bg-black/50 px-1 rounded">Lv.${mon.lvl}</div>`;
                 slot.onclick = () => openDetail(idx);
                 grid.appendChild(slot);
             });
@@ -986,7 +1072,6 @@
             selectedDetailIdx = idx;
             const mon = state.inventory[idx];
             document.getElementById('mon-detail-overlay').classList.remove('hidden'); document.getElementById('mon-detail-overlay').classList.add('flex');
-            
             document.getElementById('det-name').innerText = mon.name;
             document.getElementById('det-type').innerText = mon.type;
             document.getElementById('det-lvl').innerText = `Lv. ${mon.lvl}`;
@@ -994,25 +1079,16 @@
             document.getElementById('det-nat-grade').innerText = `NAT ${mon.stars}`;
             document.getElementById('det-element-badge').innerText = {fire:'🔥', water:'🌊', lightning:'⚡', earth:'🗿', nature:'🍃', void:'🌑'}[mon.element];
             document.getElementById('det-emoji').innerText = mon.emoji;
-            
-            const img = document.getElementById('det-img');
-            img.style.display = 'block'; document.getElementById('det-emoji').style.display = 'none';
-            img.src = mon.img;
-            
+            const img = document.getElementById('det-img'); img.style.display = 'block'; document.getElementById('det-emoji').style.display = 'none'; img.src = mon.img;
             const m = 1 + (mon.lvl * 0.1);
             document.getElementById('val-hp').innerText = Math.floor(mon.hp * m);
             document.getElementById('val-atk').innerText = Math.floor(mon.atk * m);
             document.getElementById('val-def').innerText = Math.floor(mon.def * m);
-
+            
             const btn = document.getElementById('btn-equip');
-            if(state.leaderIdx === idx) {
-                btn.innerText = "Líder Atual";
-                btn.className = "w-full py-3 mt-2 bg-green-500 text-white font-black uppercase rounded-xl opacity-90";
-            } else {
-                btn.innerText = "Definir Líder";
-                btn.className = "w-full py-3 mt-2 bg-white text-slate-900 font-black uppercase rounded-xl active:scale-95";
-                btn.onclick = equipLeader;
-            }
+            if(state.leaderIdx === idx) { btn.innerText = "Líder Atual"; btn.className = "w-full py-3 mt-2 bg-green-500 text-white font-black uppercase rounded-xl opacity-90"; }
+            else { btn.innerText = "Definir Líder"; btn.className = "w-full py-3 mt-2 bg-white text-slate-900 font-black uppercase rounded-xl active:scale-95"; btn.onclick = equipLeader; }
+            document.getElementById('btn-xp').innerText = `Usar Potion (${state.user.potions})`;
         };
 
         const closeDetail = () => document.getElementById('mon-detail-overlay').classList.add('hidden');
@@ -1020,24 +1096,18 @@
 
         const renderStory = () => {
             const c = document.getElementById('story-nodes'); c.innerHTML = '';
-            [1,2,3,4,5].forEach(i => {
+            for(let i=1; i<=5; i++) { 
                 const locked = state.storyProgress < i;
                 const node = document.createElement('div');
-                node.className = `relative pl-6 ${locked?'opacity-50 grayscale':''}`;
-                node.innerHTML = `
-                    <div class="absolute left-[-5px] top-3 w-3 h-3 rounded-full ${locked?'bg-slate-700':'bg-indigo-500'}"></div>
-                    <button onclick="${locked?'':'openPrep(\'story\','+i+')'}" class="glass-panel w-full p-4 rounded-xl text-left">
-                        <h3 class="text-white font-bold">Capítulo ${i}</h3>
-                        <p class="text-xs text-slate-400">Inimigos nível ${i*3}</p>
-                    </button>`;
+                node.className = `relative pl-6 transition-all ${locked?'opacity-50 grayscale pointer-events-none':''}`;
+                node.innerHTML = `<div class="absolute left-[-5px] top-3 w-3 h-3 rounded-full ${locked?'bg-slate-700':'bg-indigo-500'}"></div><button onclick="openPrep('story',${i})" class="glass-panel w-full p-4 rounded-xl text-left"><h3 class="text-white font-bold">Capítulo ${i}</h3><p class="text-xs text-slate-400">Inimigos nível ${i*3}</p></button>`;
                 c.appendChild(node);
-            });
+            }
         };
 
         const doSummon = async () => {
             if(state.user.tickets < 1) return alert("Sem bilhetes! Compre na Loja.");
             state.user.tickets -= 1; updateSummonUI();
-            
             const box = document.getElementById('summon-box');
             const flash = document.getElementById('summon-flash');
             flash.style.transform = 'scale(20)'; flash.style.opacity = '1';
