@@ -356,20 +356,47 @@
                     <div class="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center text-2xl">🛒</div>
                     <div class="flex-1">
                         <h4 class="text-white font-bold uppercase">Loja</h4>
-                        <p class="text-amber-200 text-xs">Equipamentos e Recursos</p>
+                        <p class="text-amber-200 text-xs">Recursos e Tickets</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div onclick="changeView('view-collection')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center">
-                        <div class="text-2xl mb-2">🎴</div>
-                        <h4 class="text-white font-bold uppercase text-xs">Monstros</h4>
+                <div class="grid grid-cols-3 gap-2">
+                    <div onclick="changeView('view-collection')" class="glass-panel p-3 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center">
+                        <div class="text-xl mb-1">🎴</div>
+                        <h4 class="text-white font-bold uppercase text-[10px]">Monstros</h4>
                     </div>
-                    <div onclick="changeView('view-summon')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center">
-                        <div class="text-2xl mb-2">📦</div>
-                        <h4 class="text-white font-bold uppercase text-xs">Summon</h4>
+                    <div onclick="changeView('view-summon')" class="glass-panel p-3 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center">
+                        <div class="text-xl mb-1">📦</div>
+                        <h4 class="text-white font-bold uppercase text-[10px]">Summon</h4>
+                    </div>
+                    <!-- NEW CHEST BUTTON -->
+                    <div onclick="changeView('view-inventory')" class="glass-panel p-3 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center border-indigo-500/30 bg-indigo-900/10">
+                        <div class="text-xl mb-1">💼</div>
+                        <h4 class="text-white font-bold uppercase text-[10px]">Baú</h4>
                     </div>
                 </div>
+            </div>
+        </main>
+
+        <!-- INVENTORY (CHEST) VIEW -->
+        <main id="view-inventory" class="flex-1 hidden-view bg-slate-950 flex flex-col p-4">
+            <div class="flex items-center justify-between mb-4">
+                <button onclick="changeView('view-home')" class="text-white font-bold text-xs bg-slate-800 px-3 py-2 rounded-lg">← Voltar</button>
+                <span class="text-white font-bold uppercase text-xs">Equipamentos</span>
+            </div>
+            
+            <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
+                <button onclick="filterInventory('all')" id="tab-all" class="inv-tab px-3 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-bold">Todos</button>
+                <button onclick="filterInventory('weapon')" id="tab-weapon" class="inv-tab px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-[10px] font-bold">Armas</button>
+                <button onclick="filterInventory('armor')" id="tab-armor" class="inv-tab px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-[10px] font-bold">Armaduras</button>
+                <button onclick="filterInventory('acc')" id="tab-acc" class="inv-tab px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-[10px] font-bold">Acessórios</button>
+            </div>
+
+            <div id="inventory-grid" class="grid grid-cols-5 gap-2 overflow-y-auto pb-20 content-start"></div>
+            
+            <div id="inv-empty-msg" class="hidden flex-col items-center justify-center flex-1 opacity-50">
+                <div class="text-4xl mb-2">🕸️</div>
+                <p class="text-white text-xs">Baú vazio</p>
             </div>
         </main>
 
@@ -420,6 +447,10 @@
         <main id="view-dungeon" class="flex-1 hidden-view bg-slate-950 p-6 flex flex-col">
             <button onclick="changeView('view-home')" class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Voltar</button>
             <h2 class="text-3xl font-black text-white uppercase italic mb-6">Masmorra</h2>
+            <div class="glass-panel p-3 mb-4 rounded-xl flex items-center gap-3 border-indigo-500/20">
+                <div class="text-2xl">ℹ️</div>
+                <p class="text-[10px] text-slate-300">Andares mais altos aumentam a chance de obter equipamentos <span class="text-purple-400 font-bold">Épicos</span> e <span class="text-yellow-400 font-bold">Lendários</span>.</p>
+            </div>
             <div class="scroll-container flex-1 overflow-y-auto space-y-3 pr-2" id="dungeon-list"></div>
         </main>
 
@@ -440,15 +471,7 @@
             <button onclick="changeView('view-home')" class="mb-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max">← Voltar</button>
             <h2 class="text-3xl font-black text-white uppercase italic mb-8">Loja</h2>
             <div class="scroll-container flex-1 space-y-3 overflow-y-auto">
-                <!-- Forja de Equipamentos -->
-                <h4 class="text-white font-bold text-sm uppercase mt-2 text-indigo-400">Forja de Equipamentos</h4>
-                <div class="glass-panel p-4 rounded-3xl flex flex-col space-y-2 border border-indigo-500/30">
-                    <div class="flex justify-between items-center">
-                         <div class="flex items-center space-x-3"><div class="text-2xl">🔨</div><div><h3 class="text-white font-bold">Forjar Equipamento</h3><p class="text-[9px] text-slate-400">Aleatório (Comum-Lendário)</p></div></div>
-                    </div>
-                    <button onclick="buyShopItem('forge_eq')" class="w-full bg-indigo-600 px-4 py-2 rounded-xl text-white font-bold text-xs mt-2">1000 💧 Forjar</button>
-                </div>
-
+                
                 <h4 class="text-white font-bold text-sm uppercase mt-4">Invocações</h4>
                 <div class="glass-panel p-4 rounded-3xl flex items-center justify-between">
                     <div class="flex items-center space-x-3"><div class="text-2xl">📜</div><div><h3 class="text-white font-bold">Bilhete Comum</h3><p class="text-[9px] text-slate-400">1-3 Estrelas</p></div></div>
@@ -525,28 +548,35 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Upgrade Modal -->
-            <div id="eq-modal" class="absolute inset-0 z-[60] bg-slate-950/95 hidden flex-col items-center justify-center p-6">
-                <div class="glass-panel w-full max-w-sm p-6 rounded-3xl flex flex-col items-center relative">
-                    <button onclick="document.getElementById('eq-modal').classList.add('hidden')" class="absolute top-4 right-4 text-white">✕</button>
-                    <h3 id="eq-modal-title" class="text-xl font-bold text-white mb-2">Espada Comum</h3>
-                    <div id="eq-modal-level" class="text-xs font-bold px-2 py-1 bg-black rounded mb-4">+0</div>
-                    
-                    <div class="w-full space-y-2 mb-6 text-sm">
-                        <div class="flex justify-between"><span class="text-slate-400">ATK</span><span id="eq-stat-atk" class="text-white font-mono">0</span></div>
-                        <div class="flex justify-between"><span class="text-slate-400">DEF</span><span id="eq-stat-def" class="text-white font-mono">0</span></div>
-                        <div class="flex justify-between"><span class="text-slate-400">CRIT</span><span id="eq-stat-crit" class="text-white font-mono">0%</span></div>
-                        <div class="flex justify-between"><span class="text-slate-400">CDMG</span><span id="eq-stat-cdmg" class="text-white font-mono">0%</span></div>
-                    </div>
-
-                    <button id="btn-upgrade" onclick="performUpgrade()" class="w-full py-3 bg-green-600 rounded-xl text-white font-bold mb-2 disabled:opacity-50 disabled:grayscale">
-                        Upgrade (<span id="upg-cost">100</span> 💧)
-                    </button>
-                    <p id="upg-chance" class="text-[10px] text-slate-400 text-center">Chance: 100%</p>
-                </div>
-            </div>
+            
         </main>
+
+        <!-- UPGRADE MODAL (MOVED TO BODY ROOT TO SHARE) -->
+        <div id="eq-modal" class="absolute inset-0 z-[60] bg-slate-950/95 hidden flex-col items-center justify-center p-6">
+            <div class="glass-panel w-full max-w-sm p-6 rounded-3xl flex flex-col items-center relative">
+                <button onclick="document.getElementById('eq-modal').classList.add('hidden')" class="absolute top-4 right-4 text-white">✕</button>
+                <h3 id="eq-modal-title" class="text-xl font-bold text-white mb-2">Espada Comum</h3>
+                <div id="eq-modal-level" class="text-xs font-bold px-2 py-1 bg-black rounded mb-4">+0</div>
+                
+                <div class="w-full space-y-2 mb-6 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-400">ATK</span><span id="eq-stat-atk" class="text-white font-mono">0</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">DEF</span><span id="eq-stat-def" class="text-white font-mono">0</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">CRIT</span><span id="eq-stat-crit" class="text-white font-mono">0%</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">CDMG</span><span id="eq-stat-cdmg" class="text-white font-mono">0%</span></div>
+                </div>
+
+                <div class="w-full flex gap-2">
+                    <button id="btn-sell" onclick="sellEquipment()" class="flex-1 py-3 bg-red-900/50 border border-red-500 rounded-xl text-red-200 font-bold mb-2 text-xs">
+                        Vender (<span id="sell-price">100</span> 💧)
+                    </button>
+                    <button id="btn-upgrade" onclick="performUpgrade()" class="flex-[2] py-3 bg-green-600 rounded-xl text-white font-bold mb-2 disabled:opacity-50 disabled:grayscale text-xs">
+                        Melhorar (<span id="upg-cost">100</span> 💧)
+                    </button>
+                </div>
+                <p id="upg-chance" class="text-[10px] text-slate-400 text-center">Chance: 100%</p>
+                <p id="eq-equipped-by" class="text-[10px] text-indigo-400 font-bold mt-2 hidden">Equipado em: Monster</p>
+            </div>
+        </div>
 
         <!-- STORY -->
         <main id="view-story" class="scroll-container flex-1 overflow-y-auto hidden-view bg-slate-950 p-6 relative">
@@ -657,7 +687,6 @@
             { id: 'bat', name: 'Bat', type: 'Cave Bat', element: 'void', stars: 1, hp: 500, atk: 90, def: 20, emoji: '🦇', img: '', skills: ['melee'] }
         ];
 
-        // ADDED MP COSTS
         const SKILLS = {
             'melee': { n: 'Ataque', p: 1.0, icon: '⚔️', type: 'phys', mp: 0 },
             'bolt': { n: 'Raio', p: 1.5, icon: '⚡', type: 'lightning', mp: 20 },
@@ -692,6 +721,7 @@
         let battleState = { active: false, busy: false, mode: 'dungeon', auto: false, speed: 1 };
         let prepState = { mode: '', level: 1, selectedMonIdx: 0 };
         let currentEqId = null; // for modal
+        let currentInvFilter = 'all';
 
         // --- TOAST SYSTEM ---
         const showToast = (message, type = 'success') => {
@@ -715,19 +745,13 @@
 
         // --- CORE ---
         const init = () => {
-            const saved = localStorage.getItem('paperwar_v12');
+            const saved = localStorage.getItem('paperwar_v13');
             if(saved) {
                 state = JSON.parse(saved);
                 if(!state.equipment) state.equipment = [];
-                // Migration checks
+                // Migration
                 if(state.user.potions === undefined) state.user.potions = 0;
                 if(state.user.lvl === undefined) state.user.lvl = 1;
-                if(state.user.firstClear === undefined) state.user.firstClear = {};
-                if(state.user.tickets_common === undefined) {
-                    state.user.tickets_common = state.user.tickets || 0;
-                    state.user.tickets_epic = 0;
-                    delete state.user.tickets;
-                }
                 state.inventory.forEach(m => {
                     const db = MONSTERS_DB.find(x => x.id === m.id);
                     if(db) { 
@@ -745,7 +769,7 @@
             if(state.user.name) { document.getElementById('login-name').value = state.user.name; handleLogin(); }
             updateHeader();
         };
-        const save = () => localStorage.setItem('paperwar_v12', JSON.stringify(state));
+        const save = () => localStorage.setItem('paperwar_v13', JSON.stringify(state));
 
         const handleLogin = () => {
             const val = document.getElementById('login-name').value.trim();
@@ -758,10 +782,7 @@
 
         const changeView = (id) => {
             const target = document.getElementById(id);
-            if (!target) {
-                console.error(`Tentativa de navegar para vista inexistente: ${id}`);
-                return;
-            }
+            if (!target) return;
 
             document.querySelectorAll('main').forEach(el => el.classList.add('hidden-view'));
             target.classList.remove('hidden-view');
@@ -780,6 +801,7 @@
             if(id === 'view-summon') updateSummonUI();
             if(id === 'view-shop') updateShopUI();
             if(id === 'view-dungeon') renderDungeonFloors();
+            if(id === 'view-inventory') { currentInvFilter='all'; renderInventory(); }
             if(id === 'view-tower') document.getElementById('tower-floor-display').innerText = state.towerFloor;
         };
 
@@ -794,7 +816,7 @@
             document.getElementById('header-xp-bar').style.width = `${pct}%`;
         };
 
-        // --- SHOP & EQUIPMENT ---
+        // --- SHOP & EQUIPMENT LOGIC ---
         const updateShopUI = () => {
             document.getElementById('shop-crystals').innerText = state.user.crystals;
             document.getElementById('shop-mana').innerText = state.user.mana;
@@ -804,23 +826,36 @@
             if(item === 'ticket_epic') { if(state.user.crystals < 300) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 300; state.user.tickets_epic++; }
             if(item === 'energy') { if(state.user.crystals < 50) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 50; state.user.energy+=50; }
             if(item === 'xp_pot') { if(state.user.mana < 500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 500; state.user.potions++; }
-            if(item === 'forge_eq') { 
-                if(state.user.mana < 1000) return showToast("Mana insuficiente!", "error"); 
-                state.user.mana -= 1000; 
-                createEquipment(); 
-            }
+            
             save(); updateShopUI(); updateHeader(); showToast("Item adquirido!");
         };
 
-        const createEquipment = () => {
+        const createEquipment = (floorLevel = 1) => {
             const types = ['weapon', 'armor', 'acc'];
             const type = types[Math.floor(Math.random() * types.length)];
             
+            // Logic for Rarity based on Floor Level (Dungeon)
+            // Floors: 1-12
             let rarity = 'common';
             const r = Math.random();
-            if(r < 0.6) rarity = 'common';
-            else if(r < 0.9) rarity = 'rare';
-            else if(r < 0.98) rarity = 'epic';
+            
+            let chanceCommon = 0.8;
+            let chanceRare = 0.99;
+            let chanceEpic = 1.0;
+            
+            if (floorLevel <= 3) { // 1-3: Mostly common
+                chanceCommon = 0.80; chanceRare = 0.99;
+            } else if (floorLevel <= 6) { // 4-6: Better
+                chanceCommon = 0.50; chanceRare = 0.90; chanceEpic = 0.99;
+            } else if (floorLevel <= 9) { // 7-9: Good
+                chanceCommon = 0.30; chanceRare = 0.80; chanceEpic = 0.95;
+            } else { // 10-12: High tier
+                chanceCommon = 0.10; chanceRare = 0.50; chanceEpic = 0.85;
+            }
+
+            if(r < chanceCommon) rarity = 'common';
+            else if(r < chanceRare) rarity = 'rare';
+            else if(r < chanceEpic) rarity = 'epic';
             else rarity = 'legendary';
 
             const base = EQ_RARITY[rarity];
@@ -832,12 +867,12 @@
                 stats: { atk: 0, def: 0, crit: 0, cdmg: 0 }
             };
 
-            // Stat Generation Logic
+            // Stat Generation
             if(type === 'weapon') eq.stats.atk = Math.floor(10 * base.mult);
             if(type === 'armor') { eq.stats.def = Math.floor(5 * base.mult); eq.stats.hp = Math.floor(50 * base.mult); }
             if(type === 'acc') { eq.stats.crit = Math.floor(2 * base.mult); eq.stats.cdmg = Math.floor(5 * base.mult); }
 
-            // Random Substats based on rarity
+            // Random Substats
             const subStatCount = rarity === 'legendary' ? 3 : (rarity === 'epic' ? 2 : (rarity === 'rare' ? 1 : 0));
             for(let i=0; i<subStatCount; i++) {
                 const sub = Math.random();
@@ -847,8 +882,6 @@
                 else eq.stats.cdmg = (eq.stats.cdmg || 0) + 2;
             }
 
-            state.equipment.push(eq);
-            showToast(`Forjado: ${type.toUpperCase()} ${base.name}!`, 'success');
             return eq;
         };
 
@@ -861,20 +894,25 @@
                 currentEqId = equippedId;
                 renderUpgradeModal();
             } else {
-                // Equip logic (Simple: Auto equip first available or just create one for demo if empty?)
-                // For this implementation, let's find the first unequippped item of type
-                const item = state.equipment.find(e => e.type === slot && !isEquipped(e.id));
-                if(item) {
-                    mon.equipped[slot] = item.id;
+                // Equip Logic: Find best available or just list
+                const items = state.equipment.filter(e => e.type === slot && !isEquipped(e.id));
+                if(items.length > 0) {
+                    // Sort by rarity/stats ideally, but just take first for now
+                    mon.equipped[slot] = items[0].id;
                     save(); openDetail(selectedDetailIdx); showToast("Equipado!");
                 } else {
-                    showToast("Nenhum item disponível. Use a Forja na Loja!", "info");
+                    showToast("Nenhum item disponível no Baú!", "info");
                 }
             }
         };
 
         const isEquipped = (id) => {
             return state.inventory.some(m => m.equipped.weapon === id || m.equipped.armor === id || m.equipped.acc === id);
+        };
+        
+        const getEquipperName = (id) => {
+             const mon = state.inventory.find(m => m.equipped.weapon === id || m.equipped.armor === id || m.equipped.acc === id);
+             return mon ? mon.name : null;
         };
 
         const renderUpgradeModal = () => {
@@ -896,12 +934,48 @@
 
             const cost = 100 * (eq.lvl + 1);
             const chance = Math.max(5, 100 - (eq.lvl * 5));
+            const sellPrice = 50 * (eq.lvl + 1) * conf.mult;
             
             const btn = document.getElementById('btn-upgrade');
             document.getElementById('upg-cost').innerText = cost;
+            document.getElementById('sell-price').innerText = Math.floor(sellPrice);
             document.getElementById('upg-chance').innerText = `Sucesso: ${chance}%`;
             
+            const equippedBy = getEquipperName(eq.id);
+            const ownerTxt = document.getElementById('eq-equipped-by');
+            if(equippedBy) {
+                ownerTxt.innerText = `Equipado em: ${equippedBy}`;
+                ownerTxt.classList.remove('hidden');
+                document.getElementById('btn-sell').disabled = true;
+                document.getElementById('btn-sell').classList.add('opacity-50', 'grayscale');
+            } else {
+                ownerTxt.classList.add('hidden');
+                document.getElementById('btn-sell').disabled = false;
+                document.getElementById('btn-sell').classList.remove('opacity-50', 'grayscale');
+            }
+
             btn.onclick = () => performUpgrade(eq, cost, chance);
+        };
+
+        const sellEquipment = () => {
+            const eq = state.equipment.find(e => e.id === currentEqId);
+            if(!eq) return;
+            if(getEquipperName(eq.id)) return showToast("Desequipe antes de vender!", "error");
+            
+            const conf = EQ_RARITY[eq.rarity];
+            const price = Math.floor(50 * (eq.lvl + 1) * conf.mult);
+            
+            state.user.mana += price;
+            state.equipment = state.equipment.filter(e => e.id !== currentEqId);
+            save();
+            
+            document.getElementById('eq-modal').classList.add('hidden');
+            showToast(`Vendido por ${price} Mana`);
+            updateHeader();
+            
+            // Refresh views
+            if(!document.getElementById('view-inventory').classList.contains('hidden-view')) renderInventory();
+            if(!document.getElementById('mon-detail-overlay').classList.contains('hidden')) openDetail(selectedDetailIdx);
         };
 
         const performUpgrade = (eq, cost, chance) => {
@@ -923,7 +997,59 @@
                 document.getElementById('eq-modal').classList.add('animate-shake');
                 setTimeout(() => document.getElementById('eq-modal').classList.remove('animate-shake'), 500);
             }
-            save(); updateShopUI(); renderUpgradeModal(); openDetail(selectedDetailIdx); // Refresh UI
+            save(); updateHeader(); renderUpgradeModal(); 
+            // Refresh views underneath
+             if(!document.getElementById('view-inventory').classList.contains('hidden-view')) renderInventory();
+             if(!document.getElementById('mon-detail-overlay').classList.contains('hidden')) openDetail(selectedDetailIdx);
+        };
+
+        // --- INVENTORY VIEW LOGIC ---
+        const filterInventory = (type) => {
+            currentInvFilter = type;
+            document.querySelectorAll('.inv-tab').forEach(b => {
+                b.classList.remove('bg-indigo-600', 'text-white');
+                b.classList.add('bg-slate-800', 'text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tab-${type}`);
+            activeBtn.classList.remove('bg-slate-800', 'text-slate-400');
+            activeBtn.classList.add('bg-indigo-600', 'text-white');
+            renderInventory();
+        };
+
+        const renderInventory = () => {
+            const grid = document.getElementById('inventory-grid');
+            grid.innerHTML = '';
+            
+            let items = state.equipment;
+            if(currentInvFilter !== 'all') items = items.filter(e => e.type === currentInvFilter);
+            
+            if(items.length === 0) {
+                document.getElementById('inv-empty-msg').classList.remove('hidden');
+                document.getElementById('inv-empty-msg').classList.add('flex');
+            } else {
+                document.getElementById('inv-empty-msg').classList.add('hidden');
+                document.getElementById('inv-empty-msg').classList.remove('flex');
+            }
+
+            items.forEach(eq => {
+                const conf = EQ_RARITY[eq.rarity];
+                const equippedBy = getEquipperName(eq.id);
+                
+                const el = document.createElement('div');
+                el.className = `aspect-square bg-slate-900 rounded-xl border relative cursor-pointer active:scale-95 transition-transform ${conf.color}`;
+                // override text color for border
+                el.style.borderColor = (eq.rarity === 'legendary' ? '#fbbf24' : (eq.rarity === 'epic' ? '#a855f7' : (eq.rarity === 'rare' ? '#3b82f6' : '#94a3b8')));
+
+                const icon = eq.type === 'weapon' ? '⚔️' : (eq.type === 'armor' ? '🛡️' : '💍');
+                
+                el.innerHTML = `
+                    <div class="absolute inset-0 flex items-center justify-center text-2xl">${icon}</div>
+                    <div class="absolute top-1 right-1 text-[9px] font-black bg-black/60 px-1 rounded text-white">+${eq.lvl}</div>
+                    ${equippedBy ? `<div class="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-indigo-600 border border-white flex items-center justify-center text-[8px] font-bold text-white" title="${equippedBy}">E</div>` : ''}
+                `;
+                el.onclick = () => { currentEqId = eq.id; renderUpgradeModal(); };
+                grid.appendChild(el);
+            });
         };
 
         const updateSummonUI = () => {
@@ -957,7 +1083,6 @@
 
         const renderPrepUnit = () => {
             const mon = state.inventory[prepState.selectedMonIdx];
-            // Calculate Total Stats (Base + Equip)
             const stats = calculateStats(mon);
             
             document.getElementById('prep-img').src = mon.img;
@@ -972,11 +1097,10 @@
                 hp: Math.floor(mon.hp * m),
                 atk: Math.floor(mon.atk * m),
                 def: Math.floor(mon.def * m),
-                crit: 10, // Base 10%
-                cdmg: 50 // Base 50%
+                crit: 10,
+                cdmg: 50
             };
 
-            // Add Equipment Stats
             ['weapon', 'armor', 'acc'].forEach(slot => {
                 if(mon.equipped && mon.equipped[slot]) {
                     const eq = state.equipment.find(e => e.id === mon.equipped[slot]);
@@ -1016,7 +1140,7 @@
             updateBattleControls();
             
             const pBase = state.inventory[prepState.selectedMonIdx];
-            const stats = calculateStats(pBase); // Use calculated stats with equipment
+            const stats = calculateStats(pBase);
 
             battleState.player = { 
                 ...pBase, 
@@ -1044,7 +1168,6 @@
             else lvl = lvlArg * 3;
             
             const m = 1 + (lvl * 0.15);
-            // Enemy simple scaling
             battleState.enemy = { 
                 ...template, lvl: lvl, 
                 curHp: Math.floor(template.hp * m), maxHp: Math.floor(template.hp * m), 
@@ -1151,7 +1274,6 @@
             const defenderEl = document.getElementById(isPlayer ? 'enemy-sprite-container' : 'player-sprite-container');
             const wrapperAtt = document.getElementById(isPlayer ? 'ent-player' : 'ent-enemy');
 
-            // Animation
             if(skill.type === 'phys') {
                 wrapperAtt.classList.add(isPlayer ? 'anim-melee-player' : 'anim-melee-enemy');
                 attackerEl.classList.add('anim-spin-atk');
@@ -1174,11 +1296,9 @@
                 defenderEl.querySelector('img').classList.remove('anim-hit-spin');
             }, 600 / spd);
 
-            // DAMAGE CALCULATION
             const raw = att.atk * skill.p;
             let dmg = Math.max(10, raw - (def.def * 0.5));
             
-            // Critical Hit Logic
             let isCrit = false;
             if(att.crit && Math.random() * 100 < att.crit) {
                 isCrit = true;
@@ -1355,29 +1475,36 @@
                 let manaGained = 0;
 
                 if(battleState.mode === 'dungeon') {
-                    // MELHORIA: Masmorra escala melhor (Base 500 + 250 por andar)
                     const floor = prepState.level;
                     manaGained = 500 + (floor * 250); 
                     crystalsGained = 5 + floor;
-                    rewards = `+${manaGained} Mana | +${crystalsGained} 💎`;
+                    
+                    // EQUIPMENT DROP LOGIC
+                    let dropRate = 0.3 + (floor * 0.02); // Base 30% + 2% per floor
+                    if(Math.random() < dropRate) {
+                        const droppedEq = createEquipment(floor);
+                        state.equipment.push(droppedEq);
+                        const rName = EQ_RARITY[droppedEq.rarity].name;
+                        rewards = `DROP: ${rName} ${droppedEq.type === 'weapon' ? 'Arma' : (droppedEq.type === 'armor' ? 'Armadura' : 'Acessório')}!`;
+                    } else {
+                        rewards = `+${manaGained} Mana | +${crystalsGained} 💎`;
+                    }
                 } else if(battleState.mode === 'tower') {
                     state.towerFloor++;
                     crystalsGained = 50 + (state.towerFloor * 10); 
                     manaGained = 500 * state.towerFloor;
                     rewards = `Andar ${state.towerFloor-1} Completo!`;
                 } else {
-                    // MELHORIA: Campanha agora escala recompensa baseado na fase
                     const stage = prepState.level;
                     const stageKey = `stage_${stage}`;
                     if (!state.user.firstClear[stageKey]) {
                         crystalsGained = 100;
-                        manaGained = 1000 * stage; // Recompensa generosa na primeira vez
+                        manaGained = 1000 * stage;
                         state.user.firstClear[stageKey] = true;
                         if(stage === state.storyProgress) state.storyProgress++;
                         rewards = `PRIMEIRA VEZ! +${crystalsGained} 💎 | +${manaGained} Mana`;
                     } else {
                         crystalsGained = 5;
-                        // Antes era fixo 100, agora escala: Fase 1 = 200, Fase 5 = 400
                         manaGained = 150 + (stage * 50); 
                         rewards = `+${crystalsGained} 💎 | +${manaGained} Mana`;
                     }
@@ -1413,11 +1540,10 @@
                 const isLeader = idx === state.leaderIdx;
                 slot.className = `sw-slot aspect-square cursor-pointer flex items-center justify-center ${isLeader ? 'selected' : ''}`;
                 
-                // Visual Distinction for Rarities (Borders)
                 if(!isLeader) {
-                    if(mon.stars >= 5) slot.style.borderColor = '#fbbf24'; // Legendary (Gold)
-                    else if(mon.stars === 4) slot.style.borderColor = '#a855f7'; // Epic (Purple)
-                    else if(mon.stars === 3) slot.style.borderColor = '#3b82f6'; // Rare (Blue)
+                    if(mon.stars >= 5) slot.style.borderColor = '#fbbf24';
+                    else if(mon.stars === 4) slot.style.borderColor = '#a855f7';
+                    else if(mon.stars === 3) slot.style.borderColor = '#3b82f6';
                 }
 
                 const elColor = {fire:'bg-fire', water:'bg-water', lightning:'bg-lightning', earth:'bg-earth', nature:'bg-nature', void:'bg-void'}[mon.element] || 'bg-slate-500';
@@ -1431,7 +1557,7 @@
         const openDetail = (idx) => {
             selectedDetailIdx = idx;
             const mon = state.inventory[idx];
-            if(!mon.equipped) mon.equipped = { weapon: null, armor: null, acc: null }; // Ensure structure
+            if(!mon.equipped) mon.equipped = { weapon: null, armor: null, acc: null };
 
             document.getElementById('mon-detail-overlay').classList.remove('hidden'); document.getElementById('mon-detail-overlay').classList.add('flex');
             document.getElementById('det-name').innerText = mon.name;
@@ -1443,7 +1569,6 @@
             document.getElementById('det-emoji').innerText = mon.emoji;
             const img = document.getElementById('det-img'); img.style.display = 'block'; document.getElementById('det-emoji').style.display = 'none'; img.src = mon.img;
             
-            // Calculate total stats
             const stats = calculateStats(mon);
             document.getElementById('val-hp').innerText = stats.hp;
             document.getElementById('val-atk').innerText = stats.atk;
@@ -1451,7 +1576,6 @@
             document.getElementById('val-crit').innerText = stats.crit + "%";
             document.getElementById('val-cdmg').innerText = stats.cdmg + "%";
             
-            // Render Equipment Slots Status
             renderEqSlot('weapon', mon.equipped.weapon);
             renderEqSlot('armor', mon.equipped.armor);
             renderEqSlot('acc', mon.equipped.acc);
@@ -1566,7 +1690,7 @@
                 lvl: 1, 
                 exp: 0, 
                 skills: [...base.skills],
-                equipped: { weapon: null, armor: null, acc: null } // Ensure new monsters have slots
+                equipped: { weapon: null, armor: null, acc: null }
             });
             save();
         };
