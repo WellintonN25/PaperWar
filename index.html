@@ -619,7 +619,7 @@
         };
 
         let state = { 
-            user: { name: "", crystals: 200, energy: 100, mana: 0, tickets_common: 0, tickets_epic: 0, lvl: 1, xp: 0, potions: 0, firstClear: {} }, // firstClear obj
+            user: { name: "", crystals: 20000, energy: 100, mana: 0, tickets_common: 0, tickets_epic: 50, lvl: 5, xp: 0, potions: 0, firstClear: {} }, // firstClear obj
             inventory: [], 
             leaderIdx: 0, 
             storyProgress: 1, 
@@ -681,7 +681,7 @@
             if(state.user.name) { document.getElementById('login-name').value = state.user.name; handleLogin(); }
             updateHeader();
         };
-        const save = () => localStorage.setItem('paperwar_v9', JSON.stringify(state));
+        const save = () => localStorage.setItem('paperwar_v10', JSON.stringify(state));
 
         const handleLogin = () => {
             const val = document.getElementById('login-name').value.trim();
@@ -733,11 +733,11 @@
         };
         const buyShopItem = (item) => {
             // Price Balance
-            if(item === 'ticket_common') { if(state.user.mana < 2000) return showToast("Mana insuficiente!", "error"); state.user.mana -= 2000; state.user.tickets_common++; }
-            if(item === 'ticket_epic') { if(state.user.crystals < 300) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 300; state.user.tickets_epic++; }
+            if(item === 'ticket_common') { if(state.user.mana < 1000) return showToast("Mana insuficiente!", "error"); state.user.mana -= 2000; state.user.tickets_common++; }
+            if(item === 'ticket_epic') { if(state.user.crystals < 200) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 300; state.user.tickets_epic++; }
             if(item === 'energy') { if(state.user.crystals < 50) return showToast("Cristais insuficientes!", "error"); state.user.crystals -= 50; state.user.energy+=50; }
-            if(item === 'xp_pot') { if(state.user.mana < 500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 500; state.user.potions++; }
-            if(item === 'xp_pot10') { if(state.user.mana < 4500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 4500; state.user.potions+=10; }
+            if(item === 'xp_pot') { if(state.user.mana < 100) return showToast("Mana insuficiente!", "error"); state.user.mana -= 500; state.user.potions++; }
+            if(item === 'xp_pot10') { if(state.user.mana < 1500) return showToast("Mana insuficiente!", "error"); state.user.mana -= 4500; state.user.potions+=10; }
             save(); updateShopUI(); updateHeader(); showToast("Item comprado com sucesso!");
         };
         const updateSummonUI = () => {
