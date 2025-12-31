@@ -24,6 +24,7 @@
           def: 80,
           emoji: "⚡",
           img: "src/Thyron.png",
+          imgBack: "src/backThyron.png",
           skills: ["melee", "bolt", "sup_lightning"],
         },
         {
@@ -63,6 +64,7 @@
           def: 100,
           emoji: "🌑",
           img: "src/Kaelthar.png",
+          imgBack: "src/backKaelthar.png",
           skills: ["melee", "void_slash", "sup_void"],
         },
         {
@@ -76,6 +78,7 @@
           def: 180,
           emoji: "🗿",
           img: "src/Dhorak.png",
+          imgBack: "src/backDhorak.png",
           skills: ["melee", "rock_throw", "sup_earth"],
         },
         {
@@ -557,6 +560,76 @@
           type: "earth_shatter",
           mp: 40,
         },
+        sup_silver_rain: {
+          n: "Chuva de Prata",
+          p: 3.5,
+          icon: "✨",
+          type: "sup_silver_rain",
+          mp: 60,
+        },
+        sup_black_lotus: {
+          n: "Lótus Negra",
+          p: 3.8,
+          icon: "🪷",
+          type: "sup_black_lotus",
+          mp: 70,
+        },
+        sup_dragon_breath: {
+          n: "Hálito Dragão",
+          p: 4.0,
+          icon: "🐲",
+          type: "sup_dragon_breath",
+          mp: 80,
+        },
+        sup_ether_chains: {
+          n: "Cadeias Éter",
+          p: 3.2,
+          icon: "⛓️",
+          type: "sup_ether_chains",
+          mp: 55,
+        },
+        sup_gravity_pulse: {
+          n: "Pulso Gravitacional",
+          p: 3.6,
+          icon: "🧬",
+          type: "sup_gravity_pulse",
+          mp: 65,
+        },
+        sup_ice_butterflies: {
+          n: "Butterflies Ice",
+          p: 3.4,
+          icon: "🦋",
+          type: "sup_ice_butterflies",
+          mp: 60,
+        },
+        sup_forest_fury: {
+          n: "Fúria Florestal",
+          p: 3.7,
+          icon: "🌲",
+          type: "sup_forest_fury",
+          mp: 65,
+        },
+        sup_celestial_judgement: {
+          n: "Julgamento",
+          p: 4.5,
+          icon: "⚔️",
+          type: "sup_celestial_judgement",
+          mp: 90,
+        },
+        sup_plasma_vortex: {
+          n: "Vórtice Plasma",
+          p: 3.9,
+          icon: "🌀",
+          type: "sup_plasma_vortex",
+          mp: 75,
+        },
+        sup_dark_comet: {
+          n: "Cometa Sombrio",
+          p: 4.2,
+          icon: "☄️",
+          type: "sup_dark_comet",
+          mp: 85,
+        },
       };
       
       const MAP_DATA = [
@@ -686,6 +759,7 @@
           const db = MONSTERS_DB.find((x) => x.id === m.id);
           if (db) {
             if (!m.img) m.img = db.img;
+            if (!m.imgBack) m.imgBack = db.imgBack || "";
             if (!m.emoji) m.emoji = db.emoji;
             m.skills = db.skills;
             m.stars = db.stars;
@@ -1839,7 +1913,8 @@
 
       const renderBattleScene = () => {
         const pl = document.getElementById("player-sprite-container");
-        pl.innerHTML = `<img src="${battleState.player.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem;filter:drop-shadow(0 10px 10px rgba(0,0,0,0.5))">${battleState.player.emoji}</span>`;
+        const sprite = battleState.player.imgBack || battleState.player.img;
+        pl.innerHTML = `<img src="${sprite}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem;filter:drop-shadow(0 10px 10px rgba(0,0,0,0.5))">${battleState.player.emoji}</span>`;
         renderSkillGrid();
       };
 
@@ -2738,6 +2813,203 @@
           p.style.opacity = 0;
           await sleep(200 / spd);
           p.remove();
+          return;
+        }
+
+        // NEW SUPREME SKILLS
+        if (type === "sup_silver_rain") {
+          for (let i = 0; i < 15; i++) {
+            const beam = document.createElement("div");
+            beam.style.position = "absolute";
+            beam.style.width = "4px";
+            beam.style.height = "100px";
+            beam.style.background = "linear-gradient(to bottom, transparent, #fff, #fef08a)";
+            beam.style.boxShadow = "0 0 10px #fff";
+            layer.appendChild(beam);
+            const x = targetPos.x + (Math.random() - 0.5) * 150;
+            const z = targetPos.z + (Math.random() - 0.5) * 100;
+            beam.animate([
+              { transform: `translateX(${x}px) translateY(${targetPos.y - 1000}px) translateZ(${z}px) scaleY(2)`, opacity: 0 },
+              { transform: `translateX(${x}px) translateY(${targetPos.y}px) translateZ(${z}px) scaleY(1)`, opacity: 1, offset: 0.8 },
+              { transform: `translateX(${x}px) translateY(${targetPos.y}px) translateZ(${z}px) scaleY(0)`, opacity: 0 }
+            ], { duration: 400 / spd, easing: "ease-in" }).finished.then(() => beam.remove());
+            await sleep(50 / spd);
+          }
+          return;
+        }
+
+        if (type === "sup_black_lotus") {
+          const flower = document.createElement("div");
+          flower.style.position = "absolute";
+          flower.innerText = "🪷";
+          flower.style.fontSize = "8rem";
+          flower.style.filter = "drop-shadow(0 0 20px #a855f7) hue-rotate(280deg)";
+          layer.appendChild(flower);
+          await flower.animate([
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0) rotate(0deg)`, opacity: 0 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(2) rotate(360deg)`, opacity: 1, offset: 0.5 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(4)`, opacity: 0 }
+          ], { duration: 1200 / spd, easing: "ease-out" }).finished;
+          flower.remove();
+          return;
+        }
+
+        if (type === "sup_dragon_breath") {
+          for (let i = 0; i < 20; i++) {
+            const fire = document.createElement("div");
+            fire.className = "vfx-fireball";
+            fire.style.width = "40px";
+            fire.style.height = "40px";
+            fire.style.filter = `hue-rotate(${Math.random() * 60 - 30}deg) blur(5px)`;
+            layer.appendChild(fire);
+            fire.animate([
+              { transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(0.5)`, opacity: 1 },
+              { transform: `translateX(${targetPos.x + (Math.random()-0.5)*150}px) translateY(${targetPos.y + (Math.random()-0.5)*100}px) translateZ(${targetPos.z}px) scale(3)`, opacity: 0 }
+            ], { duration: 800 / spd, easing: "ease-out" }).finished.then(() => fire.remove());
+            await sleep(20 / spd);
+          }
+          return;
+        }
+
+        if (type === "sup_ether_chains") {
+          for (let i = 0; i < 4; i++) {
+            const chain = document.createElement("div");
+            chain.style.position = "absolute";
+            chain.style.width = "400px";
+            chain.style.height = "2px";
+            chain.style.background = "cyan";
+            chain.style.boxShadow = "0 0 10px blue";
+            layer.appendChild(chain);
+            chain.animate([
+              { transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) rotate(${i * 45}deg) scaleX(0)`, opacity: 0 },
+              { transform: `translateX(${(startPos.x+targetPos.x)/2}px) translateY(${(startPos.y+targetPos.y)/2}px) translateZ(${(startPos.z+targetPos.z)/2}px) rotate(${i * 45}deg) scaleX(1)`, opacity: 1 },
+              { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) rotate(${i * 45}deg) scaleX(0)`, opacity: 0 }
+            ], { duration: 1000 / spd }).finished.then(() => chain.remove());
+            await sleep(100 / spd);
+          }
+          return;
+        }
+
+        if (type === "sup_gravity_pulse") {
+          const app = document.getElementById("app");
+          app.classList.add("anim-shake-crit");
+          const pulse = document.createElement("div");
+          pulse.style.position = "absolute";
+          pulse.style.width = "200px";
+          pulse.style.height = "200px";
+          pulse.style.border = "10px solid #7c3aed";
+          pulse.style.borderRadius = "50%";
+          pulse.style.filter = "blur(10px)";
+          layer.appendChild(pulse);
+          await pulse.animate([
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0)`, opacity: 1 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(5)`, opacity: 0 }
+          ], { duration: 800 / spd }).finished;
+          pulse.remove();
+          app.classList.remove("anim-shake-crit");
+          return;
+        }
+
+        if (type === "sup_ice_butterflies") {
+          for (let i = 0; i < 12; i++) {
+            const b = document.createElement("div");
+            b.innerText = "🦋";
+            b.style.position = "absolute";
+            b.style.fontSize = "2rem";
+            b.style.filter = "hue-rotate(180deg) brightness(2)";
+            layer.appendChild(b);
+            const angle = (i / 12) * Math.PI * 2;
+            b.animate([
+              { transform: `translateX(${startPos.x}px) translateY(${startPos.y}px) translateZ(${startPos.z}px) scale(0)`, opacity: 1 },
+              { transform: `translateX(${targetPos.x + Math.cos(angle)*100}px) translateY(${targetPos.y + Math.sin(angle)*100}px) translateZ(${targetPos.z}px) scale(1.5)`, opacity: 0 }
+            ], { duration: 1000 / spd, easing: "ease-out" }).finished.then(() => b.remove());
+            await sleep(50 / spd);
+          }
+          return;
+        }
+
+        if (type === "sup_forest_fury") {
+          for (let i = 0; i < 8; i++) {
+            const root = document.createElement("div");
+            root.style.position = "absolute";
+            root.style.width = "30px";
+            root.style.height = "150px";
+            root.style.background = "linear-gradient(#422006, #15803d)";
+            root.style.borderRadius = "50% 50% 0 0";
+            layer.appendChild(root);
+            const x = targetPos.x + (Math.random() - 0.5) * 120;
+            const z = targetPos.z + (Math.random() - 0.5) * 60;
+            root.animate([
+              { transform: `translateX(${x}px) translateY(${targetPos.y + 100}px) translateZ(${z}px) scaleY(0)`, opacity: 1 },
+              { transform: `translateX(${x}px) translateY(${targetPos.y - 50}px) translateZ(${z}px) scaleY(1.5)`, opacity: 1, offset: 0.7 },
+              { transform: `translateX(${x}px) translateY(${targetPos.y}px) translateZ(${z}px) scaleY(0)`, opacity: 0 }
+            ], { duration: 800 / spd }).finished.then(() => root.remove());
+            await sleep(80 / spd);
+          }
+          return;
+        }
+
+        if (type === "sup_celestial_judgement") {
+          flash.className = "flash-screen";
+          setTimeout(() => (flash.className = "hidden"), 200 / spd);
+          const sword = document.createElement("div");
+          sword.style.position = "absolute";
+          sword.innerText = "⚔️";
+          sword.style.fontSize = "15rem";
+          sword.style.filter = "drop-shadow(0 0 30px #fff) brightness(2)";
+          layer.appendChild(sword);
+          await sword.animate([
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y - 1000}px) translateZ(${targetPos.z}px) rotate(180deg)`, opacity: 0 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) rotate(180deg)`, opacity: 1, offset: 0.8 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(2) rotate(180deg)`, opacity: 0 }
+          ], { duration: 1000 / spd, easing: "ease-in" }).finished;
+          sword.remove();
+          return;
+        }
+
+        if (type === "sup_plasma_vortex") {
+          const vortex = document.createElement("div");
+          vortex.style.position = "absolute";
+          vortex.style.width = "100px";
+          vortex.style.height = "100px";
+          vortex.style.background = "radial-gradient(circle, #fff, #3b82f6, transparent)";
+          vortex.style.borderRadius = "50%";
+          vortex.style.filter = "blur(10px) contrast(2)";
+          layer.appendChild(vortex);
+          const anim = vortex.animate([
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(1) rotate(0deg)` },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(4) rotate(1080deg)`, opacity: 0 }
+          ], { duration: 1500 / spd });
+          for (let i = 0; i < 10; i++) {
+            const spark = document.createElement("div");
+            spark.className = "vfx-lightning-strike";
+            spark.style.height = "100px";
+            spark.style.width = "2px";
+            layer.appendChild(spark);
+            spark.style.transform = `translateX(${targetPos.x + (Math.random()-0.5)*200}px) translateY(${targetPos.y + (Math.random()-0.5)*100}px) translateZ(${targetPos.z}px)`;
+            setTimeout(() => spark.remove(), 100 / spd);
+            await sleep(100 / spd);
+          }
+          await anim.finished;
+          vortex.remove();
+          return;
+        }
+
+        if (type === "sup_dark_comet") {
+          const comet = document.createElement("div");
+          comet.style.position = "absolute";
+          comet.style.width = "80px";
+          comet.style.height = "80px";
+          comet.style.background = "radial-gradient(circle, #a855f7, #000)";
+          comet.style.borderRadius = "50%";
+          comet.style.boxShadow = "0 0 40px #7e22ce, 0 0 100px #000";
+          layer.appendChild(comet);
+          await comet.animate([
+            { transform: `translateX(${targetPos.x + 400}px) translateY(${targetPos.y - 600}px) translateZ(${targetPos.z - 200}px) scale(0.5)`, opacity: 0 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(2)`, opacity: 1, offset: 0.9 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(5)`, opacity: 0 }
+          ], { duration: 1200 / spd, easing: "ease-in" }).finished;
+          comet.remove();
           return;
         }
       };
