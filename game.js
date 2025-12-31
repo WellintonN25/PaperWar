@@ -6,11 +6,12 @@
           type: "Ancient Dragon",
           element: "fire",
           stars: 5,
-          hp: 2500,
-          atk: 250,
-          def: 150,
+          hp: 4200,
+          atk: 350,
+          def: 250,
           emoji: "🐉",
           img: "src/Vermithrax.png",
+          imgAtk: "src/Vermithrax_atk.webp",
           skills: ["melee", "fire", "sup_fire"],
         },
         {
@@ -19,9 +20,9 @@
           type: "Storm Bringer",
           element: "lightning",
           stars: 5,
-          hp: 1400,
-          atk: 210,
-          def: 80,
+          hp: 3800,
+          atk: 400,
+          def: 200,
           emoji: "⚡",
           img: "src/temp.webp",
           imgBack: "",
@@ -34,11 +35,12 @@
           type: "Ocean Guardian",
           element: "water",
           stars: 5,
-          hp: 1800,
-          atk: 140,
-          def: 120,
+          hp: 4000,
+          atk: 280,
+          def: 300,
           emoji: "🌊",
           img: "src/Neriah.png",
+          imgAtk: "src/Neriah_atk.webp",
           skills: ["melee", "water", "sup_water"],
         },
         {
@@ -47,11 +49,12 @@
           type: "Flame Witch",
           element: "fire",
           stars: 5,
-          hp: 1300,
-          atk: 230,
-          def: 60,
+          hp: 3600,
+          atk: 420,
+          def: 180,
           emoji: "🔥",
           img: "src/Aelyra.png",
+          imgAtk: "src/Aelyra_atk.webp",
           skills: ["melee", "fire", "sup_fire"],
         },
         {
@@ -60,9 +63,9 @@
           type: "Shadow Knight",
           element: "void",
           stars: 4,
-          hp: 1600,
-          atk: 180,
-          def: 100,
+          hp: 3200,
+          atk: 320,
+          def: 220,
           emoji: "🌑",
           img: "src/Kaelthar.png",
           imgBack: "src/backKaelthar.png",
@@ -75,9 +78,9 @@
           type: "Earth Golem",
           element: "earth",
           stars: 4,
-          hp: 2200,
-          atk: 110,
-          def: 180,
+          hp: 4000,
+          atk: 180,
+          def: 400,
           emoji: "🗿",
           img: "src/Dhorak.png",
           imgBack: "src/backDhorak.png",
@@ -90,9 +93,9 @@
           type: "Nature Spirit",
           element: "nature",
           stars: 3,
-          hp: 1200,
-          atk: 150,
-          def: 90,
+          hp: 2000,
+          atk: 180,
+          def: 140,
           emoji: "🍃",
           img: "src/Vireya.png",
           skills: ["melee", "leaf_cutter"],
@@ -103,9 +106,9 @@
           type: "Fire Warrior",
           element: "fire",
           stars: 3,
-          hp: 1100,
-          atk: 160,
-          def: 70,
+          hp: 1900,
+          atk: 200,
+          def: 120,
           emoji: "🔥",
           img: "src/Brann.png",
           skills: ["melee", "fire"],
@@ -116,9 +119,9 @@
           type: "Frost Mage",
           element: "water",
           stars: 3,
-          hp: 1050,
-          atk: 170,
-          def: 60,
+          hp: 1850,
+          atk: 210,
+          def: 110,
           emoji: "❄️",
           img: "src/Lysara.png",
           skills: ["melee", "water"],
@@ -129,9 +132,9 @@
           type: "Light Fairy",
           element: "lightning",
           stars: 2,
-          hp: 900,
-          atk: 190,
-          def: 50,
+          hp: 1500,
+          atk: 120,
+          def: 80,
           emoji: "✨",
           img: "src/Lumem.png",
           skills: ["melee", "bolt"],
@@ -142,9 +145,9 @@
           type: "Orc Grunt",
           element: "earth",
           stars: 2,
-          hp: 1200,
-          atk: 130,
-          def: 60,
+          hp: 1600,
+          atk: 110,
+          def: 90,
           emoji: "👹",
           img: "src/Ravok.png",
           skills: ["melee", "rock_throw"],
@@ -155,9 +158,9 @@
           type: "Blob",
           element: "water",
           stars: 1,
-          hp: 600,
+          hp: 1000,
           atk: 80,
-          def: 40,
+          def: 50,
           emoji: "💧",
           img: "",
           skills: ["melee"],
@@ -168,9 +171,9 @@
           type: "Cave Bat",
           element: "void",
           stars: 1,
-          hp: 500,
+          hp: 800,
           atk: 90,
-          def: 20,
+          def: 30,
           emoji: "🦇",
           img: "",
           skills: ["melee"],
@@ -183,11 +186,12 @@
           type: "Fire Warlord",
           element: "fire",
           stars: 5,
-          hp: 3000,
-          atk: 350,
-          def: 200,
+          hp: 4300,
+          atk: 380,
+          def: 220,
           emoji: "👹",
           img: "src/ignis.png",
+          imgAtk: "src/ignis_atk.webp",
           skills: ["melee", "fire", "meteor_strike"],
         },
         {
@@ -196,11 +200,12 @@
           type: "Wind Queen",
           element: "wind",
           stars: 5,
-          hp: 2800,
-          atk: 320,
-          def: 180,
+          hp: 3900,
+          atk: 370,
+          def: 210,
           emoji: "🧚‍♀️",
           img: "src/sylphid.png",
+          imgAtk: "src/sylphid_atk.webp",
           skills: ["melee", "wind_blade", "tornado"],
         },
         {
@@ -209,11 +214,12 @@
           type: "Earth Mother",
           element: "earth",
           stars: 5,
-          hp: 4000,
-          atk: 200,
-          def: 300,
+          hp: 4800,
+          atk: 250,
+          def: 350,
           emoji: "🌿",
           img: "src/gaia.png",
+          imgAtk: "src/gaia_atk.webp",
           skills: ["melee", "earth_shatter", "earthquake"],
         },
         {
@@ -222,11 +228,12 @@
           type: "Storm God",
           element: "lightning",
           stars: 5,
-          hp: 2900,
-          atk: 380,
-          def: 160,
+          hp: 4100,
+          atk: 400,
+          def: 180,
           emoji: "⚡",
           img: "src/zephyr.png",
+          imgAtk: "src/zephyr_atk.webp",
           skills: ["melee", "bolt", "thunder_storm"],
         },
         {
@@ -235,11 +242,12 @@
           type: "Void Assassin",
           element: "void",
           stars: 5,
-          hp: 2500,
-          atk: 450,
-          def: 120,
+          hp: 3500,
+          atk: 500,
+          def: 150,
           emoji: "🥷",
           img: "src/nyx.png",
+          imgAtk: "src/nyx_atk.webp",
           skills: ["melee", "shadow_strike", "void_slash"],
         },
         {
@@ -248,11 +256,12 @@
           type: "Ice Titan",
           element: "water",
           stars: 5,
-          hp: 3500,
-          atk: 280,
-          def: 250,
+          hp: 4500,
+          atk: 320,
+          def: 300,
           emoji: "🧊",
           img: "src/glacius.png",
+          imgAtk: "src/glacius_atk.webp",
           skills: ["melee", "ice_shards", "blizzard"],
         },
 
@@ -263,9 +272,9 @@
           type: "Smith",
           element: "fire",
           stars: 4,
-          hp: 2200,
-          atk: 250,
-          def: 180,
+          hp: 3400,
+          atk: 300,
+          def: 250,
           emoji: "🔨",
           img: "src/vulcan.png",
           skills: ["melee", "fire"],
@@ -276,9 +285,9 @@
           type: "Mermaid",
           element: "water",
           stars: 4,
-          hp: 2000,
-          atk: 240,
-          def: 160,
+          hp: 3200,
+          atk: 290,
+          def: 210,
           emoji: "🧜‍♀️",
           img: "src/nereid.png",
           skills: ["melee", "ice_shards"],
@@ -289,9 +298,9 @@
           type: "Keeper",
           element: "nature",
           stars: 4,
-          hp: 2100,
-          atk: 200,
-          def: 200,
+          hp: 3500,
+          atk: 260,
+          def: 260,
           emoji: "🦌",
           img: "src/druid.png",
           skills: ["melee", "poison_cloud"],
@@ -302,9 +311,9 @@
           type: "Knight",
           element: "light",
           stars: 4,
-          hp: 2500,
-          atk: 180,
-          def: 250,
+          hp: 3800,
+          atk: 240,
+          def: 300,
           emoji: "🛡️",
           img: "src/paladin.png",
           skills: ["melee", "holy_beam"],
@@ -315,9 +324,9 @@
           type: "Mage",
           element: "dark",
           stars: 4,
-          hp: 1800,
-          atk: 300,
-          def: 100,
+          hp: 2800,
+          atk: 350,
+          def: 150,
           emoji: "💀",
           img: "src/necro.png",
           skills: ["melee", "blood_drain"],
@@ -328,9 +337,9 @@
           type: "Samurai",
           element: "wind",
           stars: 4,
-          hp: 1900,
-          atk: 310,
-          def: 140,
+          hp: 2900,
+          atk: 360,
+          def: 180,
           emoji: "⚔️",
           img: "src/ronin.png",
           skills: ["melee", "wind_blade"],
@@ -343,9 +352,9 @@
           type: "Goblin",
           element: "earth",
           stars: 3,
-          hp: 1500,
-          atk: 150,
-          def: 100,
+          hp: 2200,
+          atk: 180,
+          def: 150,
           emoji: "👺",
           img: "src/goblin.png",
           skills: ["melee"],
@@ -356,9 +365,9 @@
           type: "Beast",
           element: "wind",
           stars: 3,
-          hp: 1400,
-          atk: 160,
-          def: 80,
+          hp: 2000,
+          atk: 220,
+          def: 110,
           emoji: "🦅",
           img: "src/harpy.png",
           skills: ["melee"],
@@ -369,9 +378,9 @@
           type: "Construct",
           element: "earth",
           stars: 3,
-          hp: 2000,
-          atk: 100,
-          def: 150,
+          hp: 2500,
+          atk: 150,
+          def: 220,
           emoji: "🗿",
           img: "src/golem.png",
           skills: ["melee"],
@@ -382,9 +391,9 @@
           type: "Beast",
           element: "water",
           stars: 3,
-          hp: 1600,
-          atk: 140,
-          def: 110,
+          hp: 2300,
+          atk: 190,
+          def: 160,
           emoji: "🦎",
           img: "src/lizard.png",
           skills: ["melee"],
@@ -395,9 +404,9 @@
           type: "Undead",
           element: "dark",
           stars: 3,
-          hp: 1200,
-          atk: 180,
-          def: 50,
+          hp: 1800,
+          atk: 240,
+          def: 80,
           emoji: "🏹",
           img: "src/skel.png",
           skills: ["melee"],
@@ -408,9 +417,9 @@
           type: "Fey",
           element: "light",
           stars: 3,
-          hp: 1000,
-          atk: 120,
-          def: 80,
+          hp: 1600,
+          atk: 150,
+          def: 120,
           emoji: "🦋",
           img: "src/fairy.png",
           skills: ["melee"],
@@ -421,9 +430,9 @@
           type: "Demon",
           element: "fire",
           stars: 3,
-          hp: 1100,
-          atk: 130,
-          def: 70,
+          hp: 1700,
+          atk: 180,
+          def: 100,
           emoji: "😈",
           img: "src/imp.png",
           skills: ["melee"],
@@ -434,9 +443,9 @@
           type: "Beast",
           element: "nature",
           stars: 3,
-          hp: 1300,
-          atk: 140,
-          def: 90,
+          hp: 2100,
+          atk: 170,
+          def: 140,
           emoji: "🐺",
           img: "src/wolf.png",
           skills: ["melee"],
@@ -1864,7 +1873,10 @@ const renderStory = () => {
       };
 
       const calculateStats = (mon) => {
-        const m = 1 + mon.lvl * 0.1;
+        // Growth: 5% per level (simulating SW growth)
+        // Lv 1 = 1.0x
+        // Lv 40 = ~3.0x
+        const m = 1 + (mon.lvl - 1) * 0.05;
         let s = {
           hp: Math.floor(mon.hp * m),
           atk: Math.floor(mon.atk * m),
@@ -1959,22 +1971,63 @@ const renderStory = () => {
         } else if (mode === "dungeon_dragon") {
           template = MONSTERS_DB.find((m) => m.id === "vermithrax");
         } else {
-          // Filter out dungeon bosses from random encounters
-          const availableMonsters = MONSTERS_DB.filter(
-            (m) => m.id !== "dhorak" && m.id !== "vermithrax"
-          );
-          template =
-            availableMonsters[
-              Math.floor(Math.random() * availableMonsters.length)
-            ];
+          // --- NEW GENERATION LOGIC ---
+          let availableMonsters = [];
+          
+          if (mode === "tower") {
+             // Tower: Harder scaling
+             // 1-19: 2-3 stars
+             // 20-49: 3-4 stars
+             // 50+: 4-5 stars
+             if (lvlArg >= 50) {
+                 availableMonsters = MONSTERS_DB.filter(m => m.stars >= 4 && m.stars <= 5);
+             } else if (lvlArg >= 20) {
+                 availableMonsters = MONSTERS_DB.filter(m => m.stars >= 3 && m.stars <= 4);
+             } else {
+                 availableMonsters = MONSTERS_DB.filter(m => m.stars >= 2 && m.stars <= 3);
+             }
+          } else {
+             // Story (Campanha)
+             // Normal: 2-3 stars
+             // Bosses (Every 8th or 10th level): 4 stars
+             const isBoss = lvlArg % 8 === 0 || lvlArg % 10 === 0;
+             if (isBoss) {
+                 availableMonsters = MONSTERS_DB.filter(m => m.stars === 4);
+             } else {
+                 availableMonsters = MONSTERS_DB.filter(m => m.stars >= 2 && m.stars <= 3);
+             }
+          }
+
+          // Exclude Dungeons bosses from random pool if they slipped in (they are 5* or 4*)
+          availableMonsters = availableMonsters.filter(m => m.id !== "dhorak" && m.id !== "vermithrax");
+
+          // Fallback
+          if (availableMonsters.length === 0) {
+              availableMonsters = MONSTERS_DB.filter(m => m.stars === 3);
+          }
+
+          template = availableMonsters[Math.floor(Math.random() * availableMonsters.length)];
         }
 
         let lvl = 1;
-        if (mode.startsWith("dungeon")) lvl = lvlArg * 5;
-        else if (mode === "tower") lvl = lvlArg * 2;
-        else lvl = lvlArg * 3;
+        // Balance Patch Scalings
+        if (mode.startsWith("dungeon")) {
+            // Dungeon: Floor 1 = Lv 3, Floor 10 = Lv 30
+            lvl = Math.max(1, lvlArg * 3);
+        } else if (mode === "tower") {
+            // Tower: Floor 1 = Lv 1, Floor 100 = Lv 100
+            lvl = lvlArg;
+        } else {
+            // Story: Stage 1 = Lv 1, Stage 10 = Lv 10
+            lvl = lvlArg;
+        }
 
-        const m = 1 + lvl * 0.15;
+        // New Growth formula is applied automatically by calculateStats or manual logic below
+        // Since we changed calculateStats to 5% growth, enemies should follow.
+        
+        // Manual stat calculation for enemy (simplified version of calculateStats)
+        const m = 1 + (lvl - 1) * 0.05; // 5% per level
+        
         battleState.enemy = {
           ...template,
           lvl: lvl,
