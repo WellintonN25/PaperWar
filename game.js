@@ -4,6 +4,7 @@
           id: "vermithrax",
           name: "Vermithrax",
           type: "Ancient Dragon",
+          role: "attacker",
           element: "fire",
           stars: 5,
           hp: 4200,
@@ -18,6 +19,7 @@
           id: "thyron",
           name: "Temp",
           type: "Storm Bringer",
+          role: "attacker",
           element: "lightning",
           stars: 5,
           hp: 3800,
@@ -33,6 +35,7 @@
           id: "neriah",
           name: "Neriah",
           type: "Ocean Guardian",
+          role: "hp",
           element: "water",
           stars: 5,
           hp: 4000,
@@ -47,6 +50,7 @@
           id: "aelyra",
           name: "Aelyra",
           type: "Flame Witch",
+          role: "attacker",
           element: "fire",
           stars: 5,
           hp: 3600,
@@ -61,6 +65,7 @@
           id: "kaelthar",
           name: "Kaelthar",
           type: "Shadow Knight",
+          role: "attacker",
           element: "void",
           stars: 4,
           hp: 3200,
@@ -76,6 +81,7 @@
           id: "dhorak",
           name: "Dhorak",
           type: "Earth Golem",
+          role: "defender",
           element: "earth",
           stars: 4,
           hp: 4000,
@@ -91,6 +97,7 @@
           id: "vireya",
           name: "Vireya",
           type: "Nature Spirit",
+          role: "support",
           element: "nature",
           stars: 3,
           hp: 2000,
@@ -104,6 +111,7 @@
           id: "brann",
           name: "Brann",
           type: "Fire Warrior",
+          role: "attacker",
           element: "fire",
           stars: 3,
           hp: 1900,
@@ -117,6 +125,7 @@
           id: "lysara",
           name: "Lysara",
           type: "Frost Mage",
+          role: "attacker",
           element: "water",
           stars: 3,
           hp: 1850,
@@ -130,6 +139,7 @@
           id: "lumem",
           name: "Lumem",
           type: "Light Fairy",
+          role: "support",
           element: "lightning",
           stars: 2,
           hp: 1500,
@@ -143,6 +153,7 @@
           id: "ravok",
           name: "Ravok",
           type: "Orc Grunt",
+          role: "hp",
           element: "earth",
           stars: 2,
           hp: 1600,
@@ -156,6 +167,7 @@
           id: "slime",
           name: "Slime",
           type: "Blob",
+          role: "hp",
           element: "water",
           stars: 1,
           hp: 1000,
@@ -169,6 +181,7 @@
           id: "bat",
           name: "Bat",
           type: "Cave Bat",
+          role: "attacker",
           element: "void",
           stars: 1,
           hp: 800,
@@ -176,7 +189,22 @@
           def: 30,
           emoji: "🦇",
           img: "",
+        },
+        // SKILL UP UNIT
+        {
+          id: "skillupper",
+          name: "Skillupper",
+          type: "Skill Master",
+          role: "support",
+          element: "void",
+          stars: 5,
+          hp: 1,
+          atk: 0,
+          def: 0,
+          emoji: "⚫",
+          img: "src/devilmon.png",
           skills: ["melee"],
+          description: "Use para aumentar o nível de habilidade de qualquer monstro."
         },
         // --- NEW CHARACTERS (WAVE 2) ---
         // 5 STARS (LEGENDARY)
@@ -184,6 +212,7 @@
           id: "ignis",
           name: "Ignis",
           type: "Fire Warlord",
+          role: "attacker",
           element: "fire",
           stars: 5,
           hp: 4300,
@@ -198,6 +227,7 @@
           id: "sylphid",
           name: "Sylphid",
           type: "Wind Queen",
+          role: "attacker",
           element: "wind",
           stars: 5,
           hp: 3900,
@@ -212,6 +242,7 @@
           id: "gaia",
           name: "Gaia",
           type: "Earth Mother",
+          role: "hp",
           element: "earth",
           stars: 5,
           hp: 4800,
@@ -226,6 +257,7 @@
           id: "zephyr",
           name: "Zephyr",
           type: "Storm God",
+          role: "attacker",
           element: "lightning",
           stars: 5,
           hp: 4100,
@@ -240,6 +272,7 @@
           id: "nyx",
           name: "Nyx",
           type: "Void Assassin",
+          role: "attacker",
           element: "void",
           stars: 5,
           hp: 3500,
@@ -254,6 +287,7 @@
           id: "glacius",
           name: "Glacius",
           type: "Ice Titan",
+          role: "defender",
           element: "water",
           stars: 5,
           hp: 4500,
@@ -264,12 +298,27 @@
           imgAtk: "src/glacius_atk.webp",
           skills: ["melee", "ice_shards", "blizzard"],
         },
+        {
+          id: "metamorph",
+          name: "Metamorfo",
+          type: "Shapeshifter",
+          role: "hp",
+          element: "void",
+          stars: 5,
+          hp: 6000,
+          atk: 250,
+          def: 200,
+          emoji: "👽",
+          img: "src/metamorph.png", 
+          skills: ["melee", "sup_void"],
+        },
 
         // 4 STARS (EPIC)
         {
           id: "vulcan",
           name: "Vulcan",
           type: "Smith",
+          role: "attacker",
           element: "fire",
           stars: 4,
           hp: 3400,
@@ -283,6 +332,7 @@
           id: "nereid",
           name: "Nereid",
           type: "Mermaid",
+          role: "support",
           element: "water",
           stars: 4,
           hp: 3200,
@@ -296,6 +346,7 @@
           id: "druid",
           name: "Druid",
           type: "Keeper",
+          role: "support",
           element: "nature",
           stars: 4,
           hp: 3500,
@@ -309,7 +360,8 @@
           id: "paladin",
           name: "Paladin",
           type: "Knight",
-          element: "light",
+          role: "defender",
+          element: "lightning",
           stars: 4,
           hp: 3800,
           atk: 240,
@@ -322,7 +374,8 @@
           id: "necro",
           name: "Necro",
           type: "Mage",
-          element: "dark",
+          role: "attacker",
+          element: "void",
           stars: 4,
           hp: 2800,
           atk: 350,
@@ -335,6 +388,7 @@
           id: "ronin",
           name: "Ronin",
           type: "Samurai",
+          role: "attacker",
           element: "wind",
           stars: 4,
           hp: 2900,
@@ -350,6 +404,7 @@
           id: "goblin_king",
           name: "Goblin King",
           type: "Goblin",
+          role: "attacker",
           element: "earth",
           stars: 3,
           hp: 2200,
@@ -376,6 +431,7 @@
           id: "stone_giant",
           name: "Stone Giant",
           type: "Construct",
+          role: "defender",
           element: "earth",
           stars: 3,
           hp: 2500,
@@ -402,7 +458,8 @@
           id: "skeleton_archer",
           name: "Skeleton",
           type: "Undead",
-          element: "dark",
+          role: "attacker",
+          element: "void",
           stars: 3,
           hp: 1800,
           atk: 240,
@@ -415,7 +472,8 @@
           id: "fairy",
           name: "Fairy",
           type: "Fey",
-          element: "light",
+          role: "support",
+          element: "lightning",
           stars: 3,
           hp: 1600,
           atk: 150,
@@ -428,6 +486,7 @@
           id: "imp",
           name: "Imp",
           type: "Demon",
+          role: "attacker",
           element: "fire",
           stars: 3,
           hp: 1700,
@@ -708,6 +767,15 @@
           mp: 95,
         },
       };
+
+      const MAX_LEVELS = {
+        1: 5,
+        2: 10,
+        3: 20,
+        4: 30,
+        5: 40,
+        6: 50,
+      };
       
       const MAP_DATA = [
         { name: "Floresta do Alvorecer", img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800" },
@@ -945,9 +1013,11 @@
         const target = document.getElementById(id);
         if (!target) return;
 
-        document
-          .querySelectorAll("main")
-          .forEach((el) => el.classList.add("hidden-view"));
+        // Hide ALL main views inside #app
+        document.querySelectorAll("#app > main").forEach(el => {
+            el.classList.add("hidden-view");
+        });
+        
         target.classList.remove("hidden-view");
 
         const h = document.getElementById("ui-header");
@@ -1106,33 +1176,76 @@ const renderStory = () => {
         document.getElementById("shop-gold").innerText = state.user.gold;
       };
       const buyShopItem = (item) => {
+        // --- TICKETS ---
         if (item === "ticket_common") {
-          if (state.user.gold < 2000)
-            return showToast("Ouro insuficiente!", "error");
-          state.user.gold -= 2000;
+          if (state.user.gold < 1000) return showToast("Ouro insuficiente! Requ: 1.000", "error");
+          state.user.gold -= 1000;
           state.user.tickets_common++;
         }
+        if (item === "ticket_common_11") {
+          if (state.user.gold < 10000) return showToast("Ouro insuficiente! Requ: 10.000", "error");
+          state.user.gold -= 10000;
+          state.user.tickets_common += 11;
+        }
+
         if (item === "ticket_epic") {
-          if (state.user.crystals < 300)
-            return showToast("Cristais insuficientes!", "error");
-          state.user.crystals -= 300;
+          if (state.user.crystals < 100) return showToast("Cristais insuficientes! Requ: 100", "error");
+          state.user.crystals -= 100;
           state.user.tickets_epic++;
         }
+        if (item === "ticket_epic_11") {
+          if (state.user.crystals < 1000) return showToast("Cristais insuficientes! Requ: 1.000", "error");
+          state.user.crystals -= 1000;
+          state.user.tickets_epic += 11;
+        }
+        if (item === "skillupper") {
+          if (state.user.crystals < 1000) return showToast("Cristais insuficientes! Requ: 1.000", "error");
+          state.user.crystals -= 1000;
+          addMonster("skillupper");
+        }
+
+        // --- RESOURCES ---
         if (item === "energy") {
-          if (state.user.crystals < 50)
-            return showToast("Cristais insuficientes!", "error");
+          if (state.user.crystals < 50) return showToast("Cristais insuficientes! Requ: 50", "error");
           state.user.crystals -= 50;
           state.user.energy += 50;
         }
+        
         if (item === "xp_pot") {
-          if (state.user.gold < 500)
-            return showToast("Ouro insuficiente!", "error");
+          if (state.user.gold < 500) return showToast("Ouro insuficiente! Requ: 500", "error");
           state.user.gold -= 500;
           state.user.potions++;
         }
+        if (item === "xp_pot_10") {
+          if (state.user.gold < 5000) return showToast("Ouro insuficiente! Requ: 5.000", "error");
+          state.user.gold -= 5000;
+          state.user.potions += 10;
+        }
+
+        if (item === "xp_boost") {
+            if (state.user.crystals < 150) return showToast("Cristais insuficientes! Requ: 150", "error");
+            state.user.crystals -= 150;
+            
+            // Add 7 minutes (7 * 60 * 1000 ms)
+            const now = Date.now();
+            const boostTime = 7 * 60 * 1000;
+            
+            // Extend if already active
+            if (state.user.xpBoostEndTime && state.user.xpBoostEndTime > now) {
+                state.user.xpBoostEndTime += boostTime;
+            } else {
+                state.user.xpBoostEndTime = now + boostTime;
+            }
+            showToast("Bônus XP Ativado! (3x por 7m)", "success");
+        }
 
         save();
+        updateShopUI();
+        updateHeader();
+        showToast("Compra realizada com sucesso!", "success");
       };
+      // Expose to window for HTML onclick logic
+      window.buyShopItem = buyShopItem;
       let currentSummonResults = [];
 
       const playSummonAnim = async (type) => {
@@ -1777,10 +1890,14 @@ const renderStory = () => {
     title = "Masmorra do Golem";
     imgSrc = "src/golenArt.jpg"; // Stony/Cave
     grad = "from-stone-900";
-  } else {
+  } else if (selectedDungeonType === "dragon") {
     title = "Masmorra do Dragão";
     imgSrc = "src/dragaoArt.jpg"; // Lava/Fire
     grad = "from-red-900";
+  } else if (selectedDungeonType === "xp") {
+    title = "Fenda Dimensional (XP)";
+    imgSrc = "https://www.transparenttextures.com/patterns/cubes.png"; // Placeholder
+    grad = "from-indigo-900";
   }
 
   // Inject Hero Header
@@ -1825,7 +1942,11 @@ const renderStory = () => {
     btn.className =
       "glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer active:scale-95 transition-transform border border-white/5 hover:bg-white/5";
     btn.innerHTML = `<div><h4 class="text-white font-bold">${
-      selectedDungeonType === "golem" ? "Golem" : "Dragão"
+      selectedDungeonType === "golem"
+        ? "Golem"
+        : selectedDungeonType === "dragon"
+        ? "Dragão"
+        : "Fenda XP"
     } B${i}</h4><p class="text-xs text-purple-400">Lv. ${i * 5} • ${
       5 + Math.floor(i / 2)
     } ⚡</p></div><div class="text-white">▶</div>`;
@@ -1840,6 +1961,7 @@ const renderStory = () => {
         const titles = {
           dungeon_golem: `Golem B${lvl}`,
           dungeon_dragon: `Dragão B${lvl}`,
+          dungeon_xp: `Fenda XP B${lvl}`,
           tower: `Torre Andar ${lvl}`,
           story: `Campanha Fase ${lvl}`,
         };
@@ -1873,32 +1995,62 @@ const renderStory = () => {
       };
 
       const calculateStats = (mon) => {
-        // Growth: 5% per level (simulating SW growth)
-        // Lv 1 = 1.0x
-        // Lv 40 = ~3.0x
-        const m = 1 + (mon.lvl - 1) * 0.05;
-        let s = {
-          hp: Math.floor(mon.hp * m),
-          atk: Math.floor(mon.atk * m),
-          def: Math.floor(mon.def * m),
-          crit: 10,
-          cdmg: 50,
-        };
+        // Growth: 3% per level
+        // Star Bonus: +12% base stats per star above 1
+        
+        const lvlMult = 1 + (mon.lvl - 1) * 0.03;
+        const starMult = 1 + (mon.stars - 1) * 0.12; 
+        
+        // Multipliers
+        const m = lvlMult * starMult;
 
-        ["weapon", "armor", "acc"].forEach((slot) => {
-          if (mon.equipped && mon.equipped[slot]) {
-            const eq = state.equipment.find((e) => e.id === mon.equipped[slot]);
-            if (eq) {
-              if (eq.stats.hp) s.hp += eq.stats.hp;
-              if (eq.stats.atk) s.atk += eq.stats.atk;
-              if (eq.stats.def) s.def += eq.stats.def;
-              if (eq.stats.crit) s.crit += eq.stats.crit;
-              if (eq.stats.cdmg) s.cdmg += eq.stats.cdmg;
+        // Role Modifiers
+        // Fetch role from DB if not in mon object (Legacy save support)
+        const tpl = MONSTERS_DB.find(x => x.id === mon.id);
+        const role = mon.role || (tpl ? tpl.role : 'balanced');
+
+        let rAtk = 1, rHp = 1, rDef = 1;
+        if (role === 'attacker') { rAtk = 1.25; rHp = 0.9; rDef = 0.9; }
+        else if (role === 'defender') { rDef = 1.35; rHp = 1.15; rAtk = 0.8; }
+        else if (role === 'hp') { rHp = 1.40; rAtk = 0.85; rDef = 1.05; }
+        else if (role === 'support') { rHp = 1.15; rDef = 1.15; rAtk = 0.9; }
+        
+        // Base Stats (from DB or Mon)
+        // If mon has stats (it does), apply m.
+        // But base stats are in MONSTERS_DB.
+        // 'mon' object usually has saved stats? No, 'calculateStats' returns calculated.
+        // Wait. 'mon' passed here usually has 'atk', 'hp', 'def' properties.
+        // Are those BASE or Current?
+        // In `addMonster`, we do `...template`. So `mon.atk` IS `template.atk` (Base).
+        // Unless we overwrite them.
+        // Let's assume `mon` properties are BASE.
+        
+        let hp = Math.floor(mon.hp * m * rHp);
+        let atk = Math.floor(mon.atk * m * rAtk);
+        let def = Math.floor(mon.def * m * rDef);
+        let crit = 15;
+        let cdmg = 50;
+        
+        // Equipment
+        if (mon.equipped) {
+            if (mon.equipped.weapon) {
+                const eq = state.equipment.find(e => e.id === mon.equipped.weapon);
+                if (eq) { atk += eq.mainVal; crit += eq.subVal; }
             }
-          }
-        });
-        return s;
+            if (mon.equipped.armor) {
+                const eq = state.equipment.find(e => e.id === mon.equipped.armor);
+                if (eq) { hp += eq.mainVal; def += eq.subVal; } // Armor gives HP + Def
+            }
+            if (mon.equipped.acc) {
+                const eq = state.equipment.find(e => e.id === mon.equipped.acc);
+                if (eq) { crit += eq.mainVal; cdmg += eq.subVal; }
+            }
+        }
+
+        return { hp, atk, def, crit, cdmg };
       };
+        
+
 
       const renderPrepRoster = () => {
   const grid = document.getElementById("prep-grid");
@@ -1925,21 +2077,48 @@ const renderStory = () => {
       const confirmBattle = () => startBattle(prepState.mode, prepState.level);
 
       // --- BATTLE ---
-      const startBattle = (mode, lvl = 1) => {
+      const startBattle = (modeArg, lvlArg) => {
+        // Handle Restart or Fresh Start
+        const isRestart = modeArg === true;
+        const mode = isRestart ? prepState.mode : modeArg;
+        const lvl = isRestart ? prepState.level : (lvlArg || 1);
+
         let cost = 5;
         if (mode.startsWith("dungeon")) cost = 5 + Math.floor(lvl / 2);
 
-        if (state.user.energy < cost) return showToast("Sem energia!", "error");
+        if (state.user.energy < cost) {
+             battleState.repeatCount = 0; // Stop auto
+             return showToast("Sem energia!", "error");
+        }
         state.user.energy -= cost;
         updateHeader();
 
+        // Initialize Battle State
         battleState = {
           active: true,
           mode: mode,
           busy: false,
           auto: false,
           speed: 1,
+          repeatCount: isRestart ? battleState.repeatCount : 0 
         };
+
+        // Check Auto-10x toggle (only on fresh start)
+        if (!isRestart) {
+            const cb = document.getElementById("prep-auto-10x");
+            if (cb && cb.checked) {
+                battleState.repeatCount = 10;
+            }
+        }
+
+        // Auto-Enable Features for Cleared Dungeons
+        if (mode.startsWith("dungeon")) {
+            if (state.user.dungeonClear && state.user.dungeonClear[mode]) {
+                battleState.auto = true;
+                battleState.speed = 3;
+            }
+        }
+
         updateBattleControls();
 
         const pBase = state.inventory[prepState.selectedMonIdx];
@@ -1970,6 +2149,8 @@ const renderStory = () => {
           template = MONSTERS_DB.find((m) => m.id === "dhorak");
         } else if (mode === "dungeon_dragon") {
           template = MONSTERS_DB.find((m) => m.id === "vermithrax");
+        } else if (mode === "dungeon_xp") {
+          template = MONSTERS_DB.find((m) => m.id === "metamorph");
         } else {
           // --- NEW GENERATION LOGIC ---
           let availableMonsters = [];
@@ -2250,8 +2431,19 @@ const renderStory = () => {
         arena.classList.add("anim-shake-impact");
         setTimeout(() => arena.classList.remove("anim-shake-impact"), 300);
 
-        const raw = att.atk * skill.p;
-        let dmg = Math.max(10, raw - def.def * 0.5);
+        // Skill Up Bonus: +5% per level
+        const skillMod = 1 + ((att.skillUps || 0) * 0.05);
+        const raw = att.atk * skill.p * skillMod;
+        
+        // NEW DAMAGE FORMULA (Mitigation based)
+        // Damage = Raw * (1200 / (1200 + 3 * DEF))
+        // This resembles Summoners War / LoL damage reduction logic
+        const mitigation = 1200 / (1200 + (def.def * 3));
+        let dmg = raw * mitigation;
+        
+        // Ensure at least some damage based on level diff?
+        // Let's just enforce minimum 5% of raw
+        dmg = Math.max(raw * 0.05, dmg);
 
         let isCrit = false;
         if (att.crit && Math.random() * 100 < att.crit) {
@@ -3485,14 +3677,71 @@ const renderStory = () => {
           ? "VITÓRIA"
           : "DERROTA";
 
+        let repeatCancelled = false;
+        
+        // AUTO REPEAT LOGIC UI
+        if (battleState.repeatCount > 0) {
+             const btn = document.querySelector("#battle-overlay button");
+             if (btn) btn.innerText = `Parar Auto (${battleState.repeatCount})`;
+             btn.onclick = () => {
+                 battleState.repeatCount = 0;
+                 btn.innerText = "Continuar";
+                 btn.onclick = closeBattle;
+             };
+        } else {
+             const btn = document.querySelector("#battle-overlay button");
+             if (btn) {
+                 btn.innerText = "Continuar";
+                 btn.onclick = closeBattle;
+             }
+        }
+
         if (win) {
           let rewards = "";
+          
+          // --- MONSTER XP LOGIC ---
+          const hero = state.inventory[prepState.selectedMonIdx]; // FIXED: selectedIdx -> selectedMonIdx
+          // XP Formula: Base * Level * Multiplier
+          let xpBase = 100;
+          if (battleState.mode.startsWith("dungeon")) xpBase = 300;
+          if (battleState.mode === "dungeon_xp") xpBase = 2000; // Massive XP in XP Dungeon
+          
+          let xpAmount = Math.floor(xpBase * (1 + prepState.level * 0.2));
+
+          // XP BOOST CHECK
+          if (state.user.xpBoostEndTime && Date.now() < state.user.xpBoostEndTime) {
+               xpAmount *= 3;
+               rewards += `<div class='text-emerald-400 font-bold text-xs mt-1 animate-pulse'>XP BOOST ATIVO (3x)!</div>`;
+          }
+          
+          // Apply XP
+          const maxLvl = MAX_LEVELS[hero.stars] || 40;
+          if (hero.lvl < maxLvl) {
+               // Ensure curXp exists
+               hero.curXp = hero.curXp || 0;
+               hero.curXp += xpAmount;
+               
+               // XP Needed for next level: 500 * CurrentLevel ^ 1.1 (Exponential curve)
+               let xpReq = Math.floor(500 * Math.pow(hero.lvl, 1.1));
+               
+               let didLevel = false;
+               while (hero.curXp >= xpReq && hero.lvl < maxLvl) {
+                   hero.curXp -= xpReq;
+                   hero.lvl++;
+                   didLevel = true;
+                   xpReq = Math.floor(500 * Math.pow(hero.lvl, 1.1)); // Recalc for next lvl
+               }
+               
+               if (didLevel) showToast(`${hero.name} subiu para o Nível ${hero.lvl}!`, "success");
+          }
+
+          // Account XP (Minor)
           const accXp = 50;
           state.user.xp += accXp;
 
-          const xpReq = 100 * state.user.lvl;
-          if (state.user.xp >= xpReq) {
-            state.user.xp = state.user.xp - xpReq;
+          const accXpReq = 100 * state.user.lvl;
+          if (state.user.xp >= accXpReq) {
+            state.user.xp = state.user.xp - accXpReq;
             state.user.lvl++;
             state.user.crystals += 25;
             showToast(`LEVEL UP! Nível ${state.user.lvl} (+25 💎)`);
@@ -3503,46 +3752,71 @@ const renderStory = () => {
 
           if (battleState.mode.startsWith("dungeon")) {
             const floor = prepState.level;
-            goldGained = 1000 + floor * 500; // 2x Boost
-            crystalsGained = 5 + floor;
+            
+            // Dungeon Cleared? Mark it for Auto/Speed unlock
+            state.user.dungeonClear = state.user.dungeonClear || {};
+            if (!state.user.dungeonClear[battleState.mode]) {
+                state.user.dungeonClear[battleState.mode] = true;
+                showToast("Auto & 3x Liberados para esta masmorra!", "success");
+            }
 
-            // EQUIPMENT DROP LOGIC
-            let dropRate = 0.3 + floor * 0.02; // Base 30% + 2% per floor
-            if (Math.random() < dropRate) {
+            goldGained = 4000 + floor * 500; 
+            crystalsGained = 1 + Math.floor(floor/2);
+
+            // DROP LOGIC
+            let dropRate = 0.3 + floor * 0.02; // Base 30%
+            
+            // XP Dungeon drops LESS items/gold, mostly XP
+            if (battleState.mode === "dungeon_xp") {
+                goldGained = 1000 + floor * 100; // Less gold in XP dungeon
+                dropRate = 0.05; // Very low drop rate
+                rewards = `XP: ${xpAmount} | Ouro: ${goldGained}`;
+            }
+
+            if (Math.random() < dropRate && battleState.mode !== "dungeon_xp") {
               const dungeonType = battleState.mode.includes("dragon")
                 ? "dragon"
                 : "golem";
               const droppedEq = createEquipment(floor, dungeonType);
               state.equipment.push(droppedEq);
               const rName = EQ_RARITY[droppedEq.rarity].name;
-              rewards = `DROP: ${rName} ${
-                droppedEq.type === "weapon"
-                  ? "Arma"
-                  : droppedEq.type === "armor"
-                  ? "Armadura"
-                  : "Acessório"
-              }!`;
+              rewards = `<div class='text-sm text-yellow-300 font-bold mb-1'>DROP RARO!</div>
+                         <div class='text-xs text-white'>${rName} ${droppedEq.type === 'weapon' ? 'Arma' : droppedEq.type === 'armor' ? 'Armadura' : 'Acessório'}</div>`;
             } else {
-              rewards = `+${goldGained} Ouro | +${crystalsGained} 💎`;
+              rewards = rewards || `<div class='flex gap-4 justify-center'>
+                                      <div class='text-yellow-400 font-bold text-sm'>+${goldGained} Ouro</div>
+                                      <div class='text-cyan-400 font-bold text-sm'>+${crystalsGained} 💎</div>
+                                    </div>`;
             }
           } else if (battleState.mode === "tower") {
             state.towerFloor++;
             crystalsGained = 50 + state.towerFloor * 10;
-            goldGained = 1000 * state.towerFloor; // 2x Boost
-            rewards = `Andar ${state.towerFloor - 1} Completo!`;
+            goldGained = 3000 * state.towerFloor; 
+            rewards = `<div class='text-green-400 font-bold text-lg'>Andar ${state.towerFloor - 1} Completo!</div>
+                       <div class='flex gap-4 justify-center mt-2'>
+                          <span class='text-yellow-400'>+${goldGained} Ouro</span>
+                          <span class='text-cyan-400'>+${crystalsGained} 💎</span>
+                       </div>`;
           } else {
             const stage = prepState.level;
             const stageKey = `stage_${stage}`;
             if (!state.user.firstClear[stageKey]) {
               crystalsGained = 100;
-              goldGained = 2000 * stage; // 2x Boost
+              goldGained = 5000 * stage; 
               state.user.firstClear[stageKey] = true;
               if (stage === state.storyProgress) state.storyProgress++;
-              rewards = `PRIMEIRA VEZ! +${crystalsGained} 💎 | +${goldGained} Ouro`;
+              rewards = `<div class='text-purple-400 font-black text-lg animate-pulse'>PRIMEIRA VEZ!</div>
+                         <div class='flex gap-4 justify-center mt-2'>
+                            <span class='text-yellow-400 font-bold'>+${goldGained} 💰</span>
+                            <span class='text-cyan-400 font-bold'>+${crystalsGained} 💎</span>
+                         </div>`;
             } else {
               crystalsGained = 5;
-              goldGained = 300 + stage * 100; // 2x Boost
-              rewards = `+${crystalsGained} 💎 | +${goldGained} Ouro`;
+              goldGained = 1000 + stage * 300; 
+              rewards = `<div class='flex gap-4 justify-center'>
+                            <span class='text-yellow-400 font-bold'>+${goldGained} 💰</span>
+                            <span class='text-cyan-400 font-bold'>+${crystalsGained} 💎</span>
+                         </div>`;
             }
           }
 
@@ -3550,17 +3824,61 @@ const renderStory = () => {
           state.user.gold += goldGained;
           save();
           updateHeader();
-          document.getElementById("outcome-rewards").innerText = rewards;
+          
+          const xpHTML = xpAmount 
+             ? `<div class='mt-3 pt-3 border-t border-white/10 flex justify-between items-center'>
+                    <div class='text-left'>
+                        <div class='text-[10px] text-slate-400 uppercase font-bold tracking-wider'>HERÓI XP</div>
+                        <div class='text-green-400 font-black text-xl'>+${xpAmount} XP</div>
+                    </div>
+                    <div class='text-right'>
+                         <div class='text-[10px] text-slate-400 uppercase font-bold tracking-wider'>RANK XP</div>
+                         <div class='text-blue-400 font-black text-xl'>+50</div>
+                    </div>
+                </div>`
+             : "";
+
+          document.getElementById("outcome-rewards").innerHTML = `
+              <div class="bg-slate-900/90 p-6 rounded-2xl border border-white/10 shadow-xl backdrop-blur-md">
+                 ${rewards}
+                 ${xpHTML}
+              </div>
+          `;
+          
+          // AUTO REPEAT HANDLER
+          if (battleState.repeatCount > 0) {
+              battleState.repeatCount--;
+              if (battleState.repeatCount > 0) {
+                  showToast(`Próxima batalha em 2s... (${battleState.repeatCount} restantes)`);
+                  setTimeout(() => {
+                      if (document.getElementById("battle-overlay").style.opacity === "1") { // Check if not closed manually
+                        startBattle(true); // Restart
+                      }
+                  }, 2000);
+              } else {
+                  showToast("Ciclo de Farm Concluído!");
+              }
+          }
+          
         } else {
+          battleState.repeatCount = 0; // Stop on lose
           document.getElementById("outcome-rewards").innerText =
             "Tente melhorar seu time";
         }
       };
 
+
+
       const useXpPotion = () => {
         const mon = state.inventory[selectedDetailIdx];
+        const maxLvl = MAX_LEVELS[mon.stars] || 40;
+        
+        if (mon.lvl >= maxLvl)
+          return showToast(`Nível Máximo para ${mon.stars}★ atingido! Evolua-o!`, "error");
+
         if (state.user.potions < 1)
           return showToast("Sem poções de XP!", "error");
+          
         state.user.potions--;
         mon.lvl++;
         save();
@@ -3613,6 +3931,7 @@ const renderStory = () => {
       
       <!-- Level Badge -->
       <div class="level-badge">Lv.${mon.lvl}</div>
+      ${mon.lvl >= (MAX_LEVELS[mon.stars] || 40) ? '<div class="absolute top-0 left-0 bg-red-600 text-white text-[9px] font-black px-1 rounded-br-lg z-20 shadow-sm">MAX</div>' : ''}
       
       <!-- Character Image / Emoji Fallback -->
       <img src="${mon.img}" class="w-[85%] h-[85%] object-contain filter drop-shadow-lg z-10 transition-transform group-hover:scale-110" 
@@ -3624,7 +3943,11 @@ const renderStory = () => {
       
       <!-- Star Row -->
       <div class="star-row">
-        ${'<span class="star-icon">★</span>'.repeat(mon.stars)}
+        ${
+           mon.stars === 6 
+           ? '<span class="star-icon text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">★</span>'.repeat(6)
+           : '<span class="star-icon">★</span>'.repeat(mon.stars)
+        }
       </div>
     `;
     
@@ -3634,21 +3957,27 @@ const renderStory = () => {
   grid.appendChild(fragment);
 };
       let selectedDetailIdx = 0;
+
       const openDetail = (idx) => {
         selectedDetailIdx = idx;
         const mon = state.inventory[idx];
-        if (!mon.equipped)
-          mon.equipped = { weapon: null, armor: null, acc: null };
+        
+        // Merge with DB to ensure latest static data (name, img, etc.)
+        const tpl = MONSTERS_DB.find(m => m.id === mon.id) || {};
+        const safeMon = { ...tpl, ...mon }; // mon properties (lvl, stars, equipped) override tpl, but tpl provides missing static data
+        
+        // Safety check for undefined name
+        if(!safeMon.name) safeMon.name = mon.id.toUpperCase();
 
         document
           .getElementById("mon-detail-overlay")
           .classList.remove("hidden");
         document.getElementById("mon-detail-overlay").classList.add("flex");
-        document.getElementById("det-name").innerText = mon.name;
-        document.getElementById("det-type").innerText = mon.type;
-        document.getElementById("det-lvl").innerText = `Lv. ${mon.lvl}`;
-        document.getElementById("det-stars").innerHTML = "★".repeat(mon.stars);
-        document.getElementById("det-nat-grade").innerText = `NAT ${mon.stars}`;
+        document.getElementById("det-name").innerText = safeMon.name;
+        document.getElementById("det-type").innerText = (safeMon.role ? `[${safeMon.role.toUpperCase()}] ` : "") + (safeMon.type || "Unknown Type");
+        document.getElementById("det-lvl").innerText = `Lv. ${safeMon.lvl}`;
+        document.getElementById("det-stars").innerHTML = "★".repeat(safeMon.stars);
+        document.getElementById("det-nat-grade").innerText = `NAT ${safeMon.stars}`;
         document.getElementById("det-element-badge").innerText = {
           fire: "🔥",
           water: "🌊",
@@ -3656,38 +3985,426 @@ const renderStory = () => {
           earth: "🗿",
           nature: "🍃",
           void: "🌑",
-        }[mon.element];
-        document.getElementById("det-emoji").innerText = mon.emoji;
+        }[safeMon.element] || "❓";
+        document.getElementById("det-emoji").innerText = safeMon.emoji;
         const img = document.getElementById("det-img");
         img.style.display = "block";
         document.getElementById("det-emoji").style.display = "none";
-        img.src = mon.img;
-
-        const stats = calculateStats(mon);
+        img.src = safeMon.img;
+        
+        // Recalculate stats with safeMon
+        const stats = calculateStats(safeMon);
+        // Values
         document.getElementById("val-hp").innerText = stats.hp;
         document.getElementById("val-atk").innerText = stats.atk;
         document.getElementById("val-def").innerText = stats.def;
+        document.getElementById("val-spd").innerText = 100;
         document.getElementById("val-crit").innerText = stats.crit + "%";
         document.getElementById("val-cdmg").innerText = stats.cdmg + "%";
 
-        renderEqSlot("weapon", mon.equipped.weapon);
-        renderEqSlot("armor", mon.equipped.armor);
-        renderEqSlot("acc", mon.equipped.acc);
+        // Bars (Soft caps: HP 30k, ATK 4k, DEF 2k)
+        document.getElementById("bar-hp").style.width = Math.min(100, (stats.hp / 30000) * 100) + "%";
+        document.getElementById("bar-atk").style.width = Math.min(100, (stats.atk / 4000) * 100) + "%";
+        document.getElementById("bar-def").style.width = Math.min(100, (stats.def / 2000) * 100) + "%";
+
+        renderEqSlot("weapon", safeMon.equipped.weapon);
+        renderEqSlot("armor", safeMon.equipped.armor);
+        renderEqSlot("acc", safeMon.equipped.acc);
 
         const btn = document.getElementById("btn-equip");
         if (state.leaderIdx === idx) {
           btn.innerText = "Líder Atual";
           btn.className =
-            "w-full py-3 mt-2 bg-green-500 text-white font-black uppercase rounded-xl opacity-90";
+            "w-full py-2 mt-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold uppercase rounded-lg opacity-90 cursor-default shadow-md";
         } else {
           btn.innerText = "Definir Líder";
           btn.className =
-            "w-full py-3 mt-2 bg-white text-slate-900 font-black uppercase rounded-xl active:scale-95";
+            "w-full py-2 mt-2 bg-white text-slate-900 text-sm font-bold uppercase rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 active:scale-95 transition-all";
           btn.onclick = equipLeader;
         }
-        document.getElementById(
-          "btn-xp"
-        ).innerText = `Usar Potion (${state.user.potions})`;
+        
+        // XP BAR UPDATE
+        const maxLvl = MAX_LEVELS[safeMon.stars] || 40;
+        // Update Level Display with Max
+        const lvlEl = document.getElementById("det-lvl");
+        if (lvlEl) {
+             // Rebuild the level text to include max
+             lvlEl.parentNode.innerHTML = `
+                <span id="det-lvl" class="text-3xl font-black text-white leading-none">${safeMon.lvl}</span>
+                <span class="text-xs text-slate-500">/ ${maxLvl}</span>
+             `;
+        }
+
+        const xpReq = Math.floor(500 * Math.pow(safeMon.lvl, 1.1));
+        const curXp = safeMon.curXp || 0;
+        const xpPct = Math.min(100, (curXp / xpReq) * 100);
+        
+        const bar = document.getElementById("det-xp-bar");
+        if(bar) bar.style.width = `${xpPct}%`;
+        
+        const txt = document.getElementById("det-xp-text");
+        if(txt) txt.innerText = `${Math.floor(curXp)} / ${xpReq} XP`;
+
+
+        // --- SKILLS SECTION (Clean Injection) ---
+        const skillCont = document.getElementById("det-skills-container");
+        if (skillCont) {
+            skillCont.innerHTML = "";
+            
+            const header = document.createElement("div");
+            header.className = "text-[10px] uppercase font-bold text-slate-400 mb-2";
+            header.innerText = `Habilidades (Bônus: +${(safeMon.skillUps||0)*5}%)`;
+            skillCont.appendChild(header);
+
+            const sGrid = document.createElement("div");
+            sGrid.className = "flex flex-col gap-2";
+            
+            safeMon.skills.forEach(sid => {
+                const s = SKILLS[sid];
+                if(!s) return;
+                const row = document.createElement("div");
+                row.className = "flex items-center gap-2 bg-slate-800 p-2 rounded-lg relative overflow-hidden border border-white/5";
+                row.innerHTML = `
+                    <div class="text-2xl">${s.icon}</div>
+                    <div class="flex-1">
+                        <div class="text-xs font-bold text-white">${s.n}</div>
+                        <div class="text-[9px] text-slate-400">Poder: ${Math.floor(s.p*100)}% | MP: ${s.mp}</div>
+                    </div>
+                    <div class="text-[9px] text-slate-500 absolute right-2 top-2 opacity-50 capitalize">${s.type.replace('_', ' ')}</div>
+                `;
+                sGrid.appendChild(row);
+            });
+            skillCont.appendChild(sGrid);
+        }
+
+        // EVOLUTION & SKILL UP BUTTONS
+        // Fix: Use btn-equip parent as anchor since btn-xp is gone
+        const acts = btn.parentNode;
+        
+        // Remove old dynamic containers if any
+        const oldEvo = document.getElementById("evo-container");
+        if(oldEvo) oldEvo.remove();
+        
+        const evoContainer = document.createElement("div");
+        evoContainer.id = "evo-container";
+        evoContainer.className = "w-full mt-2 grid grid-cols-2 gap-2";
+        
+        // Evolve Button
+        if (safeMon.stars < 6) {
+             const evolveBtn = document.createElement("button");
+             evolveBtn.onclick = openEvolutionModal;
+             evolveBtn.className = "py-2 bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white font-bold text-xs uppercase rounded-lg border border-fuchsia-400 shadow-[0_0_10px_rgba(192,38,211,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1";
+             evolveBtn.innerHTML = `<span>✨</span> Evoluir`;
+             evoContainer.appendChild(evolveBtn);
+        }
+        
+        // Skill Up Button
+        const skillBtn = document.createElement("button");
+        skillBtn.onclick = () => openSkillUpModal();
+        skillBtn.className = "py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-xs uppercase rounded-lg border border-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1";
+        skillBtn.innerHTML = `<span>🆙</span> Skill Up`;
+        evoContainer.appendChild(skillBtn);
+
+        acts.appendChild(evoContainer);
+      };
+
+      // EVOLUTION MODAL & LOGIC
+      let evolveTargetIdx = -1;
+      let evolveFoodIndices = [];
+
+      const openEvolutionModal = () => {
+         evolveTargetIdx = selectedDetailIdx;
+         evolveFoodIndices = [];
+         renderEvolutionModal();
+      };
+
+      const renderEvolutionModal = () => {
+         // Create modal if not exists
+         let modal = document.getElementById("evo-modal");
+         if (!modal) {
+             document.body.insertAdjacentHTML('beforeend', `
+                <div id="evo-modal" class="fixed inset-0 bg-black/90 z-[60] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
+                    <div class="glass-panel p-6 w-full max-w-lg rounded-2xl border border-white/10 relative">
+                        <h2 class="text-xl font-black text-white text-center mb-1">EVOLUÇÃO</h2>
+                        <p id="evo-desc" class="text-center text-slate-400 text-xs mb-6"></p>
+                        
+                        <div class="flex justify-center items-center gap-4 mb-6">
+                             <!-- Target -->
+                             <div id="evo-target-preview" class="w-20 h-20 border border-white rounded-xl bg-slate-800 flex items-center justify-center relative"></div>
+                             <div class="text-xl text-slate-500">➜</div>
+                             <!-- Result -->
+                             <div id="evo-result-preview" class="w-20 h-20 border border-fuchsia-500 rounded-xl bg-slate-800 flex items-center justify-center relative shadow-[0_0_15px_rgba(192,38,211,0.3)]"></div>
+                        </div>
+
+                        <div class="text-white text-sm font-bold mb-2">Materiais (<span id="evo-scount">0</span>/<span id="evo-req">2</span>)</div>
+                        <div id="evo-food-grid" class="grid grid-cols-5 gap-2 max-h-40 overflow-y-auto p-2 bg-black/40 rounded-xl mb-6"></div>
+
+                        <div class="flex gap-3">
+                            <button onclick="document.getElementById('evo-modal').classList.add('hidden')" class="flex-1 py-2 bg-slate-700 text-white text-sm font-bold rounded-lg hover:bg-slate-600 transition-colors">Cancelar</button>
+                            <button id="btn-confirm-evo" onclick="confirmEvolution()" class="flex-1 py-2 bg-fuchsia-600 text-white text-sm font-bold rounded-lg disabled:opacity-50 disabled:grayscale hover:bg-fuchsia-500 transition-colors">EVOLUIR</button>
+                        </div>
+                    </div>
+                </div>
+             `);
+             modal = document.getElementById("evo-modal");
+         }
+         
+         modal.classList.remove("hidden");
+         modal.classList.add("flex");
+
+         const target = state.inventory[evolveTargetIdx];
+         const reqAmount = target.stars;
+
+         document.getElementById("evo-desc").innerText = `Selecione ${reqAmount} monstro(s) de ${target.stars}★ para sacrificar.`;
+         document.getElementById("evo-req").innerText = reqAmount;
+         
+         // Helper to render preview
+         const renderPrev = (el, mon, nextStars = false) => {
+             const s = nextStars ? mon.stars + 1 : mon.stars;
+             el.innerHTML = `
+                 <img src="${mon.img}" class="w-full h-full object-contain p-1">
+                 <div class="absolute bottom-0 w-full text-center bg-black/60 text-[9px] text-yellow-400 font-bold">${"★".repeat(s)}</div>
+             `;
+         };
+         
+         const tDiv = document.getElementById("evo-target-preview");
+         const rDiv = document.getElementById("evo-result-preview");
+         
+         renderPrev(tDiv, target);
+         renderPrev(rDiv, target, true);
+
+         // Render Food List
+         const grid = document.getElementById("evo-food-grid");
+         grid.innerHTML = "";
+         
+         // Filter Fodder: Same Stars, Not Locked (if lock exists), Not the target itself
+         const fodder = state.inventory.map((m, i) => ({...m, idx: i})).filter(m => 
+             m.idx !== evolveTargetIdx && 
+             m.stars === target.stars &&
+             m.idx !== state.leaderIdx // Cannot feed leader
+         );
+
+         fodder.forEach(f => {
+             const isSel = evolveFoodIndices.includes(f.idx);
+             const el = document.createElement("div");
+             el.className = `aspect-square bg-slate-800 rounded border cursor-pointer relative transition-all ${isSel ? 'border-green-500 bg-green-900/20 scale-95' : 'border-slate-600 hover:border-slate-400'}`;
+             el.innerHTML = `
+                 <img src="${f.img}" class="w-full h-full object-contain opacity-80">
+                 <div class="absolute bottom-0 w-full text-center text-[8px] text-yellow-400">★${f.stars}</div>
+                 ${isSel ? '<div class="absolute inset-0 flex items-center justify-center text-green-400 font-bold text-xl drop-shadow-md">✓</div>' : ''}
+             `;
+             el.onclick = () => toggleFood(f.idx);
+             grid.appendChild(el);
+         });
+         
+         updateEvoUI();
+      };
+
+      const toggleFood = (idx) => {
+          const target = state.inventory[evolveTargetIdx];
+          const req = target.stars;
+
+          if (evolveFoodIndices.includes(idx)) {
+              evolveFoodIndices = evolveFoodIndices.filter(i => i !== idx);
+          } else {
+              if (evolveFoodIndices.length < req) evolveFoodIndices.push(idx);
+          }
+          renderEvolutionModal(); // Re-render to update styles
+      };
+
+      const updateEvoUI = () => {
+           const target = state.inventory[evolveTargetIdx];
+           const req = target ? target.stars : 2;
+           
+           document.getElementById("evo-scount").innerText = evolveFoodIndices.length;
+           const btn = document.getElementById("btn-confirm-evo");
+           if (evolveFoodIndices.length === req) {
+               btn.disabled = false;
+               btn.innerText = "EVOLUIR (Reset Lv.1)";
+           } else {
+               btn.disabled = true;
+               btn.innerText = `Selecione ${req}`;
+           }
+      };
+
+      const confirmEvolution = () => {
+           const target = state.inventory[evolveTargetIdx];
+           const req = target.stars;
+
+           if (evolveFoodIndices.length !== req) return;
+           
+           // Sort indices descending to remove from end first and not shift indices
+           const toRemove = [...evolveFoodIndices].sort((a,b) => b - a);
+           
+           toRemove.forEach(idx => {
+               state.inventory.splice(idx, 1);
+               // If removed index was before target index, adjust target index
+               if (idx < evolveTargetIdx) evolveTargetIdx--;
+           });
+           
+           // Update Target
+           target.stars++;
+           target.lvl = 1; // RESET
+           
+           // Fix ref if leader index was affected
+           // If we removed a mon before leader, leaderIdx--
+           toRemove.forEach(idx => {
+               if (idx < state.leaderIdx) state.leaderIdx--;
+           });
+           
+           save();
+           
+           document.getElementById("evo-modal").classList.add("hidden");
+           document.getElementById("evo-modal").classList.remove("flex"); // Ensure flex is removed
+           document.getElementById("mon-detail-overlay").classList.add("hidden");
+           document.getElementById("mon-detail-overlay").classList.remove("flex");
+
+           // FX
+           showToast(`EVOLUÇÃO SUCESSO! ${target.name} agora é ${target.stars}★`, "success");
+           
+           renderMonsterBox();
+      };
+
+      
+      // SKILL UP MODAL
+      let skillTargetIdx = -1;
+      let skillFeederIdx = -1;
+
+      const openSkillUpModal = () => {
+         skillTargetIdx = selectedDetailIdx;
+         skillFeederIdx = -1;
+         renderSkillUpModal();
+      };
+
+      const selectSkillFood = (idx) => {
+         skillFeederIdx = (skillFeederIdx === idx) ? -1 : idx;
+         renderSkillUpModal();
+      };
+
+      const renderSkillUpModal = () => {
+         let modal = document.getElementById("skill-modal");
+         if (!modal) {
+             document.body.insertAdjacentHTML('beforeend', `
+                <div id="skill-modal" class="fixed inset-0 bg-black/95 z-[60] hidden flex-col items-center justify-center p-4 backdrop-blur-md">
+                    <div class="bg-slate-900 border border-orange-500/30 p-6 w-full max-w-lg rounded-2xl relative shadow-[0_0_50px_rgba(249,115,22,0.2)]">
+                        <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 text-center mb-4 uppercase italic">Skill Power Up</h2>
+                        <p class="text-center text-slate-400 text-xs mb-8">Sacrifique um monstro idêntico ou um <span class="text-white font-bold">Skillupper</span>.</p>
+                        
+                        <div class="flex justify-center items-center gap-6 mb-8">
+                             <!-- Target -->
+                             <div class="flex flex-col items-center gap-2">
+                                 <span class="text-[10px] text-slate-500 font-bold uppercase">Alvo</span>
+                                 <div id="skill-target-preview" class="w-24 h-24 border-2 border-slate-700 rounded-2xl bg-slate-800 relative overflow-hidden"></div>
+                             </div>
+                             <div class="text-2xl text-orange-500 font-black animate-pulse">+</div>
+                             <!-- Feeder -->
+                             <div class="flex flex-col items-center gap-2">
+                                 <span class="text-[10px] text-slate-500 font-bold uppercase">Material</span>
+                                 <div id="skill-feeder-preview" class="w-24 h-24 border-2 border-dashed border-slate-600 rounded-2xl bg-black/50 flex items-center justify-center text-4xl text-slate-700 select-none">?</div>
+                             </div>
+                        </div>
+
+                        <div class="text-white text-sm font-bold mb-2 uppercase tracking-wider">Selecione o Material</div>
+                        <div id="skill-food-grid" class="grid grid-cols-5 gap-3 max-h-48 overflow-y-auto p-3 bg-black/60 rounded-xl mb-8 border border-white/5"></div>
+
+                        <div class="flex gap-4">
+                            <button onclick="document.getElementById('skill-modal').classList.add('hidden')" class="flex-1 py-3 bg-slate-800 text-white text-sm font-bold rounded-xl hover:bg-slate-700 transition-colors">CANCELAR</button>
+                            <button id="btn-confirm-skill" onclick="confirmSkillUp()" class="flex-1 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white text-sm font-bold rounded-xl disabled:opacity-50 disabled:grayscale hover:brightness-110 shadow-lg transition-all">CONFIRMAR</button>
+                        </div>
+                    </div>
+                </div>
+             `);
+             modal = document.getElementById("skill-modal");
+         }
+         
+         modal.classList.remove("hidden");
+         modal.classList.add("flex");
+
+         const target = state.inventory[skillTargetIdx];
+         
+         // Render Target Preview
+         const tDiv = document.getElementById("skill-target-preview");
+         tDiv.innerHTML = `<img src="${target.img}" class="w-full h-full object-contain">`;
+
+         // Render Feeder Preview
+         const fDiv = document.getElementById("skill-feeder-preview");
+         if (skillFeederIdx !== -1) {
+             const feeder = state.inventory[skillFeederIdx];
+             fDiv.innerHTML = `<img src="${feeder.img}" class="w-full h-full object-contain p-2">`;
+             fDiv.className = "w-24 h-24 border-2 border-orange-500 rounded-2xl bg-slate-800 relative overflow-hidden shadow-[0_0_15px_rgba(249,115,22,0.4)]";
+         } else {
+             fDiv.innerHTML = "?";
+             fDiv.className = "w-24 h-24 border-2 border-dashed border-slate-600 rounded-2xl bg-black/50 flex items-center justify-center text-4xl text-slate-700 select-none";
+         }
+
+         // Grid
+         const grid = document.getElementById("skill-food-grid");
+         grid.innerHTML = "";
+         
+         // Filter: Same ID via template (safeMon check?) or just mon.id
+         // Need to be careful: target.id might be unique if we generated UUIDs, but here id IS the monster type ID.
+         // And check for 'skillupper'.
+         const candidates = state.inventory.map((m, i) => ({...m, idx: i})).filter(m => 
+             m.idx !== skillTargetIdx &&
+             m.idx !== state.leaderIdx &&
+             (m.id === target.id || m.id === "skillupper")
+         );
+         
+         if (candidates.length === 0) {
+             grid.innerHTML = `<div class="col-span-5 text-center text-slate-500 text-xs py-4">Nenhum monstro compatível encontrado.</div>`;
+         }
+
+         candidates.forEach(c => {
+             const isSel = (skillFeederIdx === c.idx);
+             const el = document.createElement("div");
+             el.className = `aspect-square bg-slate-800 rounded-xl border-2 cursor-pointer relative transition-all overflow-hidden ${isSel ? 'border-orange-500 opacity-100 scale-95' : 'border-slate-700 hover:border-slate-500 opacity-80'}`;
+             el.innerHTML = `
+                 <img src="${c.img}" class="w-full h-full object-contain">
+                 <div class="absolute top-0 right-0 p-1 bg-black/50 backdrop-blur rounded-bl-lg">
+                     <div class="text-[8px] font-bold text-white">${c.id === "skillupper" ? "SKILL" : "★"+c.stars}</div>
+                 </div>
+                 ${isSel ? '<div class="absolute inset-0 bg-orange-500/20 animate-pulse"></div>' : ''}
+             `;
+             el.onclick = () => selectSkillFood(c.idx);
+             grid.appendChild(el);
+         });
+
+         const btn = document.getElementById("btn-confirm-skill");
+         btn.disabled = (skillFeederIdx === -1);
+      };
+
+      const confirmSkillUp = () => {
+          if (skillFeederIdx === -1) return;
+          
+          const target = state.inventory[skillTargetIdx];
+          const feeder = state.inventory[skillFeederIdx];
+          
+          // Consume Feeder
+          
+          let realTargetIdx = skillTargetIdx;
+          if (skillFeederIdx < skillTargetIdx) realTargetIdx--;
+          
+          state.inventory.splice(skillFeederIdx, 1);
+          
+          // Logic: Apply Skill Up
+          // Add 'skillUps' property
+          const realTarget = state.inventory[realTargetIdx];
+          realTarget.skillUps = (realTarget.skillUps || 0) + 1;
+          
+          // Leader Check
+          if (skillFeederIdx < state.leaderIdx) state.leaderIdx--;
+          
+          save();
+          
+          // UI Reset
+          document.getElementById("skill-modal").classList.add("hidden");
+          document.getElementById("skill-modal").classList.remove("flex");
+          
+          renderMonsterBox(); // Re-renders the grid
+          
+          closeDetail();
+          
+          showToast(`⚡ Habilidade Melhorada! Total: +${realTarget.skillUps}`, "success");
       };
 
       const renderEqSlot = (type, id) => {

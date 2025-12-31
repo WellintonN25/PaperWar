@@ -282,9 +282,27 @@
             <h3 class="text-white font-bold uppercase text-sm">Dragão</h3>
             <p class="text-slate-400 text-[10px] mt-1">Crítico/Acessórios</p>
           </button>
+
+          <!-- XP Rift -->
+          <button
+            onclick="openDungeonSelect('xp')"
+            class="glass-panel p-4 rounded-3xl text-left active:scale-95 transition-all border-indigo-500/20 relative overflow-hidden"
+          >
+            <div class="absolute right-[-10px] top-[-10px] text-6xl opacity-10">
+              🌀
+            </div>
+            <div
+              class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl mb-3"
+            >
+              🌀
+            </div>
+            <h3 class="text-white font-bold uppercase text-sm">XP Rift</h3>
+            <p class="text-slate-400 text-[10px] mt-1">Farm de XP</p>
+          </button>
+
           <button
             onclick="changeView('view-tower')"
-            class="col-span-2 glass-panel p-4 rounded-3xl text-left active:scale-95 transition-all border-yellow-500/20 relative overflow-hidden"
+            class="glass-panel p-4 rounded-3xl text-left active:scale-95 transition-all border-yellow-500/20 relative overflow-hidden"
           >
             <div class="absolute right-[-10px] top-[-10px] text-6xl opacity-10">
               🏰
@@ -663,9 +681,15 @@
               </div>
               <button
                 onclick="buyShopItem('ticket_common')"
-                class="premium-btn px-6 py-2 rounded-xl text-white font-bold text-xs shadow-lg shadow-blue-900/20 transform active:scale-95 transition-all"
+                class="premium-btn px-6 py-2 rounded-xl text-white font-bold text-xs shadow-lg shadow-blue-900/20 transform active:scale-95 transition-all mb-2 w-full"
               >
-                2000 💰
+                1x (1.000 💰)
+              </button>
+              <button
+                onclick="buyShopItem('ticket_common_11')"
+                class="bg-blue-800/50 hover:bg-blue-800 px-6 py-2 rounded-xl text-white font-bold text-[10px] border border-blue-500/30 w-full"
+              >
+                11x (+1 Grátis) (10.000 💰)
               </button>
             </div>
           </div>
@@ -677,8 +701,10 @@
             <div
               class="absolute inset-0 bg-gradient-to-r from-amber-900/40 to-slate-900 z-0"
             ></div>
-            <div class="relative z-10 p-4 flex items-center justify-between">
-              <div class="flex items-center gap-4">
+            <div
+              class="relative z-10 p-4 flex flex-col sm:flex-row items-center justify-between gap-3"
+            >
+              <div class="flex items-center gap-4 w-full">
                 <div
                   class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-2xl border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
                 >
@@ -689,12 +715,20 @@
                   <p class="text-amber-300 text-[10px]">3-5 Estrelas</p>
                 </div>
               </div>
-              <button
-                onclick="buyShopItem('ticket_epic')"
-                class="bg-gradient-to-r from-amber-600 to-orange-600 px-6 py-2 rounded-xl text-white font-bold text-xs shadow-lg shadow-amber-900/20 active:scale-95 transition-transform border border-amber-400/30"
-              >
-                300 💎
-              </button>
+              <div class="flex flex-col gap-2 w-full sm:w-auto">
+                <button
+                  onclick="buyShopItem('ticket_epic')"
+                  class="bg-gradient-to-r from-amber-600 to-orange-600 px-6 py-2 rounded-xl text-white font-bold text-xs shadow-lg shadow-amber-900/20 active:scale-95 transition-transform border border-amber-400/30 w-full"
+                >
+                  1x (100 💎)
+                </button>
+                <button
+                  onclick="buyShopItem('ticket_epic_11')"
+                  class="bg-amber-900/50 hover:bg-amber-800 px-6 py-2 rounded-xl text-white font-bold text-[10px] border border-amber-500/30 w-full"
+                >
+                  11x (+1 Grátis) (1.000 💎)
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -713,36 +747,56 @@
               class="glass-panel p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden"
             >
               <div
-                class="absolute inset-0 bg-gradient-to-b from-yellow-900/20 to-transparent"
+                class="absolute inset-0 bg-gradient-to-b from-yellow-900/20 to-transparent pointer-events-none"
               ></div>
               <div class="text-3xl mb-2 relative z-10">⚡</div>
               <h3 class="text-white font-bold text-sm relative z-10">
-                50 Energia
+                Energia
               </h3>
               <button
                 onclick="buyShopItem('energy')"
-                class="mt-3 w-full py-2 bg-slate-800 border border-white/10 rounded-lg text-white font-bold text-xs hover:bg-slate-700 active:scale-95 transition-all"
+                class="mt-3 w-full py-2 bg-slate-800 border border-white/10 rounded-lg text-white font-bold text-xs hover:bg-slate-700 active:scale-95 transition-all relative z-20 cursor-pointer"
               >
-                50 💎
+                50 (+50) 💎
               </button>
             </div>
 
-            <!-- XP Potion -->
+            <!-- Skillupper -->
             <div
-              class="glass-panel p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden"
+              class="glass-panel p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden ring-1 ring-fuchsia-500/50"
             >
               <div
-                class="absolute inset-0 bg-gradient-to-b from-blue-900/20 to-transparent"
+                class="absolute inset-0 bg-gradient-to-b from-fuchsia-900/20 to-transparent pointer-events-none"
               ></div>
-              <div class="text-3xl mb-2 relative z-10">🧪</div>
+              <div class="text-3xl mb-2 relative z-10">⚫</div>
               <h3 class="text-white font-bold text-sm relative z-10">
-                XP Potion
+                Skillupper
               </h3>
               <button
-                onclick="buyShopItem('xp_pot')"
-                class="mt-3 w-full py-2 bg-slate-800 border border-white/10 rounded-lg text-white font-bold text-xs hover:bg-slate-700 active:scale-95 transition-all"
+                onclick="buyShopItem('skillupper')"
+                class="mt-3 w-full py-2 bg-slate-800 border border-white/10 rounded-lg text-white font-bold text-xs hover:bg-slate-700 active:scale-95 transition-all relative z-20 cursor-pointer"
               >
-                500 💰
+                1 (+1) 1k 💎
+              </button>
+            </div>
+
+            <!-- XP Bost (NEW) -->
+            <div
+              class="glass-panel p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden ring-1 ring-emerald-500/50"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-b from-emerald-900/20 to-transparent pointer-events-none"
+              ></div>
+              <div class="text-3xl mb-2 relative z-10">🚀</div>
+              <h3 class="text-white font-bold text-sm relative z-10">
+                XP Boost (7m)
+              </h3>
+              <p class="text-[9px] text-emerald-400 relative z-10">3x EXP</p>
+              <button
+                onclick="buyShopItem('xp_boost')"
+                class="mt-auto pt-2 w-full py-2 bg-slate-800 border border-white/10 rounded-lg text-white font-bold text-xs hover:bg-slate-700 active:scale-95 transition-all relative z-20 cursor-pointer"
+              >
+                150 💎
               </button>
             </div>
           </div>
@@ -842,90 +896,162 @@
 
             <!-- RIGHT: Info & Stats (60%) -->
             <div
-              class="w-[60%] h-full bg-slate-900/90 relative flex flex-col p-6 border-l border-white/5"
+              class="w-[60%] h-full bg-slate-900/90 relative flex flex-col p-6 border-l border-white/5 overflow-y-auto scroll-container"
             >
-              <!-- Header Stats -->
-              <div class="flex items-center justify-between mb-8">
-                <div class="flex flex-col">
-                  <span
-                    class="text-slate-400 text-[10px] font-bold uppercase tracking-wider"
-                    >Raridade</span
-                  >
-                  <div
-                    id="det-stars"
-                    class="text-yellow-400 text-sm tracking-widest"
-                  >
-                    ⭐⭐⭐⭐⭐
+              <!-- Header: Rarity & Level -->
+              <div class="flex flex-col gap-4 mb-6 shrink-0">
+                <div
+                  class="flex justify-between items-end border-b border-white/10 pb-4"
+                >
+                  <div>
+                    <div
+                      class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1"
+                    >
+                      Classificação
+                    </div>
+                    <div
+                      id="det-stars"
+                      class="text-yellow-400 text-lg tracking-[0.2em] leading-none"
+                    >
+                      ⭐⭐⭐⭐⭐
+                    </div>
+                    <div
+                      id="det-nat-grade"
+                      class="text-[9px] font-bold text-slate-500 mt-1"
+                    >
+                      NATURAL GRADE
+                    </div>
                   </div>
-                  <span
-                    id="det-nat-grade"
-                    class="text-[9px] font-bold text-slate-500 mt-1"
-                    >NATURAL GRADE</span
-                  >
+                  <div class="text-right">
+                    <div
+                      class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1"
+                    >
+                      Nível
+                    </div>
+                    <div class="flex items-baseline justify-end gap-2">
+                      <span
+                        id="det-lvl"
+                        class="text-3xl font-black text-white leading-none"
+                        >40</span
+                      >
+                      <span class="text-xs text-slate-500">/ 40</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="text-right">
-                  <span
-                    class="text-slate-400 text-[10px] font-bold uppercase tracking-wider"
-                    >Nível</span
+
+                <!-- XP Bar (Full Width) -->
+                <div>
+                  <div
+                    class="flex justify-between text-[9px] text-slate-400 font-bold mb-1"
                   >
-                  <div id="det-lvl" class="text-2xl font-black text-white">
-                    40
+                    <span>EXP</span> <span id="det-xp-text">0 / 0</span>
+                  </div>
+                  <div
+                    class="h-2 bg-slate-800 rounded-full overflow-hidden relative border border-white/5"
+                  >
+                    <div
+                      id="det-xp-bar"
+                      class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-green-400 w-0 transition-all duration-500"
+                    ></div>
                   </div>
                 </div>
               </div>
 
-              <!-- Stats Grid -->
-              <div class="grid grid-cols-2 gap-x-6 gap-y-4 mb-8">
-                <div
-                  class="flex justify-between items-center border-b border-white/5 pb-1"
-                >
-                  <span class="text-slate-400 text-xs font-bold">HP</span>
-                  <span id="val-hp" class="text-white font-mono font-bold"
-                    >10000</span
+              <!-- Stats Section (Progress Bars) -->
+              <div class="mb-6 space-y-3 shrink-0">
+                <!-- HP -->
+                <div>
+                  <div class="flex justify-between text-xs font-bold mb-1">
+                    <span class="text-slate-400">HP</span>
+                    <span id="val-hp" class="text-emerald-400 font-mono"
+                      >10000</span
+                    >
+                  </div>
+                  <div
+                    class="h-1.5 bg-slate-800 rounded-full overflow-hidden relative"
                   >
+                    <div
+                      id="bar-hp"
+                      class="absolute inset-0 bg-emerald-500 w-[50%]"
+                    ></div>
+                  </div>
                 </div>
-                <div
-                  class="flex justify-between items-center border-b border-white/5 pb-1"
-                >
-                  <span class="text-slate-400 text-xs font-bold">ATK</span>
-                  <span id="val-atk" class="text-white font-mono font-bold"
-                    >2500</span
+                <!-- ATK -->
+                <div>
+                  <div class="flex justify-between text-xs font-bold mb-1">
+                    <span class="text-slate-400">ATK</span>
+                    <span id="val-atk" class="text-red-400 font-mono"
+                      >2500</span
+                    >
+                  </div>
+                  <div
+                    class="h-1.5 bg-slate-800 rounded-full overflow-hidden relative"
                   >
+                    <div
+                      id="bar-atk"
+                      class="absolute inset-0 bg-red-500 w-[50%]"
+                    ></div>
+                  </div>
                 </div>
-                <div
-                  class="flex justify-between items-center border-b border-white/5 pb-1"
-                >
-                  <span class="text-slate-400 text-xs font-bold">DEF</span>
-                  <span id="val-def" class="text-white font-mono font-bold"
-                    >900</span
+                <!-- DEF -->
+                <div>
+                  <div class="flex justify-between text-xs font-bold mb-1">
+                    <span class="text-slate-400">DEF</span>
+                    <span id="val-def" class="text-blue-400 font-mono"
+                      >900</span
+                    >
+                  </div>
+                  <div
+                    class="h-1.5 bg-slate-800 rounded-full overflow-hidden relative"
                   >
+                    <div
+                      id="bar-def"
+                      class="absolute inset-0 bg-blue-500 w-[50%]"
+                    ></div>
+                  </div>
                 </div>
-                <div
-                  class="flex justify-between items-center border-b border-white/5 pb-1"
-                >
-                  <span class="text-slate-400 text-xs font-bold">SPD</span>
-                  <span class="text-white font-mono font-bold">100</span>
-                </div>
-                <div
-                  class="flex justify-between items-center border-b border-white/5 pb-1"
-                >
-                  <span class="text-slate-400 text-xs font-bold">CRIT</span>
-                  <span id="val-crit" class="text-white font-mono font-bold"
-                    >15%</span
-                  >
-                </div>
-                <div
-                  class="flex justify-between items-center border-b border-white/5 pb-1"
-                >
-                  <span class="text-slate-400 text-xs font-bold">CDMG</span>
-                  <span id="val-cdmg" class="text-white font-mono font-bold"
-                    >50%</span
-                  >
+                <!-- Grid for Secondary Stats -->
+                <div class="grid grid-cols-3 gap-4 pt-2">
+                  <div>
+                    <div class="text-[9px] text-slate-500 font-bold uppercase">
+                      SPD
+                    </div>
+                    <div
+                      id="val-spd"
+                      class="text-white font-mono font-bold text-sm"
+                    >
+                      100
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-[9px] text-slate-500 font-bold uppercase">
+                      CRIT
+                    </div>
+                    <div
+                      id="val-crit"
+                      class="text-white font-mono font-bold text-sm"
+                    >
+                      15%
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-[9px] text-slate-500 font-bold uppercase">
+                      CDMG
+                    </div>
+                    <div
+                      id="val-cdmg"
+                      class="text-white font-mono font-bold text-sm"
+                    >
+                      50%
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <!-- Equipment Slots (Visual) -->
-              <div class="flex justify-center gap-6 mb-auto">
+              <div
+                class="flex justify-center gap-6 mb-6 shrink-0 border-t border-b border-white/5 py-4"
+              >
                 <div
                   id="eq-slot-weapon"
                   class="eq-slot transform hover:scale-105 transition-transform cursor-pointer"
@@ -949,15 +1075,12 @@
                 </div>
               </div>
 
+              <!-- SKILLS CONTAINER (JS Target) -->
+              <div id="det-skills-container" class="w-full shrink-0 mb-6"></div>
+
               <!-- Actions -->
               <div class="space-y-3 mt-4">
-                <button
-                  onclick="useXpPotion()"
-                  id="btn-xp"
-                  class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold uppercase rounded-xl text-xs flex items-center justify-center gap-2 border border-white/5"
-                >
-                  <span>🧪</span> Usar Potion
-                </button>
+                <!-- Removed XP Potion Button -->
                 <button
                   onclick="equipLeader()"
                   id="btn-equip"
@@ -1041,26 +1164,6 @@
           </p>
         </div>
       </div>
-
-      <!-- STORY -->
-      <main
-        id="view-story"
-        class="scroll-container flex-1 overflow-y-auto hidden-view bg-slate-950 p-6 relative"
-      >
-        <button
-          onclick="changeView('view-home')"
-          class="mb-6 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold"
-        >
-          ← Voltar
-        </button>
-        <h2 class="text-3xl font-black text-white uppercase italic mb-8">
-          Campanha
-        </h2>
-        <div
-          id="story-nodes"
-          class="space-y-6 relative pl-4 border-l-2 border-slate-800"
-        ></div>
-      </main>
 
       <!-- BATTLE -->
       <main id="view-battle" class="flex-1 hidden-view battle-scene relative">
@@ -1449,70 +1552,6 @@
           </div>
         </div>
       </div>
-
-      <!-- BATTLE VIEW -->
-      <main
-        id="view-battle"
-        class="flex-1 hidden-view bg-gradient-to-b from-slate-900 via-slate-950 to-black flex flex-col items-center justify-center p-6 relative"
-      >
-        <!-- Victory/Defeat Screen -->
-        <div class="text-center space-y-6 max-w-md w-full">
-          <!-- Result Title -->
-          <div id="battle-result-title" class="space-y-2">
-            <h2
-              class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 uppercase"
-            >
-              VITÓRIA!
-            </h2>
-            <p class="text-slate-300 text-sm">Batalha concluída com sucesso</p>
-          </div>
-
-          <!-- Rewards -->
-          <div
-            id="battle-rewards"
-            class="glass-panel p-6 rounded-2xl space-y-4"
-          >
-            <h3 class="text-white font-bold uppercase text-sm mb-4">
-              Recompensas
-            </h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div
-                class="bg-slate-800/50 p-4 rounded-xl border border-yellow-500/30"
-              >
-                <div class="text-3xl mb-2">💰</div>
-                <div class="text-yellow-400 font-bold text-lg" id="reward-gold">
-                  +500
-                </div>
-                <div class="text-slate-400 text-xs">Ouro</div>
-              </div>
-              <div
-                class="bg-slate-800/50 p-4 rounded-xl border border-cyan-500/30"
-              >
-                <div class="text-3xl mb-2">💎</div>
-                <div
-                  class="text-cyan-400 font-bold text-lg"
-                  id="reward-crystals"
-                >
-                  +50
-                </div>
-                <div class="text-slate-400 text-xs">Cristais</div>
-              </div>
-            </div>
-            <!-- Equipment Drops -->
-            <div id="battle-equipment-drops" class="space-y-2">
-              <!-- Equipment cards will be added here dynamically -->
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <button
-            onclick="closeBattle()"
-            class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black uppercase rounded-2xl shadow-lg active:scale-95 transition-all"
-          >
-            Continuar
-          </button>
-        </div>
-      </main>
     </div>
 
     <script src="game.js"></script>
