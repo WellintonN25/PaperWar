@@ -427,7 +427,7 @@
       <!-- PRE-BATTLE PREPARATION -->
       <main
         id="view-prep"
-        class="flex-1 hidden-view bg-slate-950 flex flex-col p-6 relative"
+        class="flex-1 hidden-view bg-slate-950 flex flex-col p-4 sm:p-6 relative overflow-y-auto custom-scrollbar"
       >
         <button
           onclick="changeView('view-home')"
@@ -446,7 +446,7 @@
           Masmorra B10
         </p>
 
-        <div class="flex-1 flex flex-col space-y-6">
+        <div class="flex-1 flex flex-col space-y-2 sm:space-y-6">
           <!-- Selected Unit -->
           <div
             class="glass-panel p-6 rounded-3xl flex flex-col items-center relative overflow-hidden"
@@ -841,7 +841,7 @@
 
       <main
         id="view-character-detail"
-        class="hidden-view bg-slate-950 min-h-screen flex flex-col relative"
+        class="hidden-view bg-slate-950 flex-1 h-full flex flex-col relative"
       >
         <!-- Back Button (Floating) -->
         <button
@@ -852,7 +852,7 @@
         </button>
 
         <!-- Split Layout (Vertical) -->
-        <div class="flex flex-col h-screen w-full">
+        <div class="flex flex-col h-full w-full">
           <!-- TOP: Visuals (35%) -->
           <div
             class="w-full h-[35%] relative flex items-center justify-center bg-gradient-to-br from-indigo-900/20 to-slate-900 overflow-hidden shrink-0 border-b border-white/10"
@@ -900,7 +900,7 @@
 
           <!-- BOTTOM: Info & Stats (65%) -->
           <div
-            class="w-full h-[65%] bg-slate-900/90 relative flex flex-col p-4 overflow-y-auto custom-scrollbar"
+            class="w-full h-[65%] bg-slate-900/90 relative flex flex-col px-4 pt-4 pb-24 overflow-y-auto custom-scrollbar"
           >
             <!-- Header: Rarity & Level -->
             <div class="flex flex-col gap-4 mb-6 shrink-0">
@@ -1079,14 +1079,9 @@
             <div id="det-skills-container" class="w-full shrink-0 mb-6"></div>
 
             <!-- Actions (Grid Layout for Safe Visibility) -->
-            <div class="grid grid-cols-2 gap-3 mt-4 shrink-0 pb-6">
-              <button
-                onclick="openSkillUpModal()"
-                id="btn-skillup"
-                class="w-full py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-black uppercase rounded-xl shadow-lg shadow-fuchsia-500/20 active:scale-95 transition-all text-xs border border-white/10"
-              >
-                Evoluir Skill
-              </button>
+            <!-- Actions (Grid Layout for Safe Visibility) -->
+            <div class="flex flex-col gap-3 mt-4 shrink-0 pb-6">
+              <!-- Removed duplicate static btn-skillup -->
 
               <button
                 onclick="equipLeader()"

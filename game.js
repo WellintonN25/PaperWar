@@ -4104,7 +4104,7 @@ const renderStory = () => {
         const skillBtn = document.createElement("button");
         skillBtn.onclick = () => openSkillUpModal();
         skillBtn.className = "py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-xs uppercase rounded-lg border border-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1";
-        skillBtn.innerHTML = `<span>🆙</span> Skill Up`;
+        skillBtn.innerHTML = `<span>🆙</span> Evoluir Skill`;
         evoContainer.appendChild(skillBtn);
 
         acts.appendChild(evoContainer);
