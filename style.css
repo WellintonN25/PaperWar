@@ -241,6 +241,73 @@
         background: #a855f7;
       }
 
+      /* Elemental Gradients for Character Icons */
+      .bg-fire-gradient { background: radial-gradient(circle at center, rgba(239, 68, 68, 0.3) 0%, transparent 80%); }
+      .bg-water-gradient { background: radial-gradient(circle at center, rgba(59, 130, 246, 0.3) 0%, transparent 80%); }
+      .bg-lightning-gradient { background: radial-gradient(circle at center, rgba(234, 179, 8, 0.3) 0%, transparent 80%); }
+      .bg-earth-gradient { background: radial-gradient(circle at center, rgba(168, 162, 158, 0.3) 0%, transparent 80%); }
+      .bg-nature-gradient { background: radial-gradient(circle at center, rgba(34, 197, 94, 0.3) 0%, transparent 80%); }
+      .bg-void-gradient { background: radial-gradient(circle at center, rgba(168, 85, 247, 0.3) 0%, transparent 80%); }
+
+      .element-glow {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      .level-badge {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        font-size: 8px;
+        font-weight: 900;
+        color: white;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 1px 4px;
+        border-radius: 4px;
+        z-index: 25;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .name-label {
+        position: absolute;
+        bottom: 12px;
+        width: 100%;
+        text-align: center;
+        font-size: 7px;
+        font-weight: 800;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        z-index: 25;
+        padding: 0 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+      }
+
+      .leader-badge {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: #fbbf24;
+        color: #78350f;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        font-weight: 950;
+        z-index: 30;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        border: 1px solid white;
+      }
+
+
       /* --- 3D SCENE --- */
       .battle-scene {
         perspective: 1200px;

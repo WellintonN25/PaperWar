@@ -15,7 +15,7 @@
         },
         {
           id: "thyron",
-          name: "Thyron",
+          name: "Temp",
           type: "Storm Bringer",
           element: "lightning",
           stars: 5,
@@ -23,9 +23,10 @@
           atk: 210,
           def: 80,
           emoji: "⚡",
-          img: "src/Thyron.png",
-          imgBack: "src/backThyron.png",
-          skills: ["melee", "bolt", "sup_lightning"],
+          img: "src/temp.webp",
+          imgBack: "",
+          imgAtk: "src/tempSpec.webp",
+          skills: ["melee", "bolt", "sup_cosmic_storm"],
         },
         {
           id: "neriah",
@@ -65,6 +66,7 @@
           emoji: "🌑",
           img: "src/Kaelthar.png",
           imgBack: "src/backKaelthar.png",
+          imgAtk: "src/atkKaelthar.webp",
           skills: ["melee", "void_slash", "sup_void"],
         },
         {
@@ -79,6 +81,7 @@
           emoji: "🗿",
           img: "src/Dhorak.png",
           imgBack: "src/backDhorak.png",
+          imgAtk: "src/atkDhorak.webp",
           skills: ["melee", "rock_throw", "sup_earth"],
         },
         {
@@ -630,6 +633,71 @@
           type: "sup_dark_comet",
           mp: 85,
         },
+        // NEW ELEMENTAL SKILLS (4)
+        crystal_spear: {
+          n: "Lança de Cristal",
+          p: 1.9,
+          icon: "💎",
+          type: "crystal_spear",
+          mp: 30,
+        },
+        lava_burst: {
+          n: "Erupção de Lava",
+          p: 2.0,
+          icon: "🌋",
+          type: "lava_burst",
+          mp: 35,
+        },
+        chain_lightning: {
+          n: "Raio em Cadeia",
+          p: 1.75,
+          icon: "⚡",
+          type: "chain_lightning",
+          mp: 28,
+        },
+        spectral_blade: {
+          n: "Lâmina Espectral",
+          p: 1.95,
+          icon: "👻",
+          type: "spectral_blade",
+          mp: 32,
+        },
+        // NEW SUPREME SKILLS (5)
+        sup_cosmic_storm: {
+          n: "Tempestade Cósmica",
+          p: 3.9,
+          icon: "🌌",
+          type: "sup_cosmic_storm",
+          mp: 70,
+        },
+        sup_infernal_apocalypse: {
+          n: "Apocalipse Infernal",
+          p: 4.3,
+          icon: "🔥",
+          type: "sup_infernal_apocalypse",
+          mp: 85,
+        },
+        sup_frozen_eternity: {
+          n: "Eternidade Congelada",
+          p: 4.0,
+          icon: "❄️",
+          type: "sup_frozen_eternity",
+          mp: 75,
+        },
+        sup_natures_wrath: {
+          n: "Ira da Natureza",
+          p: 3.8,
+          icon: "🌿",
+          type: "sup_natures_wrath",
+          mp: 68,
+        },
+        sup_void_collapse: {
+          n: "Colapso do Vazio",
+          p: 4.6,
+          icon: "⚫",
+          type: "sup_void_collapse",
+          mp: 95,
+        },
       };
       
       const MAP_DATA = [
@@ -760,6 +828,7 @@
           if (db) {
             if (!m.img) m.img = db.img;
             if (!m.imgBack) m.imgBack = db.imgBack || "";
+            if (!m.imgAtk) m.imgAtk = db.imgAtk || "";
             if (!m.emoji) m.emoji = db.emoji;
             m.skills = db.skills;
             m.stars = db.stars;
@@ -2088,12 +2157,27 @@ const renderStory = () => {
           );
           attackerEl.classList.remove("anim-spin-atk");
         } else {
+          // Character Sprite Swap Logic for SPECIAL ATTACKS ONLY
+          const imgElement = attackerEl.querySelector("img");
+          const origImg = imgElement ? imgElement.src : null;
+          let didSwap = false;
+          
+          if (att.imgAtk && imgElement) {
+            imgElement.src = att.imgAtk;
+            didSwap = true;
+          }
+
           attackerEl.classList.add("anim-cast");
-          await sleep(500 / spd);
-          if (skill.type.endsWith("_sup"))
+          await sleep(1500 / spd); // Increased from 500 to 1500 for full animation
+          if (skill.type.endsWith("_sup") || skill.type.startsWith("sup_"))
             await spawnUltimateVFX(skill.type, isPlayer);
           else await spawnVFX(skill.type, isPlayer);
           attackerEl.classList.remove("anim-cast");
+
+          // Revert sprite
+          if (didSwap && imgElement && origImg) {
+            imgElement.src = origImg;
+          }
         }
 
         defenderEl.classList.add("anim-hit-recoil");
@@ -2680,6 +2764,121 @@ const renderStory = () => {
         );
         await anim.finished;
         proj.remove();
+
+      // NEW ELEMENTAL SKILLS VFX
+      if (type === "crystal_spear") {
+        for (let i = 0; i < 8; i++) {
+          const crystal = document.createElement("div");
+          crystal.style.position = "absolute";
+          crystal.style.width = "8px";
+          crystal.style.height = "30px";
+          crystal.style.background = "linear-gradient(135deg, #60a5fa, #a5f3fc, #fff)";
+          crystal.style.boxShadow = "0 0 15px #60a5fa, 0 0 30px #a5f3fc";
+          crystal.style.clipPath = "polygon(50% 0%, 100% 100%, 0% 100%)";
+          crystal.style.transform = `translateX(${start.x}px) translateY(${start.y}px) translateZ(${start.z}px) rotate(${i * 45}deg)`;
+          layer.appendChild(crystal);
+          
+          setTimeout(() => {
+            crystal.animate(
+              [
+                { transform: `translateX(${start.x}px) translateY(${start.y}px) translateZ(${start.z}px) rotate(${i * 45}deg)` },
+                { transform: `translateX(${end.x}px) translateY(${end.y}px) translateZ(${end.z}px) rotate(${i * 45 + 360}deg)` },
+              ],
+              { duration: 600 / spd, easing: "ease-out", fill: "forwards" }
+            );
+          }, i * 50 / spd);
+          
+          setTimeout(() => crystal.remove(), 700 / spd);
+        }
+        await sleep(700 / spd);
+      }
+
+      if (type === "lava_burst") {
+        for (let i = 0; i < 12; i++) {
+          const lava = document.createElement("div");
+          lava.style.position = "absolute";
+          lava.style.width = "20px";
+          lava.style.height = "20px";
+          lava.style.borderRadius = "50%";
+          lava.style.background = i % 2 === 0 
+            ? "radial-gradient(circle, #ff4500, #ff6347, #8b0000)" 
+            : "radial-gradient(circle, #ffa500, #ff8c00, #654321)";
+          lava.style.boxShadow = "0 0 20px #ff4500";
+          const angle = (i / 12) * Math.PI * 2;
+          const radius = 50;
+          lava.style.transform = `translateX(${end.x}px) translateY(${end.y - 50}px) translateZ(${end.z}px)`;
+          layer.appendChild(lava);
+          
+          lava.animate(
+            [
+              { transform: `translateX(${end.x}px) translateY(${end.y - 50}px) translateZ(${end.z}px) scale(0)`, opacity: 1 },
+              { transform: `translateX(${end.x + Math.cos(angle) * radius}px) translateY(${end.y + Math.sin(angle) * radius - 30}px) translateZ(${end.z}px) scale(1.5)`, opacity: 0.5 },
+            ],
+            { duration: 800 / spd, easing: "ease-out", fill: "forwards" }
+          );
+          
+          setTimeout(() => lava.remove(), 850 / spd);
+        }
+        await sleep(850 / spd);
+      }
+
+      if (type === "chain_lightning") {
+        for (let i = 0; i < 5; i++) {
+          const bolt = document.createElement("div");
+          bolt.style.position = "absolute";
+          bolt.style.width = "4px";
+          bolt.style.height = "60px";
+          bolt.style.background = "linear-gradient(to bottom, #fff, #60a5fa, #3b82f6)";
+          bolt.style.boxShadow = "0 0 20px #60a5fa, 0 0 40px #3b82f6";
+          const offsetX = (Math.random() - 0.5) * 40;
+          const offsetY = (Math.random() - 0.5) * 40;
+          bolt.style.transform = `translateX(${start.x + offsetX}px) translateY(${start.y + offsetY}px) translateZ(${start.z}px) rotate(${Math.random() * 30 - 15}deg)`;
+          layer.appendChild(bolt);
+          
+          triggerFlash(80);
+          
+          setTimeout(() => {
+            bolt.animate(
+              [
+                { opacity: 1, transform: `translateX(${start.x + offsetX}px) translateY(${start.y + offsetY}px) translateZ(${start.z}px) rotate(${Math.random() * 30 - 15}deg)` },
+                { opacity: 1, transform: `translateX(${end.x + offsetX}px) translateY(${end.y + offsetY}px) translateZ(${end.z}px) rotate(${Math.random() * 30 - 15}deg)` },
+                { opacity: 0, transform: `translateX(${end.x + offsetX}px) translateY(${end.y + offsetY}px) translateZ(${end.z}px) rotate(${Math.random() * 30 - 15}deg)` },
+              ],
+              { duration: 200 / spd, easing: "linear", fill: "forwards" }
+            );
+          }, i * 100 / spd);
+          
+          setTimeout(() => bolt.remove(), (i * 100 + 250) / spd);
+        }
+        await sleep(700 / spd);
+      }
+
+      if (type === "spectral_blade") {
+        for (let i = 0; i < 3; i++) {
+          const blade = document.createElement("div");
+          blade.style.position = "absolute";
+          blade.style.width = "60px";
+          blade.style.height = "8px";
+          blade.style.background = "linear-gradient(90deg, transparent, #a78bfa, #8b5cf6, transparent)";
+          blade.style.boxShadow = "0 0 20px #a78bfa, 0 0 40px #8b5cf6";
+          blade.style.transform = `translateX(${start.x}px) translateY(${start.y + i * 15}px) translateZ(${start.z}px) rotate(-45deg)`;
+          layer.appendChild(blade);
+          
+          setTimeout(() => {
+            blade.animate(
+              [
+                { transform: `translateX(${start.x}px) translateY(${start.y + i * 15}px) translateZ(${start.z}px) rotate(-45deg)`, opacity: 0.8 },
+                { transform: `translateX(${end.x}px) translateY(${end.y + i * 15}px) translateZ(${end.z}px) rotate(-45deg)`, opacity: 1 },
+                { transform: `translateX(${end.x + 30}px) translateY(${end.y + i * 15}px) translateZ(${end.z}px) rotate(-45deg)`, opacity: 0 },
+              ],
+              { duration: 500 / spd, easing: "ease-in-out", fill: "forwards" }
+            );
+          }, i * 100 / spd);
+          
+          setTimeout(() => blade.remove(), (i * 100 + 550) / spd);
+        }
+        await sleep(650 / spd);
+      }
       };
 
       const spawnUltimateVFX = async (type, fromPlayer) => {
@@ -3025,6 +3224,174 @@ const renderStory = () => {
           comet.remove();
           return;
         }
+
+          // NEW SUPREME SKILLS VFX
+      if (type === "sup_cosmic_storm") {
+        for (let i = 0; i < 30; i++) {
+          const star = document.createElement("div");
+          star.style.position = "absolute";
+          star.style.width = "6px";
+          star.style.height = "6px";
+          star.style.borderRadius = "50%";
+          star.style.background = `radial-gradient(circle, #fff, ${i % 3 === 0 ? '#a78bfa' : i % 3 === 1 ? '#60a5fa' : '#f472b6'})`;
+          star.style.boxShadow = `0 0 15px ${i % 3 === 0 ? '#a78bfa' : i % 3 === 1 ? '#60a5fa' : '#f472b6'}`;
+          const angle = (i / 30) * Math.PI * 2;
+          const radius = 80 + Math.random() * 40;
+          star.style.transform = `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px)`;
+          layer.appendChild(star);
+          
+          star.animate(
+            [
+              { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0)`, opacity: 0 },
+              { transform: `translateX(${targetPos.x + Math.cos(angle) * radius}px) translateY(${targetPos.y + Math.sin(angle) * radius}px) translateZ(${targetPos.z}px) scale(1)`, opacity: 1 },
+              { transform: `translateX(${targetPos.x + Math.cos(angle) * radius * 0.5}px) translateY(${targetPos.y + Math.sin(angle) * radius * 0.5}px) translateZ(${targetPos.z}px) scale(0)`, opacity: 0 },
+            ],
+            { duration: 1500 / spd, easing: "ease-out", fill: "forwards" }
+          );
+          
+          setTimeout(() => star.remove(), 1600 / spd);
+        }
+        await sleep(1600 / spd);
+        return;
+      }
+
+      if (type === "sup_infernal_apocalypse") {
+        for (let i = 0; i < 8; i++) {
+          const meteor = document.createElement("div");
+          meteor.style.position = "absolute";
+          meteor.style.width = "30px";
+          meteor.style.height = "30px";
+          meteor.style.borderRadius = "50%";
+          meteor.style.background = "radial-gradient(circle, #fff, #ff4500, #8b0000)";
+          meteor.style.boxShadow = "0 0 30px #ff4500, 0 0 60px #ff6347";
+          const offsetX = (Math.random() - 0.5) * 100;
+          const offsetY = (Math.random() - 0.5) * 100;
+          meteor.style.transform = `translateX(${targetPos.x + offsetX}px) translateY(${targetPos.y + offsetY - 200}px) translateZ(${targetPos.z}px)`;
+          layer.appendChild(meteor);
+          
+          setTimeout(() => {
+            meteor.animate(
+              [
+                { transform: `translateX(${targetPos.x + offsetX}px) translateY(${targetPos.y + offsetY - 200}px) translateZ(${targetPos.z}px) scale(0.5)`, opacity: 1 },
+                { transform: `translateX(${targetPos.x + offsetX}px) translateY(${targetPos.y + offsetY}px) translateZ(${targetPos.z}px) scale(2)`, opacity: 1 },
+                { transform: `translateX(${targetPos.x + offsetX}px) translateY(${targetPos.y + offsetY + 20}px) translateZ(${targetPos.z}px) scale(0)`, opacity: 0 },
+              ],
+              { duration: 800 / spd, easing: "ease-in", fill: "forwards" }
+            );
+          }, i * 150 / spd);
+          
+          setTimeout(() => meteor.remove(), (i * 150 + 850) / spd);
+        }
+        await sleep(2000 / spd);
+        return;
+      }
+
+      if (type === "sup_frozen_eternity") {
+        for (let i = 0; i < 20; i++) {
+          const ice = document.createElement("div");
+          ice.style.position = "absolute";
+          ice.style.width = "15px";
+          ice.style.height = "15px";
+          ice.style.background = "linear-gradient(135deg, #a5f3fc, #60a5fa, #fff)";
+          ice.style.boxShadow = "0 0 20px #60a5fa, 0 0 40px #a5f3fc";
+          ice.style.clipPath = "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)";
+          const angle = (i / 20) * Math.PI * 2;
+          const radius = 60;
+          ice.style.transform = `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0)`;
+          layer.appendChild(ice);
+          
+          ice.animate(
+            [
+              { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0) rotate(0deg)`, opacity: 0 },
+              { transform: `translateX(${targetPos.x + Math.cos(angle) * radius}px) translateY(${targetPos.y + Math.sin(angle) * radius}px) translateZ(${targetPos.z}px) scale(1.5) rotate(360deg)`, opacity: 1 },
+            ],
+            { duration: 1200 / spd, easing: "ease-out", fill: "forwards" }
+          );
+          
+          setTimeout(() => ice.remove(), 1300 / spd);
+        }
+        await sleep(1300 / spd);
+        return;
+      }
+
+      if (type === "sup_natures_wrath") {
+        for (let i = 0; i < 15; i++) {
+          const vine = document.createElement("div");
+          vine.style.position = "absolute";
+          vine.style.width = "8px";
+          vine.style.height = "80px";
+          vine.style.background = "linear-gradient(to bottom, #22c55e, #16a34a, #15803d)";
+          vine.style.boxShadow = "0 0 15px #22c55e";
+          vine.style.borderRadius = "4px";
+          const angle = (i / 15) * Math.PI * 2;
+          const radius = 50;
+          vine.style.transform = `translateX(${targetPos.x}px) translateY(${targetPos.y + 50}px) translateZ(${targetPos.z}px) scale(0)`;
+          layer.appendChild(vine);
+          
+          setTimeout(() => {
+            vine.animate(
+              [
+                { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y + 50}px) translateZ(${targetPos.z}px) scale(0) rotate(0deg)`, opacity: 0 },
+                { transform: `translateX(${targetPos.x + Math.cos(angle) * radius}px) translateY(${targetPos.y - 30}px) translateZ(${targetPos.z}px) scale(1) rotate(${angle * 180 / Math.PI}deg)`, opacity: 1 },
+              ],
+              { duration: 1000 / spd, easing: "ease-out", fill: "forwards" }
+            );
+          }, i * 50 / spd);
+          
+          setTimeout(() => vine.remove(), (i * 50 + 1100) / spd);
+        }
+        await sleep(1800 / spd);
+        return;
+      }
+
+      if (type === "sup_void_collapse") {
+        const blackHole = document.createElement("div");
+        blackHole.style.position = "absolute";
+        blackHole.style.width = "100px";
+        blackHole.style.height = "100px";
+        blackHole.style.borderRadius = "50%";
+        blackHole.style.background = "radial-gradient(circle, #000, #1a1a2e, #16213e)";
+        blackHole.style.boxShadow = "0 0 50px #8b5cf6, 0 0 100px #6366f1, inset 0 0 50px #000";
+        blackHole.style.transform = `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0)`;
+        layer.appendChild(blackHole);
+        
+        blackHole.animate(
+          [
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0)`, opacity: 0 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(2)`, opacity: 1 },
+            { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px) scale(0.1)`, opacity: 0 },
+          ],
+          { duration: 1500 / spd, easing: "ease-in-out", fill: "forwards" }
+        );
+        
+        for (let i = 0; i < 25; i++) {
+          const particle = document.createElement("div");
+          particle.style.position = "absolute";
+          particle.style.width = "4px";
+          particle.style.height = "4px";
+          particle.style.borderRadius = "50%";
+          particle.style.background = "#a78bfa";
+          particle.style.boxShadow = "0 0 10px #a78bfa";
+          const angle = (i / 25) * Math.PI * 2;
+          const startRadius = 120;
+          particle.style.transform = `translateX(${targetPos.x + Math.cos(angle) * startRadius}px) translateY(${targetPos.y + Math.sin(angle) * startRadius}px) translateZ(${targetPos.z}px)`;
+          layer.appendChild(particle);
+          
+          particle.animate(
+            [
+              { transform: `translateX(${targetPos.x + Math.cos(angle) * startRadius}px) translateY(${targetPos.y + Math.sin(angle) * startRadius}px) translateZ(${targetPos.z}px)`, opacity: 1 },
+              { transform: `translateX(${targetPos.x}px) translateY(${targetPos.y}px) translateZ(${targetPos.z}px)`, opacity: 0 },
+            ],
+            { duration: 1200 / spd, easing: "ease-in", fill: "forwards" }
+          );
+          
+          setTimeout(() => particle.remove(), 1250 / spd);
+        }
+        
+        setTimeout(() => blackHole.remove(), 1600 / spd);
+        await sleep(1600 / spd);
+        return;
+    }
       };
 
       const showDmgText = (val, targetId, isCrit) => {
@@ -3150,6 +3517,7 @@ const renderStory = () => {
 
       const renderMonsterBox = () => {
   const grid = document.getElementById("roster-grid");
+  if (!grid) return;
   grid.innerHTML = "";
   document.getElementById("mon-count").innerText = state.inventory.length;
 
@@ -3157,15 +3525,16 @@ const renderStory = () => {
   state.inventory.forEach((mon, idx) => {
     const slot = document.createElement("div");
     const isLeader = idx === state.leaderIdx;
-    slot.className = `sw-slot aspect-square cursor-pointer flex items-center justify-center ${
+    
+    // Rarity classes for automatic styling from CSS
+    let rarityClass = "rarity-common";
+    if (mon.stars === 5) rarityClass = "rarity-legendary";
+    else if (mon.stars === 4) rarityClass = "rarity-epic";
+    else if (mon.stars === 3) rarityClass = "rarity-rare";
+
+    slot.className = `sw-slot aspect-square cursor-pointer flex items-center justify-center relative ${rarityClass} ${
       isLeader ? "selected" : ""
     }`;
-
-    if (!isLeader) {
-      if (mon.stars >= 5) slot.style.borderColor = "#fbbf24";
-      else if (mon.stars === 4) slot.style.borderColor = "#a855f7";
-      else if (mon.stars === 3) slot.style.borderColor = "#3b82f6";
-    }
 
     const elColor =
       {
@@ -3176,15 +3545,36 @@ const renderStory = () => {
         nature: "bg-nature",
         void: "bg-void",
       }[mon.element] || "bg-slate-500";
-    slot.innerHTML = `<div class="elem-badge ${elColor}"></div><img src="${
-      mon.img
-    }" class="w-[90%] h-[90%] object-contain filter drop-shadow-lg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:3rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${
-      mon.emoji
-    }</span><div class="star-row">${'<span class="star-icon">★</span>'.repeat(
-      mon.stars
-    )}</div><div class="absolute top-1 left-1 text-[8px] font-bold text-white bg-black/50 px-1 rounded">Lv.${
-      mon.lvl
-    }</div>`;
+
+    const elGradient = `bg-${mon.element || 'slate'}-gradient`;
+
+    slot.innerHTML = `
+      <!-- Element Background Glow -->
+      <div class="element-glow ${elGradient}"></div>
+      
+      <!-- Leader Badge -->
+      ${isLeader ? '<div class="leader-badge">L</div>' : ''}
+      
+      <!-- Element Badge -->
+      <div class="elem-badge ${elColor}"></div>
+      
+      <!-- Level Badge -->
+      <div class="level-badge">Lv.${mon.lvl}</div>
+      
+      <!-- Character Image / Emoji Fallback -->
+      <img src="${mon.img}" class="w-[85%] h-[85%] object-contain filter drop-shadow-lg z-10 transition-transform group-hover:scale-110" 
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <span style="display:none;font-size:2.5rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));z-index:10;">${mon.emoji}</span>
+      
+      <!-- Name Label -->
+      <div class="name-label">${mon.name}</div>
+      
+      <!-- Star Row -->
+      <div class="star-row">
+        ${'<span class="star-icon">★</span>'.repeat(mon.stars)}
+      </div>
+    `;
+    
     slot.onclick = () => openDetail(idx);
     fragment.appendChild(slot);
   });
