@@ -498,7 +498,6 @@
         height: 40px;
         z-index: 100;
         pointer-events: none;
-        filter: drop-shadow(0 0 10px currentColor);
       }
 
       .vfx-fireball {
@@ -506,7 +505,6 @@
         border-radius: 50%;
         width: 50px;
         height: 50px;
-        box-shadow: 0 0 20px #ef4444;
       }
       .vfx-waterball {
         background: radial-gradient(circle, #fff, #60a5fa, #2563eb);
@@ -514,7 +512,6 @@
         width: 45px;
         height: 45px;
         opacity: 0.9;
-        box-shadow: 0 0 20px #3b82f6;
       }
       .vfx-rock {
         background: #57534e;
@@ -536,7 +533,6 @@
         border-radius: 50%;
         width: 40px;
         height: 40px;
-        box-shadow: 0 0 15px #a855f7;
       }
 
       .vfx-lightning-strike {
@@ -626,6 +622,43 @@
         box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
       }
 
+      @keyframes toast-fade {
+        0% {
+          opacity: 0;
+          transform: translateY(20px) scale(0.9);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* CARD ANIMATIONS */
+      .perspective-1000 {
+        perspective: 1000px;
+      }
+      @keyframes card-flip {
+        0% {
+          transform: rotateY(90deg);
+          opacity: 0;
+        }
+        100% {
+          transform: rotateY(0deg);
+          opacity: 1;
+        }
+      }
+
+      /* LEVITATE ANIMATION FOR DUNGEON HERO */
+      @keyframes levitate {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+
       @keyframes float-dmg {
         0% {
           opacity: 1;
@@ -710,6 +743,50 @@
       .toast-icon {
         font-size: 1.2rem;
       }
+
+      /* Hide scrollbar on login icons */
+      #login-icons-container::-webkit-scrollbar {
+        display: none;
+      }
+      #login-icons-container {
+        scrollbar-width: none;
+      }
+
+      /* Elemental Auras */
+      .aura-fire {
+        box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.6),
+          0 0 40px 10px rgba(239, 68, 68, 0.3);
+        animation: pulse-aura 2s ease-in-out infinite;
+      }
+      .aura-water {
+        box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.6),
+          0 0 40px 10px rgba(59, 130, 246, 0.3);
+        animation: pulse-aura 2s ease-in-out infinite;
+      }
+      .aura-earth {
+        box-shadow: 0 0 20px 5px rgba(34, 197, 94, 0.6),
+          0 0 40px 10px rgba(34, 197, 94, 0.3);
+        animation: pulse-aura 2s ease-in-out infinite;
+      }
+      .aura-lightning {
+        box-shadow: 0 0 20px 5px rgba(250, 204, 21, 0.6),
+          0 0 40px 10px rgba(250, 204, 21, 0.3);
+        animation: pulse-aura 1.5s ease-in-out infinite;
+      }
+      .aura-void {
+        box-shadow: 0 0 20px 5px rgba(168, 85, 247, 0.6),
+          0 0 40px 10px rgba(168, 85, 247, 0.3);
+        animation: pulse-aura 2s ease-in-out infinite;
+      }
+      @keyframes pulse-aura {
+        0%,
+        100% {
+          filter: brightness(1);
+        }
+        50% {
+          filter: brightness(1.3);
+        }
+      }
     </style>
   </head>
   <body>
@@ -728,7 +805,7 @@
         <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"></div>
         <div class="relative z-10 w-full flex flex-col items-center">
           <h1
-            class="text-7xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-cyan-300 mb-2 drop-shadow-lg"
+            class="text-6xl sm:text-7xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-cyan-300 mb-2 drop-shadow-lg"
           >
             PAPER<br />WAR
           </h1>
@@ -750,6 +827,19 @@
             >
               Jogar
             </button>
+
+            <!-- ICON SELECTOR -->
+            <div class="pt-4">
+              <p
+                class="text-slate-400 text-xs text-center mb-3 uppercase font-bold"
+              >
+                Escolha seu Avatar
+              </p>
+              <div
+                id="login-icons-container"
+                class="flex justify-start space-x-3 overflow-x-auto pb-2 px-1"
+              ></div>
+            </div>
           </div>
         </div>
       </main>
@@ -757,36 +847,39 @@
       <!-- HEADER -->
       <header
         id="ui-header"
-        class="px-5 py-4 bg-slate-950/90 backdrop-blur-md border-b border-white/5 hidden justify-between items-center z-[50] shrink-0"
+        class="px-3 py-3 bg-slate-950/90 backdrop-blur-md border-b border-white/5 hidden justify-between items-center z-[50] shrink-0"
       >
         <div
-          class="flex items-center space-x-3 cursor-pointer"
+          class="flex items-center space-x-2 cursor-pointer"
           onclick="changeView('view-home')"
         >
           <div
-            class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg relative"
+            class="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg relative"
           >
+            <span id="header-icon-img" class="text-2xl hidden"></span>
             <span id="header-initial">P</span>
             <div
-              class="absolute -bottom-1 -right-1 w-5 h-5 bg-black rounded-full flex items-center justify-center text-[9px] font-bold border border-white"
+              class="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-black rounded-full flex items-center justify-center text-[8px] sm:text-[9px] font-bold border border-white"
               id="header-lvl"
             >
               1
             </div>
           </div>
           <div class="leading-tight">
-            <p class="text-[9px] font-bold text-slate-400 uppercase">
+            <p
+              class="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase hidden sm:block"
+            >
               Comandante
             </p>
             <p
               id="player-name-ui"
-              class="font-bold text-white text-sm truncate max-w-[100px]"
+              class="font-bold text-white text-xs sm:text-sm truncate max-w-[80px] sm:max-w-[100px]"
             >
               ---
             </p>
             <!-- XP BAR -->
             <div
-              class="w-16 h-1 bg-slate-800 rounded-full mt-0.5 overflow-hidden border border-white/10"
+              class="w-12 sm:w-16 h-1 bg-slate-800 rounded-full mt-0.5 overflow-hidden border border-white/10"
             >
               <div
                 id="header-xp-bar"
@@ -795,13 +888,15 @@
             </div>
           </div>
         </div>
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center gap-1 sm:space-x-2">
           <div
             class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1"
             title="Energia"
           >
-            <span class="text-xs">⚡</span
-            ><span id="val-energy" class="text-[10px] font-bold text-yellow-400"
+            <span class="text-[10px] sm:text-xs">⚡</span
+            ><span
+              id="val-energy"
+              class="text-[9px] sm:text-[10px] font-bold text-yellow-400"
               >0</span
             >
           </div>
@@ -809,8 +904,10 @@
             class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1"
             title="Ouro"
           >
-            <span class="text-xs">💰</span
-            ><span id="val-gold" class="text-[10px] font-bold text-yellow-400"
+            <span class="text-[10px] sm:text-xs">💰</span
+            ><span
+              id="val-gold"
+              class="text-[9px] sm:text-[10px] font-bold text-yellow-400"
               >0</span
             >
           </div>
@@ -818,14 +915,16 @@
             class="bg-slate-800/80 border border-white/5 px-2 py-1 rounded-lg flex items-center space-x-1"
             title="Cristais"
           >
-            <span class="text-xs">💎</span
-            ><span id="val-crystals" class="text-[10px] font-bold text-cyan-400"
+            <span class="text-[10px] sm:text-xs">💎</span
+            ><span
+              id="val-crystals"
+              class="text-[9px] sm:text-[10px] font-bold text-cyan-400"
               >0</span
             >
           </div>
           <button
             onclick="logout()"
-            class="bg-red-900/80 px-2 py-1 rounded-lg border border-red-500/50 text-xs text-red-200 font-bold ml-2 transition-transform active:scale-95"
+            class="bg-red-900/80 px-2 py-1 rounded-lg border border-red-500/50 text-[10px] sm:text-xs text-red-200 font-bold ml-1 transition-transform active:scale-95"
             title="Sair da Conta"
           >
             🚪
@@ -934,7 +1033,7 @@
             >
               <div class="text-xl mb-1">🎴</div>
               <h4 class="text-white font-bold uppercase text-[10px]">
-                Monstros
+                Guerreiros
               </h4>
             </div>
             <div
@@ -1130,7 +1229,7 @@
       <!-- MASMORRA (DUNGEON SELECT) -->
       <main
         id="view-dungeon"
-        class="flex-1 hidden-view bg-slate-950 p-6 flex flex-col"
+        class="scroll-container flex-1 hidden-view bg-slate-950 p-6 flex flex-col"
       >
         <button
           onclick="changeView('view-home')"
@@ -1152,8 +1251,40 @@
           </p>
         </div>
         <div
-          class="scroll-container flex-1 overflow-y-auto space-y-3 pr-2"
+          class="scroll-container flex-1 min-h-0 overflow-y-auto space-y-3 pr-2"
           id="dungeon-list"
+        ></div>
+      </main>
+
+      <!-- STORY/CAMPAIGN MODE -->
+      <main
+        id="view-story"
+        class="scroll-container flex-1 hidden-view bg-slate-950 p-6 flex flex-col"
+      >
+        <button
+          onclick="changeView('view-home')"
+          class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max shrink-0"
+        >
+          ← Voltar
+        </button>
+        <h2
+          class="text-3xl font-black text-white uppercase italic mb-6 shrink-0"
+        >
+          Campanha
+        </h2>
+        <div
+          class="glass-panel p-3 mb-4 rounded-xl flex items-center gap-3 border-indigo-500/20 shrink-0"
+        >
+          <div class="text-2xl">⚔️</div>
+          <p class="text-[10px] text-slate-300">
+            Complete os
+            <span class="text-indigo-400 font-bold">10 mapas</span> e derrote os
+            <span class="text-amber-400 font-bold">chefes</span> no final!
+          </p>
+        </div>
+        <div
+          class="scroll-container content-start overflow-y-auto space-y-3 pr-2 pb-20"
+          id="story-list"
         ></div>
       </main>
 
@@ -1353,7 +1484,7 @@
             ← VOLTAR
           </button>
           <span class="text-white font-bold uppercase text-xs"
-            >Monstros: <span id="mon-count">0</span></span
+            >Guerreiros: <span id="mon-count">0</span></span
           >
         </div>
         <div
@@ -1766,19 +1897,44 @@
         <!-- Background Scene -->
         <div class="absolute inset-0 z-0">
           <div
-            class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center opacity-30"
-          ></div>
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-slate-900/80"
+            class="absolute inset-0 bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950"
           ></div>
 
-          <!-- Magic Circle (CSS) -->
+          <!-- NEW: Dramatic Portal Background -->
           <div
-            class="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-indigo-500/20 animate-[spin_60s_linear_infinite] opacity-50 pointer-events-none"
-          ></div>
-          <div
-            class="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full border-2 border-dashed border-indigo-400/30 animate-[spin_20s_linear_infinite_reverse] pointer-events-none"
-          ></div>
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]"
+          >
+            <!-- Outer glow -->
+            <div
+              class="absolute inset-0 bg-indigo-500/20 rounded-full blur-3xl animate-pulse"
+            ></div>
+            <!-- Rotating outer circle -->
+            <div
+              class="absolute inset-0 rounded-full border-4 border-indigo-500/30 animate-[spin_30s_linear_infinite]"
+            >
+              <div
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-indigo-400 rounded-full shadow-[0_0_10px_#818cf8]"
+              ></div>
+              <div
+                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-purple-400 rounded-full shadow-[0_0_10px_#c084fc]"
+              ></div>
+            </div>
+            <!-- Inner rotating circle -->
+            <div
+              class="absolute inset-12 rounded-full border-2 border-dashed border-purple-400/40 animate-[spin_20s_linear_infinite_reverse]"
+            >
+              <div
+                class="absolute top-0 left-0 w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_#22d3ee]"
+              ></div>
+              <div
+                class="absolute bottom-0 right-0 w-2 h-2 bg-pink-400 rounded-full shadow-[0_0_8px_#f472b6]"
+              ></div>
+            </div>
+            <!-- Center glow -->
+            <div
+              class="absolute inset-24 rounded-full bg-gradient-to-br from-indigo-600/40 to-purple-600/40 blur-2xl"
+            ></div>
+          </div>
         </div>
 
         <!-- Header -->
@@ -1816,34 +1972,34 @@
 
         <!-- Central Platform & Crystal -->
         <div
-          class="relative z-10 flex-1 flex flex-col items-center justify-center -mt-20"
+          class="relative z-10 flex-1 flex flex-col items-center justify-center"
         >
           <div
             id="summon-crystal-container"
-            class="relative w-48 h-48 cursor-pointer transition-transform duration-500 hover:scale-105 active:scale-95"
+            class="relative w-40 h-40 cursor-pointer transition-transform duration-300 hover:scale-110 active:scale-95"
             onclick="playSummonAnim('preview')"
           >
             <div
-              class="absolute inset-0 bg-indigo-600/20 blur-3xl rounded-full animate-pulse"
+              class="absolute inset-0 bg-indigo-600/30 blur-2xl rounded-full animate-pulse"
             ></div>
             <div
               class="relative w-full h-full flex items-center justify-center"
             >
               <span
-                class="text-[8rem] filter drop-shadow-[0_0_50px_rgba(99,102,241,0.6)] animate-float"
+                class="text-[7rem] filter drop-shadow-[0_0_40px_rgba(99,102,241,0.8)]"
                 >🔮</span
               >
             </div>
           </div>
           <h2
-            class="mt-8 text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-indigo-400 uppercase tracking-widest"
+            class="mt-6 text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-indigo-400 uppercase tracking-wider"
           >
-            Portal de Invocação
+            Portal Místico
           </h2>
           <p
-            class="text-indigo-300/50 text-[10px] font-bold tracking-[0.4em] uppercase"
+            class="text-indigo-300/60 text-[9px] font-bold tracking-[0.3em] uppercase mt-1"
           >
-            Convoque seus aliados
+            Invoque seus guerreiros
           </p>
         </div>
 
@@ -1968,6 +2124,104 @@
               Confirmar
             </button>
           </div>
+        </div>
+      </main>
+
+      <!-- Logout Confirmation Modal -->
+      <div
+        id="logout-modal"
+        class="absolute inset-0 z-[100] bg-slate-950/95 backdrop-blur-sm hidden flex items-center justify-center p-6"
+      >
+        <div
+          class="glass-panel p-6 rounded-3xl max-w-sm w-full space-y-4 animate-fade-in"
+        >
+          <div class="text-center">
+            <div class="text-5xl mb-3">🚪</div>
+            <h3 class="text-xl font-black text-white uppercase">
+              Sair do Jogo?
+            </h3>
+            <p class="text-slate-400 text-sm mt-2" id="logout-username">
+              Deseja sair da conta?
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <button
+              onclick="cancelLogout()"
+              class="py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onclick="confirmLogout()"
+              class="py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-colors"
+            >
+              Sair
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BATTLE VIEW -->
+      <main
+        id="view-battle"
+        class="flex-1 hidden-view bg-gradient-to-b from-slate-900 via-slate-950 to-black flex flex-col items-center justify-center p-6 relative"
+      >
+        <!-- Victory/Defeat Screen -->
+        <div class="text-center space-y-6 max-w-md w-full">
+          <!-- Result Title -->
+          <div id="battle-result-title" class="space-y-2">
+            <h2
+              class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500 uppercase"
+            >
+              VITÓRIA!
+            </h2>
+            <p class="text-slate-300 text-sm">Batalha concluída com sucesso</p>
+          </div>
+
+          <!-- Rewards -->
+          <div
+            id="battle-rewards"
+            class="glass-panel p-6 rounded-2xl space-y-4"
+          >
+            <h3 class="text-white font-bold uppercase text-sm mb-4">
+              Recompensas
+            </h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div
+                class="bg-slate-800/50 p-4 rounded-xl border border-yellow-500/30"
+              >
+                <div class="text-3xl mb-2">💰</div>
+                <div class="text-yellow-400 font-bold text-lg" id="reward-gold">
+                  +500
+                </div>
+                <div class="text-slate-400 text-xs">Ouro</div>
+              </div>
+              <div
+                class="bg-slate-800/50 p-4 rounded-xl border border-cyan-500/30"
+              >
+                <div class="text-3xl mb-2">💎</div>
+                <div
+                  class="text-cyan-400 font-bold text-lg"
+                  id="reward-crystals"
+                >
+                  +50
+                </div>
+                <div class="text-slate-400 text-xs">Cristais</div>
+              </div>
+            </div>
+            <!-- Equipment Drops -->
+            <div id="battle-equipment-drops" class="space-y-2">
+              <!-- Equipment cards will be added here dynamically -->
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <button
+            onclick="closeBattle()"
+            class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black uppercase rounded-2xl shadow-lg active:scale-95 transition-all"
+          >
+            Continuar
+          </button>
         </div>
       </main>
     </div>
@@ -2546,15 +2800,15 @@
           name: "",
           crystals: 200,
           energy: 100,
-          gold: 0,
+          gold: 5000, // Start with some gold
           tickets_common: 0,
-          tickets_epic: 0,
+          tickets_epic: 10, // Start with 10 epic tickets!
           lvl: 1,
           xp: 0,
           potions: 0,
           firstClear: {},
         },
-        inventory: [],
+        inventory: [], // Start with NO monsters
         equipment: [], // Global Equipment Storage
         leaderIdx: 0,
         storyProgress: 1,
@@ -2633,12 +2887,17 @@
 
         // No user found, show login
         changeView("view-login");
+        renderLoginIcons(); // Init login icons
       };
 
       const loadMigration = () => {
         if (!state.equipment) state.equipment = [];
         if (state.user.potions === undefined) state.user.potions = 0;
         if (state.user.lvl === undefined) state.user.lvl = 1;
+        if (state.user.icon === undefined)
+          state.user.icon =
+            "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200"; // Default
+
         state.inventory.forEach((m) => {
           const db = MONSTERS_DB.find((x) => x.id === m.id);
           if (db) {
@@ -2660,6 +2919,39 @@
         );
       };
 
+      // --- LOGIN ICONS ---
+      let selectedLoginIcon = "🦸";
+      const LOGIN_ICONS = [
+        "🦸", // Superhero
+        "🧙", // Wizard
+        "🧝", // Elf
+        "🧛", // Vampire
+        "🤖", // Robot
+        "👾", // Alien
+        "🐉", // Dragon
+        "🦄", // Unicorn
+      ];
+
+      const renderLoginIcons = () => {
+        const c = document.getElementById("login-icons-container");
+        if (!c) return;
+        c.innerHTML = "";
+        LOGIN_ICONS.forEach((emoji) => {
+          const div = document.createElement("div");
+          div.innerText = emoji;
+          div.className = `w-14 h-14 text-3xl rounded-full border-2 cursor-pointer transition-all hover:scale-110 flex items-center justify-center ${
+            selectedLoginIcon === emoji
+              ? "border-indigo-500 scale-110 shadow-[0_0_15px_#6366f1] bg-indigo-900/30"
+              : "border-slate-600 opacity-60 bg-slate-800/30"
+          }`;
+          div.onclick = () => {
+            selectedLoginIcon = emoji;
+            renderLoginIcons();
+          };
+          c.appendChild(div);
+        });
+      };
+
       const handleLogin = () => {
         try {
           const val = document.getElementById("login-name").value.trim();
@@ -2673,6 +2965,8 @@
           if (saved) {
             state = JSON.parse(saved);
             loadMigration();
+            // If they want to change icon on re-login, un-comment below. For now, strict load.
+            // state.user.icon = selectedLoginIcon;
             showToast(`Bem-vindo de volta, ${val}!`);
           } else {
             // Create New
@@ -2682,6 +2976,7 @@
             state.user.lvl = 1;
             state.user.tickets_common = 5;
             state.user.tickets_epic = 10;
+            state.user.icon = selectedLoginIcon; // Save Icon
             state.inventory = [];
             state.equipment = [];
             addMonster("thyron");
@@ -2694,8 +2989,12 @@
           save();
 
           document.getElementById("player-name-ui").innerText = state.user.name;
-          document.getElementById("header-initial").innerText =
-            state.user.name[0].toUpperCase();
+          // Hide letter, show emoji
+          document.getElementById("header-initial").classList.add("hidden");
+          const iconEl = document.getElementById("header-icon-img");
+          iconEl.innerText = state.user.icon; // Display emoji as text
+          iconEl.classList.remove("hidden");
+
           changeView("view-home");
           updateHeader();
         } catch (e) {
@@ -2746,7 +3045,100 @@
             state.towerFloor;
       };
 
+      // --- STORY/CAMPAIGN RENDERING ---
+      const renderStory = () => {
+        const list = document.getElementById("story-list");
+        if (!list) return;
+        list.innerHTML = "";
+
+        const totalMaps = 10;
+        const stagesPerMap = 8;
+
+        for (let map = 1; map <= totalMaps; map++) {
+          const mapDiv = document.createElement("div");
+          mapDiv.className = "glass-panel p-4 rounded-2xl space-y-3";
+
+          // Map header
+          const header = document.createElement("div");
+          header.className = "flex items-center justify-between mb-2";
+          header.innerHTML = `
+            <h3 class="text-white font-bold uppercase text-sm">Mapa ${map}</h3>
+            <span class="text-slate-400 text-xs">${stagesPerMap} Fases</span>
+          `;
+          mapDiv.appendChild(header);
+
+          // Stages grid
+          const stagesGrid = document.createElement("div");
+          stagesGrid.className = "grid grid-cols-4 gap-2";
+
+          for (let stage = 1; stage <= stagesPerMap; stage++) {
+            const stageNum = (map - 1) * stagesPerMap + stage;
+            const isBoss = stage === stagesPerMap;
+            const isLocked = stageNum > (state.storyProgress || 1);
+
+            const stageBtn = document.createElement("button");
+            stageBtn.className = `relative p-3 rounded-xl transition-all ${
+              isLocked
+                ? "bg-slate-800/50 border border-slate-700/50 cursor-not-allowed opacity-50"
+                : isBoss
+                ? "bg-gradient-to-br from-amber-900/50 to-red-900/50 border-2 border-amber-500/50 hover:scale-105 active:scale-95"
+                : "bg-slate-800/80 border border-slate-600/50 hover:bg-slate-700 active:scale-95"
+            }`;
+
+            if (!isLocked) {
+              stageBtn.onclick = () => startStoryBattle(stageNum, isBoss);
+            }
+
+            stageBtn.innerHTML = `
+              <div class="text-center">
+                <div class="text-2xl mb-1">${isBoss ? "👑" : "⚔️"}</div>
+                <div class="text-white font-bold text-xs">${stage}</div>
+                ${
+                  isBoss
+                    ? '<div class="text-amber-400 text-[8px] font-bold">CHEFE</div>'
+                    : ""
+                }
+                ${
+                  isLocked
+                    ? '<div class="absolute inset-0 flex items-center justify-center text-2xl">🔒</div>'
+                    : ""
+                }
+              </div>
+            `;
+
+            stagesGrid.appendChild(stageBtn);
+          }
+
+          mapDiv.appendChild(stagesGrid);
+          list.appendChild(mapDiv);
+        }
+      };
+
+      const startStoryBattle = (stageNum, isBoss) => {
+        // Call openPrep just like tower does
+        openPrep("story", stageNum);
+      };
+
+      const closeBattle = () => {
+        changeView("view-home");
+      };
+
       const updateHeader = () => {
+        document.getElementById("player-name-ui").innerText = state.user.name;
+
+        // Icon Logic
+        const iconEl = document.getElementById("header-icon-img");
+        const initEl = document.getElementById("header-initial");
+        if (state.user.icon) {
+          iconEl.innerText = state.user.icon; // Display emoji as text
+          iconEl.classList.remove("hidden");
+          initEl.classList.add("hidden");
+        } else {
+          iconEl.classList.add("hidden");
+          initEl.classList.remove("hidden");
+          initEl.innerText = state.user.name[0].toUpperCase();
+        }
+
         document.getElementById("val-crystals").innerText = state.user.crystals;
         document.getElementById("val-energy").innerText = state.user.energy;
         document.getElementById("val-gold").innerText = state.user.gold;
@@ -2758,10 +3150,21 @@
       };
 
       const logout = () => {
-        if (confirm(`Sair da conta ${state.user.name}?`)) {
-          localStorage.removeItem("paperwar_last_user");
-          location.reload();
-        }
+        document.getElementById(
+          "logout-username"
+        ).innerText = `Deseja sair da conta ${state.user.name}?`;
+        document.getElementById("logout-modal").classList.remove("hidden");
+        document.getElementById("logout-modal").classList.add("flex");
+      };
+
+      const cancelLogout = () => {
+        document.getElementById("logout-modal").classList.add("hidden");
+        document.getElementById("logout-modal").classList.remove("flex");
+      };
+
+      const confirmLogout = () => {
+        localStorage.removeItem("paperwar_last_user");
+        location.reload();
       };
 
       // --- SHOP & EQUIPMENT LOGIC ---
@@ -2825,55 +3228,25 @@
         updateHeader();
         updateSummonUI();
 
-        // 1. ANIMATION SEQUENCE
-        const overlay = document.getElementById("summon-anim-overlay");
-        overlay.classList.remove("hidden");
-        overlay.classList.add("flex");
-
-        const core = document.getElementById("summon-core");
-        const rays = document.getElementById("summon-rays");
-        const flash = document.getElementById("summon-flash");
-
-        // Reset state
-        core.style.transform = "scale(1)";
-        rays.style.opacity = "0";
-        flash.style.opacity = "0";
-
-        // Animate
-        // Charge
-        core.style.transform = "scale(0.5)";
-        await sleep(500);
-
-        // Spin
-        rays.style.opacity = "1";
-        await sleep(1500);
-
-        // Flash/Explode
-        flash.style.transition = "opacity 0.1s";
-        flash.style.opacity = "1";
-        await sleep(100);
-
-        // Hide anim elements while white screen is up
-        core.style.opacity = "0";
-        rays.style.opacity = "0";
-
-        await sleep(200);
-
-        // 2. GENERATION
+        // 1. GENERATE MONSTERS FIRST (to detect rarity)
         currentSummonResults = [];
+        let maxStarsFound = 0;
+
         for (let i = 0; i < amount; i++) {
           let rarity = "common";
           const r = Math.random();
 
           if (type === "common") {
-            if (r < 0.8) rarity = "common";
-            else if (r < 0.98) rarity = "rare";
-            else rarity = "epic";
+            // Common Ticket: Mostly 1-2 stars, rare chance for 3-4
+            if (r < 0.75) rarity = "common"; // 75% - nat 1-2
+            else if (r < 0.97) rarity = "rare"; // 22% - nat 3
+            else if (r < 0.995) rarity = "epic"; // 2.5% - nat 4
+            else rarity = "legendary"; // 0.5% - nat 5 (Summoners War rate!)
           } else {
-            // Epic Ticket
-            if (r < 0.6) rarity = "rare";
-            else if (r < 0.9) rarity = "epic";
-            else rarity = "legendary";
+            // Epic Ticket: Guaranteed 3+ stars
+            if (r < 0.925) rarity = "rare"; // 92.5% - nat 3
+            else if (r < 0.995) rarity = "epic"; // 7% - nat 4
+            else rarity = "legendary"; // 0.5% - nat 5 (Summoners War rate!)
           }
 
           let minStar = 1,
@@ -2904,6 +3277,8 @@
             template = pool[Math.floor(Math.random() * pool.length)];
           }
 
+          if (template.stars > maxStarsFound) maxStarsFound = template.stars;
+
           const newMon = {
             ...template,
             instanceId: Date.now() + Math.random().toString() + i, // unique
@@ -2918,6 +3293,90 @@
         }
 
         save();
+
+        // 2. CONDITIONAL ANIMATION BASED ON RARITY
+        const overlay = document.getElementById("summon-anim-overlay");
+        overlay.classList.remove("hidden");
+        overlay.classList.add("flex");
+
+        const core = document.getElementById("summon-core");
+        const rays = document.getElementById("summon-rays");
+        const flash = document.getElementById("summon-flash");
+        const app = document.getElementById("app");
+
+        // Reset state
+        core.style.transform = "scale(1)";
+        rays.style.opacity = "0";
+        flash.style.opacity = "0";
+        flash.className =
+          "absolute inset-0 bg-white opacity-0 pointer-events-none";
+
+        const hasNat5 = maxStarsFound >= 5;
+
+        if (hasNat5) {
+          // === NAT 5 ANIMATION (EPIC) ===
+          // Charge
+          core.style.transform = "scale(0.5)";
+          await sleep(500);
+
+          // Spin
+          rays.style.opacity = "1";
+          await sleep(1500);
+
+          // LIGHTNING STRIKE EFFECT
+          const lightning = document.createElement("div");
+          lightning.className = "vfx-lightning-strike";
+          lightning.style.left = "50%";
+          lightning.style.top = "0";
+          lightning.style.height = "100%";
+          lightning.style.width = "20px";
+          lightning.style.zIndex = "100";
+          overlay.appendChild(lightning);
+
+          // Flash/Explode
+          flash.style.transition = "opacity 0.1s";
+          flash.style.opacity = "1";
+
+          // Screen Shake
+          app.classList.add("anim-shake-crit");
+
+          await sleep(150);
+          lightning.remove();
+          app.classList.remove("anim-shake-crit");
+
+          // Hide anim elements while white screen is up
+          core.style.opacity = "0";
+          rays.style.opacity = "0";
+
+          await sleep(200);
+
+          // EXTRA 5-STAR FX (Multiple bolts)
+          for (let k = 0; k < 5; k++) {
+            const bolt = document.createElement("div");
+            bolt.className = "vfx-lightning-strike";
+            bolt.style.left = 20 + Math.random() * 60 + "%";
+            bolt.style.animationDuration = "0.2s";
+            overlay.appendChild(bolt);
+            setTimeout(() => bolt.remove(), 200);
+            await sleep(100);
+          }
+        } else {
+          // === STANDARD ANIMATION (NAT 1-4) - SIMPLE ===
+          // Quick pulse
+          core.style.transform = "scale(1.2)";
+          rays.style.opacity = "0.3";
+          await sleep(300);
+
+          core.style.transform = "scale(1)";
+          rays.style.opacity = "0";
+
+          // Subtle flash (no white screen)
+          flash.style.transition = "opacity 0.2s";
+          flash.style.opacity = "0.3";
+          await sleep(100);
+          flash.style.opacity = "0";
+          await sleep(200);
+        }
 
         // 3. SHOW RESULTS
         renderSummonResults(); // Build DOM first
@@ -2941,10 +3400,29 @@
         modal.classList.add("flex");
         grid.innerHTML = "";
 
+        const count = currentSummonResults.length;
+
+        // Adjust grid based on summon count
+        if (count === 1) {
+          // Single summon: centered, larger card
+          grid.className =
+            "flex-1 flex items-center justify-center overflow-y-auto pb-20";
+        } else {
+          // Multiple summons: grid layout with smaller cards
+          grid.className =
+            "flex-1 grid grid-cols-5 content-start gap-2 overflow-y-auto pb-20";
+        }
+
         currentSummonResults.forEach((mon, idx) => {
           const card = document.createElement("div");
-          // Flip animation setup
-          card.className = "relative w-32 h-44 perspective-1000 opacity-0";
+
+          // Adjust card size based on count
+          if (count === 1) {
+            card.className = "relative w-48 h-64 perspective-1000 opacity-0";
+          } else {
+            card.className = "relative w-24 h-32 perspective-1000 opacity-0";
+          }
+
           card.style.animation = `card-flip 0.5s ease-out ${
             idx * 0.1
           }s forwards`;
@@ -2954,19 +3432,19 @@
           let bgGrad = "from-slate-700 to-slate-900";
           let glow = "";
 
-          if (mon.stars === 3) {
+          if (mon.stars >= 3) {
             borderCol = "border-blue-500";
             bgGrad = "from-blue-900 to-slate-900";
           }
-          if (mon.stars === 4) {
+          if (mon.stars >= 4) {
             borderCol = "border-purple-500";
             bgGrad = "from-purple-900 to-slate-900";
             glow = "shadow-[0_0_15px_#a855f7]";
           }
-          if (mon.stars === 5) {
-            borderCol = "border-amber-400";
+          if (mon.stars >= 5) {
+            borderCol = "border-amber-400 animate-pulse";
             bgGrad = "from-amber-900 to-slate-900";
-            glow = "shadow-[0_0_20px_#fbbf24]";
+            glow = "shadow-[0_0_30px_#fbbf24] animate-pulse";
           }
 
           card.innerHTML = `
@@ -2981,14 +3459,23 @@
                             : ""
                         }
                     </div>
-                    <div class="text-4xl filter drop-shadow-lg">${
-                      mon.emoji
-                    }</div>
-                    <div class="text-center w-full">
-                        <div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">${
+                     <!-- IMAGE with EMOJI FALLBACK -->
+                    <div class="relative w-full flex-1 flex items-center justify-center my-1 overflow-hidden">
+                        <img 
+                          src="${mon.img}" 
+                          class="w-full h-full object-contain filter drop-shadow-lg z-10" 
+                          onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                        />
+                        <span class="text-5xl absolute hidden animate-bounce">${
+                          mon.emoji
+                        }</span>
+                    </div>
+
+                    <div class="text-center w-full relative z-20">
+                        <div class="text-[8px] text-slate-400 uppercase font-bold tracking-wider truncate">${
                           mon.type
                         }</div>
-                        <div class="text-xs text-white font-black truncate w-full">${
+                        <div class="text-[10px] text-white font-black truncate w-full">${
                           mon.name
                         }</div>
                     </div>
@@ -3347,14 +3834,55 @@
       };
 
       const renderDungeonFloors = () => {
-        const c = document.getElementById("dungeon-list");
-        c.innerHTML = "";
-        const title =
-          selectedDungeonType === "golem"
-            ? "Masmorra do Golem"
-            : "Masmorra do Dragão";
+        let title = "";
+        let imgSrc = "";
+        let grad = "";
 
-        document.querySelector("#view-dungeon h2").innerText = title;
+        if (selectedDungeonType === "golem") {
+          title = "Masmorra do Golem";
+          imgSrc = "src/golenArt.jpg"; // Stony/Cave
+          grad = "from-stone-900";
+        } else {
+          title = "Masmorra do Dragão";
+          imgSrc = "src/dragaoArt.jpg"; // Lava/Fire
+          grad = "from-red-900";
+        }
+
+        // Inject Hero Header
+        const headerHTML = `
+           <div class="relative w-full h-40 rounded-[2rem] overflow-hidden shadow-2xl mb-6 shrink-0">
+              <img src="${imgSrc}" class="absolute inset-0 w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+              <div class="absolute bottom-6 left-6">
+                <p class="text-white/70 font-bold text-[10px] uppercase tracking-widest mb-1">Masmorra de Cairos</p>
+                <h2 class="text-3xl font-black text-white italic uppercase leading-none break-words max-w-[200px]">${title}</h2>
+              </div>
+           </div>
+           <div class="flex items-center gap-3 mb-4 px-2">
+              <div class="text-2xl animate-bounce">ℹ️</div>
+               <p class="text-[10px] text-slate-300 leading-tight">
+                Ultrapasse andares para aumentar chances de <span class="text-purple-400 font-bold">Épicos</span> e <span class="text-yellow-400 font-bold">Lendários</span>.
+              </p>
+           </div>
+        `;
+
+        // Clear previous manually added "h2" if any, we are replacing the top part logic
+        const container = document.getElementById("view-dungeon");
+        if (!container) return; // Safety check
+
+        // Remove ALL children to rebuild properly
+        container.innerHTML = `
+         <button
+          onclick="changeView('view-home')"
+          class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max shrink-0"
+         >
+          ← Voltar
+         </button>
+         ${headerHTML}
+         <div class="scroll-container content-start overflow-y-auto space-y-3 pr-2 pb-20" id="dungeon-list-inner"></div>
+        `;
+
+        const listInner = document.getElementById("dungeon-list-inner");
 
         for (let i = 1; i <= 12; i++) {
           const btn = document.createElement("div");
@@ -3366,7 +3894,7 @@
             5 + Math.floor(i / 2)
           } ⚡</p></div><div class="text-white">▶</div>`;
           btn.onclick = () => openPrep("dungeon_" + selectedDungeonType, i);
-          c.appendChild(btn);
+          listInner.appendChild(btn);
         }
       };
 
@@ -3502,8 +4030,14 @@
         } else if (mode === "dungeon_dragon") {
           template = MONSTERS_DB.find((m) => m.id === "vermithrax");
         } else {
+          // Filter out dungeon bosses from random encounters
+          const availableMonsters = MONSTERS_DB.filter(
+            (m) => m.id !== "dhorak" && m.id !== "vermithrax"
+          );
           template =
-            MONSTERS_DB[Math.floor(Math.random() * MONSTERS_DB.length)];
+            availableMonsters[
+              Math.floor(Math.random() * availableMonsters.length)
+            ];
         }
 
         let lvl = 1;
@@ -4294,10 +4828,11 @@
         const targetPos = fromPlayer ? ePos : pPos;
         const startPos = fromPlayer ? pPos : ePos;
 
-        flash.className = "flash-screen";
-        setTimeout(() => (flash.className = "hidden"), 300 / spd);
-
+        // Flash ONLY for lightning/electric types
         if (type.includes("lightning")) {
+          flash.className = "flash-screen";
+          setTimeout(() => (flash.className = "hidden"), 300 / spd);
+
           for (let i = 0; i < 6; i++) {
             const strike = document.createElement("div");
             strike.className = "vfx-lightning-strike";
@@ -4541,10 +5076,6 @@
             "Tente melhorar seu time";
         }
       };
-      const closeBattle = () => {
-        changeView("view-home");
-        updateHeader();
-      };
 
       const useXpPotion = () => {
         const mon = state.inventory[selectedDetailIdx];
@@ -4681,24 +5212,6 @@
         save();
         closeDetail();
         renderMonsterBox();
-      };
-
-      const renderStory = () => {
-        const c = document.getElementById("story-nodes");
-        c.innerHTML = "";
-        for (let i = 1; i <= 5; i++) {
-          const locked = state.storyProgress < i;
-          const node = document.createElement("div");
-          node.className = `relative pl-6 transition-all ${
-            locked ? "opacity-50 grayscale pointer-events-none" : ""
-          }`;
-          node.innerHTML = `<div class="absolute left-[-5px] top-3 w-3 h-3 rounded-full ${
-            locked ? "bg-slate-700" : "bg-indigo-500"
-          }"></div><button onclick="openPrep('story',${i})" class="glass-panel w-full p-4 rounded-xl text-left"><h3 class="text-white font-bold">Capítulo ${i}</h3><p class="text-xs text-slate-400">Inimigos nível ${
-            i * 3
-          }</p></button>`;
-          c.appendChild(node);
-        }
       };
 
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
