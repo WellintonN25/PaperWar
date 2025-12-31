@@ -791,24 +791,26 @@
       ];
 
       const renderLoginIcons = () => {
-        const c = document.getElementById("login-icons-container");
-        if (!c) return;
-        c.innerHTML = "";
-        LOGIN_ICONS.forEach((emoji) => {
-          const div = document.createElement("div");
-          div.innerText = emoji;
-          div.className = `w-14 h-14 text-3xl rounded-full border-2 cursor-pointer transition-all hover:scale-110 flex items-center justify-center ${
-            selectedLoginIcon === emoji
-              ? "border-indigo-500 scale-110 shadow-[0_0_15px_#6366f1] bg-indigo-900/30"
-              : "border-slate-600 opacity-60 bg-slate-800/30"
-          }`;
-          div.onclick = () => {
-            selectedLoginIcon = emoji;
-            renderLoginIcons();
-          };
-          c.appendChild(div);
-        });
-      };
+  const c = document.getElementById("login-icons-container");
+  if (!c) return;
+  c.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+  LOGIN_ICONS.forEach((emoji) => {
+    const div = document.createElement("div");
+    div.innerText = emoji;
+    div.className = `w-14 h-14 text-3xl rounded-full border-2 cursor-pointer transition-all hover:scale-110 flex items-center justify-center ${
+      selectedLoginIcon === emoji
+        ? "border-indigo-500 scale-110 shadow-[0_0_15px_#6366f1] bg-indigo-900/30"
+        : "border-slate-600 opacity-60 bg-slate-800/30"
+    }`;
+    div.onclick = () => {
+      selectedLoginIcon = emoji;
+      renderLoginIcons();
+    };
+    fragment.appendChild(div);
+  });
+  c.appendChild(fragment);
+};
 
       const handleLogin = () => {
         try {
@@ -904,64 +906,67 @@
       };
 
       // --- STORY/CAMPAIGN RENDERING ---
-      const renderStory = () => {
-        const list = document.getElementById("story-list");
-        if (!list) return;
-        list.innerHTML = "";
+const renderStory = () => {
+  const list = document.getElementById("story-list");
+  if (!list) return;
+  list.innerHTML = "";
 
-        const totalMaps = 10;
-        const stagesPerMap = 8;
+  const totalMaps = 10;
+  const stagesPerMap = 8;
+  const fragment = document.createDocumentFragment();
 
-        for (let mapNum = 1; mapNum <= totalMaps; mapNum++) {
-          const mapInfo = MAP_DATA[mapNum - 1];
-          const mapCard = document.createElement("div");
-          mapCard.className = "map-card group";
-          
-          // Map Background & Info
-          mapCard.innerHTML = `
-            <div class="map-banner">
-              <img src="${mapInfo.img}" class="map-bg-img" />
-              <div class="map-overlay"></div>
-              <div class="map-content">
-                <p class="map-chapter">Capítulo ${mapNum}</p>
-                <h3 class="map-title">${mapInfo.name}</h3>
-              </div>
-            </div>
-            <div class="stages-grid-container px-4 py-4">
-              <div class="stages-grid"></div>
-            </div>
-          `;
+  for (let mapNum = 1; mapNum <= totalMaps; mapNum++) {
+    const mapInfo = MAP_DATA[mapNum - 1];
+    const mapCard = document.createElement("div");
+    mapCard.className = "map-card group";
+    
+    // Map Background & Info
+    mapCard.innerHTML = `
+      <div class="map-banner">
+        <img src="${mapInfo.img}" class="map-bg-img" />
+        <div class="map-overlay"></div>
+        <div class="map-content">
+          <p class="map-chapter">Capítulo ${mapNum}</p>
+          <h3 class="map-title">${mapInfo.name}</h3>
+        </div>
+      </div>
+      <div class="stages-grid-container px-4 py-4">
+        <div class="stages-grid"></div>
+      </div>
+    `;
 
-          const stagesGrid = mapCard.querySelector(".stages-grid");
-          
-          for (let stage = 1; stage <= stagesPerMap; stage++) {
-            const stageNum = (mapNum - 1) * stagesPerMap + stage;
-            const isBoss = stage === stagesPerMap;
-            const isLocked = stageNum > (state.storyProgress || 1);
-            const isCompleted = stageNum < (state.storyProgress || 1);
-            const isCurrent = stageNum === (state.storyProgress || 1);
+    const stagesGrid = mapCard.querySelector(".stages-grid");
+    const stagesFragment = document.createDocumentFragment();
+    
+    for (let stage = 1; stage <= stagesPerMap; stage++) {
+      const stageNum = (mapNum - 1) * stagesPerMap + stage;
+      const isBoss = stage === stagesPerMap;
+      const isLocked = stageNum > (state.storyProgress || 1);
+      const isCompleted = stageNum < (state.storyProgress || 1);
+      const isCurrent = stageNum === (state.storyProgress || 1);
 
-            const stageBtn = document.createElement("button");
-            stageBtn.className = `stage-node ${isLocked ? 'locked' : isBoss ? 'boss' : 'normal'} ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}`;
-            
-            if (!isLocked) {
-              stageBtn.onclick = () => startStoryBattle(stageNum, isBoss);
-            }
+      const stageBtn = document.createElement("button");
+      stageBtn.className = `stage-node ${isLocked ? 'locked' : isBoss ? 'boss' : 'normal'} ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}`;
+      
+      if (!isLocked) {
+        stageBtn.onclick = () => startStoryBattle(stageNum, isBoss);
+      }
 
-            stageBtn.innerHTML = `
-              <div class="node-content">
-                <span class="node-icon">${isBoss ? '👑' : isLocked ? '🔒' : isCompleted ? '✅' : stage}</span>
-              </div>
-              ${isCurrent ? '<div class="current-indicator"></div>' : ''}
-              <div class="node-label">${isBoss ? 'BOS' : stage}</div>
-            `;
+      stageBtn.innerHTML = `
+        <div class="node-content">
+          <span class="node-icon">${isBoss ? '👑' : isLocked ? '🔒' : isCompleted ? '✅' : stage}</span>
+        </div>
+        ${isCurrent ? '<div class="current-indicator"></div>' : ''}
+        <div class="node-label">${isBoss ? 'BOS' : stage}</div>
+      `;
 
-            stagesGrid.appendChild(stageBtn);
-          }
-
-          list.appendChild(mapCard);
-        }
-      };
+      stagesFragment.appendChild(stageBtn);
+    }
+    stagesGrid.appendChild(stagesFragment);
+    fragment.appendChild(mapCard);
+  }
+  list.appendChild(fragment);
+};
 
       const startStoryBattle = (stageNum, isBoss) => {
         // Call openPrep just like tower does
@@ -1243,96 +1248,98 @@
       };
 
       const renderSummonResults = () => {
-        const modal = document.getElementById("summon-results");
-        const grid = document.getElementById("summon-grid");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        grid.innerHTML = "";
+  const modal = document.getElementById("summon-results");
+  const grid = document.getElementById("summon-grid");
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+  grid.innerHTML = "";
 
-        const count = currentSummonResults.length;
+  const count = currentSummonResults.length;
+  const fragment = document.createDocumentFragment();
 
-        // Adjust grid based on summon count
-        if (count === 1) {
-          // Single summon: centered, larger card
-          grid.className =
-            "flex-1 flex items-center justify-center overflow-y-auto pb-20";
-        } else {
-          // Multiple summons: grid layout with smaller cards
-          grid.className =
-            "flex-1 grid grid-cols-5 content-start gap-2 overflow-y-auto pb-20";
-        }
+  // Adjust grid based on summon count
+  if (count === 1) {
+    // Single summon: centered, larger card
+    grid.className =
+      "flex-1 flex items-center justify-center overflow-y-auto pb-20";
+  } else {
+    // Multiple summons: grid layout with smaller cards
+    grid.className =
+      "flex-1 grid grid-cols-5 content-start gap-2 overflow-y-auto pb-20";
+  }
 
-        currentSummonResults.forEach((mon, idx) => {
-          const card = document.createElement("div");
+  currentSummonResults.forEach((mon, idx) => {
+    const card = document.createElement("div");
 
-          // Adjust card size based on count
-          if (count === 1) {
-            card.className = "relative w-48 h-64 perspective-1000 opacity-0";
-          } else {
-            card.className = "relative w-24 h-32 perspective-1000 opacity-0";
-          }
+    // Adjust card size based on count
+    if (count === 1) {
+      card.className = "relative w-48 h-64 perspective-1000 opacity-0";
+    } else {
+      card.className = "relative w-24 h-32 perspective-1000 opacity-0";
+    }
 
-          card.style.animation = `card-flip 0.5s ease-out ${
-            idx * 0.1
-          }s forwards`;
+    card.style.animation = `card-flip 0.5s ease-out ${
+      idx * 0.1
+    }s forwards`;
 
-          // Rarity Style
-          let borderCol = "border-slate-600";
-          let bgGrad = "from-slate-700 to-slate-900";
-          let glow = "";
+    // Rarity Style
+    let borderCol = "border-slate-600";
+    let bgGrad = "from-slate-700 to-slate-900";
+    let glow = "";
 
-          if (mon.stars >= 3) {
-            borderCol = "border-blue-500";
-            bgGrad = "from-blue-900 to-slate-900";
-          }
-          if (mon.stars >= 4) {
-            borderCol = "border-purple-500";
-            bgGrad = "from-purple-900 to-slate-900";
-            glow = "shadow-[0_0_15px_#a855f7]";
-          }
-          if (mon.stars >= 5) {
-            borderCol = "border-amber-400 animate-pulse";
-            bgGrad = "from-amber-900 to-slate-900";
-            glow = "shadow-[0_0_30px_#fbbf24] animate-pulse";
-          }
+    if (mon.stars >= 3) {
+      borderCol = "border-blue-500";
+      bgGrad = "from-blue-900 to-slate-900";
+    }
+    if (mon.stars >= 4) {
+      borderCol = "border-purple-500";
+      bgGrad = "from-purple-900 to-slate-900";
+      glow = "shadow-[0_0_15px_#a855f7]";
+    }
+    if (mon.stars >= 5) {
+      borderCol = "border-amber-400 animate-pulse";
+      bgGrad = "from-amber-900 to-slate-900";
+      glow = "shadow-[0_0_30px_#fbbf24] animate-pulse";
+    }
 
-          card.innerHTML = `
-                <div class="w-full h-full rounded-xl border-2 ${borderCol} bg-gradient-to-br ${bgGrad} p-2 flex flex-col items-center justify-between ${glow}">
-                    <div class="w-full flex justify-between items-start">
-                        <span class="text-[10px] text-white font-bold bg-black/50 px-1 rounded">${"⭐".repeat(
-                          mon.stars
-                        )}</span>
-                        ${
-                          mon.stars >= 5
-                            ? '<span class="animate-pulse text-amber-300">✨</span>'
-                            : ""
-                        }
-                    </div>
-                     <!-- IMAGE with EMOJI FALLBACK -->
-                    <div class="relative w-full flex-1 flex items-center justify-center my-1 overflow-hidden">
-                        <img 
-                          src="${mon.img}" 
-                          class="w-full h-full object-contain filter drop-shadow-lg z-10" 
-                          onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
-                        />
-                        <span class="text-5xl absolute hidden animate-bounce">${
-                          mon.emoji
-                        }</span>
-                    </div>
+    card.innerHTML = `
+          <div class="w-full h-full rounded-xl border-2 ${borderCol} bg-gradient-to-br ${bgGrad} p-2 flex flex-col items-center justify-between ${glow}">
+              <div class="w-full flex justify-between items-start">
+                  <span class="text-[10px] text-white font-bold bg-black/50 px-1 rounded">${"⭐".repeat(
+                    mon.stars
+                  )}</span>
+                  ${
+                    mon.stars >= 5
+                      ? '<span class="animate-pulse text-amber-300">✨</span>'
+                      : ""
+                  }
+              </div>
+               <!-- IMAGE with EMOJI FALLBACK -->
+              <div class="relative w-full flex-1 flex items-center justify-center my-1 overflow-hidden">
+                  <img 
+                    src="${mon.img}" 
+                    class="w-full h-full object-contain filter drop-shadow-lg z-10" 
+                    onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+                  />
+                  <span class="text-5xl absolute hidden animate-bounce">${
+                    mon.emoji
+                  }</span>
+              </div>
 
-                    <div class="text-center w-full relative z-20">
-                        <div class="text-[8px] text-slate-400 uppercase font-bold tracking-wider truncate">${
-                          mon.type
-                        }</div>
-                        <div class="text-[10px] text-white font-black truncate w-full">${
-                          mon.name
-                        }</div>
-                    </div>
-                </div>
-             `;
-          grid.appendChild(card);
-        });
-      };
+              <div class="text-center w-full relative z-20">
+                  <div class="text-[8px] text-slate-400 uppercase font-bold tracking-wider truncate">${
+                    mon.type
+                  }</div>
+                  <div class="text-[10px] text-white font-black truncate w-full">${
+                    mon.name
+                  }</div>
+              </div>
+          </div>
+       `;
+    fragment.appendChild(card);
+  });
+  grid.appendChild(fragment);
+};
 
       const closeSummonResults = () => {
         document.getElementById("summon-results").classList.remove("flex");
@@ -1613,59 +1620,60 @@
       };
 
       const renderInventory = () => {
-        const grid = document.getElementById("inventory-grid");
-        grid.innerHTML = "";
+  const grid = document.getElementById("inventory-grid");
+  grid.innerHTML = "";
 
-        let items = state.equipment;
-        if (currentInvFilter !== "all")
-          items = items.filter((e) => e.type === currentInvFilter);
+  let items = state.equipment;
+  if (currentInvFilter !== "all")
+    items = items.filter((e) => e.type === currentInvFilter);
 
-        if (items.length === 0) {
-          document.getElementById("inv-empty-msg").classList.remove("hidden");
-          document.getElementById("inv-empty-msg").classList.add("flex");
-        } else {
-          document.getElementById("inv-empty-msg").classList.add("hidden");
-          document.getElementById("inv-empty-msg").classList.remove("flex");
-        }
+  if (items.length === 0) {
+    document.getElementById("inv-empty-msg").classList.remove("hidden");
+    document.getElementById("inv-empty-msg").classList.add("flex");
+  } else {
+    document.getElementById("inv-empty-msg").classList.add("hidden");
+    document.getElementById("inv-empty-msg").classList.remove("flex");
+  }
 
-        items.forEach((eq) => {
-          const conf = EQ_RARITY[eq.rarity];
-          const equippedBy = getEquipperName(eq.id);
+  const fragment = document.createDocumentFragment();
+  items.forEach((eq) => {
+    const conf = EQ_RARITY[eq.rarity];
+    const equippedBy = getEquipperName(eq.id);
 
-          const el = document.createElement("div");
-          el.className = `aspect-square bg-slate-900 rounded-xl border relative cursor-pointer active:scale-95 transition-transform ${conf.color}`;
-          // override text color for border
-          el.style.borderColor =
-            eq.rarity === "legendary"
-              ? "#fbbf24"
-              : eq.rarity === "epic"
-              ? "#a855f7"
-              : eq.rarity === "rare"
-              ? "#3b82f6"
-              : "#94a3b8";
+    const el = document.createElement("div");
+    el.className = `aspect-square bg-slate-900 rounded-xl border relative cursor-pointer active:scale-95 transition-transform ${conf.color}`;
+    // override text color for border
+    el.style.borderColor =
+      eq.rarity === "legendary"
+        ? "#fbbf24"
+        : eq.rarity === "epic"
+        ? "#a855f7"
+        : eq.rarity === "rare"
+        ? "#3b82f6"
+        : "#94a3b8";
 
-          const icon =
-            eq.type === "weapon" ? "⚔️" : eq.type === "armor" ? "🛡️" : "💍";
+    const icon =
+      eq.type === "weapon" ? "⚔️" : eq.type === "armor" ? "🛡️" : "💍";
 
-          el.innerHTML = `
-                    <div class="absolute inset-0 flex items-center justify-center text-2xl">${icon}</div>
-                    <div class="absolute top-1 right-1 text-[9px] font-black bg-black/60 px-1 rounded text-white">+${
-                      eq.lvl
-                    }</div>
-                    ${
-                      equippedBy
-                        ? `<div class="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-indigo-600 border border-white flex items-center justify-center text-[8px] font-bold text-white" title="${equippedBy}">E</div>`
-                        : ""
-                    }
-                `;
-          el.onclick = () => {
-            currentEqId = eq.id;
-            renderUpgradeModal();
-          };
-          grid.appendChild(el);
-        });
-      };
-
+    el.innerHTML = `
+              <div class="absolute inset-0 flex items-center justify-center text-2xl">${icon}</div>
+              <div class="absolute top-1 right-1 text-[9px] font-black bg-black/60 px-1 rounded text-white">+${
+                eq.lvl
+              }</div>
+              ${
+                equippedBy
+                  ? `<div class="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-indigo-600 border border-white flex items-center justify-center text-[8px] font-bold text-white" title="${equippedBy}">E</div>`
+                  : ""
+              }
+          `;
+    el.onclick = () => {
+      currentEqId = eq.id;
+      renderUpgradeModal();
+    };
+    fragment.appendChild(el);
+  });
+  grid.appendChild(fragment);
+};
       const updateSummonUI = () => {
         const elC = document.getElementById("summon-tickets-common");
         const elE = document.getElementById("summon-tickets-epic");
@@ -1683,70 +1691,71 @@
       };
 
       const renderDungeonFloors = () => {
-        let title = "";
-        let imgSrc = "";
-        let grad = "";
+  let title = "";
+  let imgSrc = "";
+  let grad = "";
 
-        if (selectedDungeonType === "golem") {
-          title = "Masmorra do Golem";
-          imgSrc = "src/golenArt.jpg"; // Stony/Cave
-          grad = "from-stone-900";
-        } else {
-          title = "Masmorra do Dragão";
-          imgSrc = "src/dragaoArt.jpg"; // Lava/Fire
-          grad = "from-red-900";
-        }
+  if (selectedDungeonType === "golem") {
+    title = "Masmorra do Golem";
+    imgSrc = "src/golenArt.jpg"; // Stony/Cave
+    grad = "from-stone-900";
+  } else {
+    title = "Masmorra do Dragão";
+    imgSrc = "src/dragaoArt.jpg"; // Lava/Fire
+    grad = "from-red-900";
+  }
 
-        // Inject Hero Header
-        const headerHTML = `
-           <div class="relative w-full h-40 rounded-[2rem] overflow-hidden shadow-2xl mb-6 shrink-0">
-              <img src="${imgSrc}" class="absolute inset-0 w-full h-full object-cover">
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
-              <div class="absolute bottom-6 left-6">
-                <p class="text-white/70 font-bold text-[10px] uppercase tracking-widest mb-1">Masmorra de Cairos</p>
-                <h2 class="text-3xl font-black text-white italic uppercase leading-none break-words max-w-[200px]">${title}</h2>
-              </div>
-           </div>
-           <div class="flex items-center gap-3 mb-4 px-2">
-              <div class="text-2xl animate-bounce">ℹ️</div>
-               <p class="text-[10px] text-slate-300 leading-tight">
-                Ultrapasse andares para aumentar chances de <span class="text-purple-400 font-bold">Épicos</span> e <span class="text-yellow-400 font-bold">Lendários</span>.
-              </p>
-           </div>
-        `;
+  // Inject Hero Header
+  const headerHTML = `
+     <div class="relative w-full h-40 rounded-[2rem] overflow-hidden shadow-2xl mb-6 shrink-0">
+        <img src="${imgSrc}" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+        <div class="absolute bottom-6 left-6">
+          <p class="text-white/70 font-bold text-[10px] uppercase tracking-widest mb-1">Masmorra de Cairos</p>
+          <h2 class="text-3xl font-black text-white italic uppercase leading-none break-words max-w-[200px]">${title}</h2>
+        </div>
+     </div>
+     <div class="flex items-center gap-3 mb-4 px-2">
+        <div class="text-2xl animate-bounce">ℹ️</div>
+         <p class="text-[10px] text-slate-300 leading-tight">
+          Ultrapasse andares para aumentar chances de <span class="text-purple-400 font-bold">Épicos</span> e <span class="text-yellow-400 font-bold">Lendários</span>.
+        </p>
+     </div>
+  `;
 
-        // Clear previous manually added "h2" if any, we are replacing the top part logic
-        const container = document.getElementById("view-dungeon");
-        if (!container) return; // Safety check
+  // Clear previous manually added "h2" if any, we are replacing the top part logic
+  const container = document.getElementById("view-dungeon");
+  if (!container) return; // Safety check
 
-        // Remove ALL children to rebuild properly
-        container.innerHTML = `
-         <button
-          onclick="changeView('view-home')"
-          class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max shrink-0"
-         >
-          ← Voltar
-         </button>
-         ${headerHTML}
-         <div class="scroll-container content-start overflow-y-auto space-y-3 pr-2 pb-20" id="dungeon-list-inner"></div>
-        `;
+  // Remove ALL children to rebuild properly
+  container.innerHTML = `
+   <button
+    onclick="changeView('view-home')"
+    class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max shrink-0"
+   >
+    ← Voltar
+   </button>
+   ${headerHTML}
+   <div class="scroll-container content-start overflow-y-auto space-y-3 pr-2 pb-20" id="dungeon-list-inner"></div>
+  `;
 
-        const listInner = document.getElementById("dungeon-list-inner");
+  const listInner = document.getElementById("dungeon-list-inner");
+  const fragment = document.createDocumentFragment();
 
-        for (let i = 1; i <= 12; i++) {
-          const btn = document.createElement("div");
-          btn.className =
-            "glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer active:scale-95 transition-transform border border-white/5 hover:bg-white/5";
-          btn.innerHTML = `<div><h4 class="text-white font-bold">${
-            selectedDungeonType === "golem" ? "Golem" : "Dragão"
-          } B${i}</h4><p class="text-xs text-purple-400">Lv. ${i * 5} • ${
-            5 + Math.floor(i / 2)
-          } ⚡</p></div><div class="text-white">▶</div>`;
-          btn.onclick = () => openPrep("dungeon_" + selectedDungeonType, i);
-          listInner.appendChild(btn);
-        }
-      };
-
+  for (let i = 1; i <= 12; i++) {
+    const btn = document.createElement("div");
+    btn.className =
+      "glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer active:scale-95 transition-transform border border-white/5 hover:bg-white/5";
+    btn.innerHTML = `<div><h4 class="text-white font-bold">${
+      selectedDungeonType === "golem" ? "Golem" : "Dragão"
+    } B${i}</h4><p class="text-xs text-purple-400">Lv. ${i * 5} • ${
+      5 + Math.floor(i / 2)
+    } ⚡</p></div><div class="text-white">▶</div>`;
+    btn.onclick = () => openPrep("dungeon_" + selectedDungeonType, i);
+    fragment.appendChild(btn);
+  }
+  listInner.appendChild(fragment);
+};
       const openPrep = (mode, lvl) => {
         prepState = { mode, level: lvl, selectedMonIdx: state.leaderIdx };
         changeView("view-prep");
@@ -1811,24 +1820,26 @@
       };
 
       const renderPrepRoster = () => {
-        const grid = document.getElementById("prep-grid");
-        grid.innerHTML = "";
-        state.inventory.forEach((mon, idx) => {
-          const el = document.createElement("div");
-          const isSel = idx === prepState.selectedMonIdx;
-          el.className = `aspect-square bg-slate-800 rounded-lg p-1 border-2 cursor-pointer ${
-            isSel ? "border-green-500" : "border-transparent"
-          }`;
-          el.innerHTML = `<img src="${mon.img}" class="w-full h-full object-contain">`;
-          el.onclick = () => {
-            prepState.selectedMonIdx = idx;
-            renderPrepUnit();
-            renderPrepRoster();
-            document.getElementById("prep-roster").classList.add("hidden");
-          };
-          grid.appendChild(el);
-        });
-      };
+  const grid = document.getElementById("prep-grid");
+  grid.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+  state.inventory.forEach((mon, idx) => {
+    const el = document.createElement("div");
+    const isSel = idx === prepState.selectedMonIdx;
+    el.className = `aspect-square bg-slate-800 rounded-lg p-1 border-2 cursor-pointer ${
+      isSel ? "border-green-500" : "border-transparent"
+    }`;
+    el.innerHTML = `<img src="${mon.img}" class="w-full h-full object-contain">`;
+    el.onclick = () => {
+      prepState.selectedMonIdx = idx;
+      renderPrepUnit();
+      renderPrepRoster();
+      document.getElementById("prep-roster").classList.add("hidden");
+    };
+    fragment.appendChild(el);
+  });
+  grid.appendChild(fragment);
+};
 
       const confirmBattle = () => startBattle(prepState.mode, prepState.level);
 
@@ -1919,39 +1930,41 @@
       };
 
       const renderSkillGrid = () => {
-        const grid = document.getElementById("skill-grid");
-        grid.innerHTML = "";
-        grid.className = `grid gap-2 ${
-          battleState.player.skills.length > 2 ? "grid-cols-3" : "grid-cols-2"
-        }`;
+  const grid = document.getElementById("skill-grid");
+  grid.innerHTML = "";
+  grid.className = `grid gap-2 ${
+    battleState.player.skills.length > 2 ? "grid-cols-3" : "grid-cols-2"
+  }`;
 
-        battleState.player.skills.forEach((k) => {
-          const s = SKILLS[k];
-          if (!s) return;
-          const canAfford = battleState.player.mp >= s.mp;
-          const btn = document.createElement("button");
-          btn.className = `bg-slate-800/80 border border-white/10 rounded-xl p-2 flex flex-col items-center transition-all ${
-            canAfford
-              ? "hover:bg-white/10 active:scale-90"
-              : "opacity-50 grayscale cursor-not-allowed"
-          }`;
-          btn.innerHTML = `
-                    <span class="text-xl mb-1">${s.icon}</span>
-                    <span class="text-[8px] font-black uppercase text-white">${
-                      s.n
-                    }</span>
-                    ${
-                      s.mp > 0
-                        ? `<span class="text-[8px] text-blue-300 font-bold">${s.mp} MP</span>`
-                        : ""
-                    }
-                `;
-          btn.onclick = () => {
-            if (canAfford) doPlayerTurn(k);
-          };
-          grid.appendChild(btn);
-        });
-      };
+  const fragment = document.createDocumentFragment();
+  battleState.player.skills.forEach((k) => {
+    const s = SKILLS[k];
+    if (!s) return;
+    const canAfford = battleState.player.mp >= s.mp;
+    const btn = document.createElement("button");
+    btn.className = `bg-slate-800/80 border border-white/10 rounded-xl p-2 flex flex-col items-center transition-all ${
+      canAfford
+        ? "hover:bg-white/10 active:scale-90"
+        : "opacity-50 grayscale cursor-not-allowed"
+    }`;
+    btn.innerHTML = `
+              <span class="text-xl mb-1">${s.icon}</span>
+              <span class="text-[8px] font-black uppercase text-white">${
+                s.n
+              }</span>
+              ${
+                s.mp > 0
+                  ? `<span class="text-[8px] text-blue-300 font-bold">${s.mp} MP</span>`
+                  : ""
+              }
+          `;
+    btn.onclick = () => {
+      if (canAfford) doPlayerTurn(k);
+    };
+    fragment.appendChild(btn);
+  });
+  grid.appendChild(fragment);
+};
 
       const doPlayerTurn = async (skillKey) => {
         if (battleState.busy) return;
@@ -3136,45 +3149,47 @@
       };
 
       const renderMonsterBox = () => {
-        const grid = document.getElementById("roster-grid");
-        grid.innerHTML = "";
-        document.getElementById("mon-count").innerText = state.inventory.length;
-        state.inventory.forEach((mon, idx) => {
-          const slot = document.createElement("div");
-          const isLeader = idx === state.leaderIdx;
-          slot.className = `sw-slot aspect-square cursor-pointer flex items-center justify-center ${
-            isLeader ? "selected" : ""
-          }`;
+  const grid = document.getElementById("roster-grid");
+  grid.innerHTML = "";
+  document.getElementById("mon-count").innerText = state.inventory.length;
 
-          if (!isLeader) {
-            if (mon.stars >= 5) slot.style.borderColor = "#fbbf24";
-            else if (mon.stars === 4) slot.style.borderColor = "#a855f7";
-            else if (mon.stars === 3) slot.style.borderColor = "#3b82f6";
-          }
+  const fragment = document.createDocumentFragment();
+  state.inventory.forEach((mon, idx) => {
+    const slot = document.createElement("div");
+    const isLeader = idx === state.leaderIdx;
+    slot.className = `sw-slot aspect-square cursor-pointer flex items-center justify-center ${
+      isLeader ? "selected" : ""
+    }`;
 
-          const elColor =
-            {
-              fire: "bg-fire",
-              water: "bg-water",
-              lightning: "bg-lightning",
-              earth: "bg-earth",
-              nature: "bg-nature",
-              void: "bg-void",
-            }[mon.element] || "bg-slate-500";
-          slot.innerHTML = `<div class="elem-badge ${elColor}"></div><img src="${
-            mon.img
-          }" class="w-[90%] h-[90%] object-contain filter drop-shadow-lg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:3rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${
-            mon.emoji
-          }</span><div class="star-row">${'<span class="star-icon">★</span>'.repeat(
-            mon.stars
-          )}</div><div class="absolute top-1 left-1 text-[8px] font-bold text-white bg-black/50 px-1 rounded">Lv.${
-            mon.lvl
-          }</div>`;
-          slot.onclick = () => openDetail(idx);
-          grid.appendChild(slot);
-        });
-      };
+    if (!isLeader) {
+      if (mon.stars >= 5) slot.style.borderColor = "#fbbf24";
+      else if (mon.stars === 4) slot.style.borderColor = "#a855f7";
+      else if (mon.stars === 3) slot.style.borderColor = "#3b82f6";
+    }
 
+    const elColor =
+      {
+        fire: "bg-fire",
+        water: "bg-water",
+        lightning: "bg-lightning",
+        earth: "bg-earth",
+        nature: "bg-nature",
+        void: "bg-void",
+      }[mon.element] || "bg-slate-500";
+    slot.innerHTML = `<div class="elem-badge ${elColor}"></div><img src="${
+      mon.img
+    }" class="w-[90%] h-[90%] object-contain filter drop-shadow-lg" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:3rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${
+      mon.emoji
+    }</span><div class="star-row">${'<span class="star-icon">★</span>'.repeat(
+      mon.stars
+    )}</div><div class="absolute top-1 left-1 text-[8px] font-bold text-white bg-black/50 px-1 rounded">Lv.${
+      mon.lvl
+    }</div>`;
+    slot.onclick = () => openDetail(idx);
+    fragment.appendChild(slot);
+  });
+  grid.appendChild(fragment);
+};
       let selectedDetailIdx = 0;
       const openDetail = (idx) => {
         selectedDetailIdx = idx;
