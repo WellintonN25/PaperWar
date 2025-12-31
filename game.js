@@ -3969,10 +3969,12 @@ const renderStory = () => {
         // Safety check for undefined name
         if(!safeMon.name) safeMon.name = mon.id.toUpperCase();
 
-        document
-          .getElementById("mon-detail-overlay")
-          .classList.remove("hidden");
-        document.getElementById("mon-detail-overlay").classList.add("flex");
+        // SWITCH TO THE NEW VIEW
+        changeView("view-character-detail");
+
+        // Removed old overlay toggle code
+        // document.getElementById("mon-detail-overlay").classList.remove("hidden");
+        // document.getElementById("mon-detail-overlay").classList.add("flex");
         document.getElementById("det-name").innerText = safeMon.name;
         document.getElementById("det-type").innerText = (safeMon.role ? `[${safeMon.role.toUpperCase()}] ` : "") + (safeMon.type || "Unknown Type");
         document.getElementById("det-lvl").innerText = `Lv. ${safeMon.lvl}`;
