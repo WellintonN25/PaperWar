@@ -1,4 +1,4 @@
-﻿      // --- DATABASE ---
+﻿      // --- BANCO DE DADOS ---
       const MONSTERS_DB = [
         {
           id: "vermithrax",
@@ -220,8 +220,8 @@
           img: "",
           skills: ["melee"],
         },
-        // --- NEW CHARACTERS (WAVE 2) ---
-        // 5 STARS (LEGENDARY)
+        // --- NOVOS PERSONAGENS (ONDA 2) ---
+        // 5 ESTRELAS (LENDÁRIOS)
         {
           id: "ignis",
           name: "Ignis",
@@ -327,7 +327,7 @@
           skills: ["melee", "sup_void"],
         },
 
-        // 4 STARS (EPIC)
+        // 4 ESTRELAS (ÉPICOS)
         {
           id: "vulcan",
           name: "Vulcan",
@@ -413,7 +413,7 @@
           skills: ["melee", "wind_blade"],
         },
 
-        // 3 STARS (RARE)
+        // 3 ESTRELAS (RAROS)
         {
           id: "goblin_king",
           name: "Goblin King",
@@ -574,7 +574,7 @@
           type: "void_sup",
           mp: 60,
         },
-        // NEW PREMIUM SKILLS
+        // NOVAS HABILIDADES PREMIUM
         ice_shards: {
           n: "Estilhaços",
           p: 1.8,
@@ -715,7 +715,7 @@
           type: "sup_dark_comet",
           mp: 85,
         },
-        // NEW ELEMENTAL SKILLS (4)
+        // NOVAS HABILIDADES ELEMENTAIS (4)
         crystal_spear: {
           n: "Lança de Cristal",
           p: 1.9,
@@ -744,7 +744,7 @@
           type: "spectral_blade",
           mp: 32,
         },
-        // NEW SUPREME SKILLS (5)
+        // NOVAS HABILIDADES SUPREMAS (5)
         sup_cosmic_storm: {
           n: "Tempestade Cósmica",
           p: 3.9,
@@ -811,7 +811,7 @@
         legendary: { name: "Lendário", mult: 3.5, color: "rarity-legendary" },
       };
 
-      // Equipment Sets (2 pieces = bonus)
+      // Conjuntos de Equipamento (2 peças = bônus)
       const EQUIPMENT_SETS = {
         energy: {
           name: "Energy",
@@ -1039,7 +1039,7 @@
         );
       };
 
-      // --- LOGIN ICONS ---
+      // --- ÍCONES DE LOGIN ---
       let selectedLoginIcon = "??";
       const LOGIN_ICONS = [
         "🦸", // Superhero
@@ -1169,7 +1169,7 @@
             state.towerFloor;
       };
 
-      // --- STORY/CAMPAIGN RENDERING ---
+      // --- RENDERIZAÇÃO DA CAMPANHA/HISTÓRIA ---
 const renderStory = () => {
   const list = document.getElementById("story-list");
   if (!list) return;
@@ -1280,7 +1280,7 @@ const renderStory = () => {
             xpBar.classList.remove("w-0");
         }
 
-        // ENERGY REGEN LOGIC
+        // LÓGICA DE REGENERAÇÃO DE ENERGIA
         const now = Date.now();
         if (!state.user.lastEnergyRegen) state.user.lastEnergyRegen = now;
         
@@ -1327,14 +1327,14 @@ const renderStory = () => {
         location.reload();
       };
 
-      // --- SHOP & EQUIPMENT LOGIC ---
+      // --- LÓGICA DE LOJA E EQUIPAMENTOS ---
       const updateShopUI = () => {
         document.getElementById("shop-crystals").innerText =
           state.user.crystals;
         document.getElementById("shop-gold").innerText = state.user.gold;
       };
       const buyShopItem = (item) => {
-        // --- TICKETS ---
+        // --- BILHETES ---
         if (item === "ticket_common") {
           if (state.user.gold < 1000) return showToast("Ouro insuficiente! Requ: 1.000", "error");
           state.user.gold -= 1000;
@@ -1362,7 +1362,7 @@ const renderStory = () => {
           addMonster("skillupper");
         }
 
-        // --- RESOURCES ---
+        // --- RECURSOS ---
         if (item === "energy") {
           if (state.user.crystals < 50) return showToast("Cristais insuficientes! Requ: 50", "error");
           state.user.crystals -= 50;
@@ -1436,7 +1436,7 @@ const renderStory = () => {
         updateHeader();
         updateSummonUI();
 
-        // 1. GENERATE MONSTERS FIRST (to detect rarity)
+        // 1. GERAR MONSTROS PRIMEIRO (para detectar raridade)
         currentSummonResults = [];
         let maxStarsFound = 0;
 
@@ -1502,7 +1502,7 @@ const renderStory = () => {
 
         save();
 
-        // 2. CONDITIONAL ANIMATION BASED ON RARITY
+        // 2. ANIMAÇÃO CONDICIONAL BASEADA EM RARIDADE
         const overlay = document.getElementById("summon-anim-overlay");
         overlay.classList.remove("hidden");
         overlay.classList.add("flex");
@@ -1701,13 +1701,13 @@ const renderStory = () => {
         document.getElementById("summon-results").classList.add("hidden");
       };
 
-      // Helper to generate a random substat
+      // Ajuda para gerar um substatus aleatório
       const generateSubStat = (excludeTypes = []) => {
           const types = ["atk", "def", "hp", "crit", "cdmg", "spd", "res", "acc"].filter(t => !excludeTypes.includes(t));
           const type = types[Math.floor(Math.random() * types.length)];
           
           let val = 0;
-          // Substat Ranges (SW Style - slightly simplified/adapted)
+          // Faixas de Substatus (Estilo SW - levemente simplificado/adaptado)
           switch(type) {
               case "atk": val = Math.floor(Math.random() * 4) + 5; break; // 5-8%
               case "def": val = Math.floor(Math.random() * 4) + 5; break; // 5-8%
@@ -1722,7 +1722,7 @@ const renderStory = () => {
       };
 
       const createEquipment = (floorLevel = 1, dungeonType = "golem") => {
-        // Slot selection
+        // Seleção de Slot
         let slot;
         if (dungeonType === "golem") slot = [1, 2, 3][Math.floor(Math.random() * 3)];
         else if (dungeonType === "dragon") slot = [2, 3, 4][Math.floor(Math.random() * 3)];
@@ -1736,7 +1736,7 @@ const renderStory = () => {
         
         const set = availableSets[Math.floor(Math.random() * availableSets.length)];
 
-        // Rarity Logic
+        // Lógica de Raridade
         const r = Math.random();
         let rarity = "common";
         // Simple rarity curve based on floor
@@ -1757,14 +1757,14 @@ const renderStory = () => {
           set: set,
           rarity: rarity,
           lvl: 0,
-          // NEW STRUCTURE
+          // NOVA ESTRUTURA
           stats: {
               main: {},
               subs: []
           }
         };
 
-        // Main Stat Definition
+        // Definição de Status Principal
         if (slot === 1) {
              eq.type = "weapon";
              eq.stats.main = { type: "atk", value: 100 }; // Flat ATK for weapon usually, simplified to 100 base
@@ -1810,7 +1810,7 @@ const renderStory = () => {
              eq.stats.main = { type: pick, value: val };
         }
 
-        // Substats Generation
+        // Geração de Substatus
         let subCount = 0;
         if (rarity === "legendary") subCount = 4;
         else if (rarity === "epic") subCount = 3;
@@ -1824,7 +1824,7 @@ const renderStory = () => {
             existingTypes.push(sub.type);
         }
         
-        // BACKWARD COMPATIBILITY / FLATTENING
+        // COMPATIBILIDADE RETROATIVA
         // For easy calculation in calculateStats, we might want a 'total' or handle it there.
         // Let's ensure 'calculateStats' (next refactor) handles this structure.
         // For now, I will NOT set flattened properties like eq.stats.atk = X. 
@@ -1842,14 +1842,14 @@ const renderStory = () => {
           currentEqId = equippedId;
           renderUpgradeModal();
         } else {
-          // Equip Logic: Find best available for this slot
-          // NEW SYSTEM: slot1-4, OLD SYSTEM: weapon/armor/acc
+          // Lógica de Equipar: Encontrar o melhor disponível para este slot
+          // NOVO SISTEMA: slot1-4, SISTEMA ANTIGO: weapon/armor/acc
           let slotNumber;
           if (slot === 'slot1') slotNumber = 1;
           else if (slot === 'slot2') slotNumber = 2;
           else if (slot === 'slot3') slotNumber = 3;
           else if (slot === 'slot4') slotNumber = 4;
-          // Old system compatibility
+          // Compatibilidade com sistema antigo
           else if (slot === 'weapon') slotNumber = 1;
           else if (slot === 'armor') slotNumber = 2;
           else if (slot === 'acc') slotNumber = 4;
@@ -1859,7 +1859,7 @@ const renderStory = () => {
           );
           
           if (items.length > 0) {
-            // Sort by rarity/level, take best
+            // Ordenar por raridade/nível, pegar o melhor
             items.sort((a, b) => {
               const rarityOrder = {legendary: 4, epic: 3, rare: 2, common: 1};
               return (rarityOrder[b.rarity] || 0) - (rarityOrder[a.rarity] || 0) || b.lvl - a.lvl;
@@ -1877,15 +1877,11 @@ const renderStory = () => {
       const isEquipped = (id) => {
         return state.inventory.some(
           (m) =>
-            // NEW SYSTEM
+            // NOVO SISTEMA
             m.equipped.slot1 === id ||
             m.equipped.slot2 === id ||
             m.equipped.slot3 === id ||
-            m.equipped.slot4 === id ||
-            // OLD SYSTEM COMPATIBILITY
-            m.equipped.weapon === id ||
-            m.equipped.armor === id ||
-            m.equipped.acc === id
+            m.equipped.slot4 === id
         );
       };
 
@@ -1896,11 +1892,7 @@ const renderStory = () => {
             m.equipped.slot1 === id ||
             m.equipped.slot2 === id ||
             m.equipped.slot3 === id ||
-            m.equipped.slot4 === id ||
-            // OLD SYSTEM COMPATIBILITY
-            m.equipped.weapon === id ||
-            m.equipped.armor === id ||
-            m.equipped.acc === id
+            m.equipped.slot4 === id
         );
         return mon ? mon.name : null;
       };
@@ -1915,8 +1907,8 @@ const renderStory = () => {
 
         const conf = EQ_RARITY[eq.rarity];
         
-        // Set equipment icon
-        // Helper to get type if missing (legacy items)
+        // Definir ícone do equipamento
+        // Ajuda para obter tipo se estiver faltando (itens legados)
         let eqType = eq.type;
         if (!eqType) {
             if (eq.slot === 1) eqType = "weapon";
@@ -1946,12 +1938,53 @@ const renderStory = () => {
         )}`;
         document.getElementById("eq-modal-level").innerText = `+${eq.lvl}`;
 
-        document.getElementById("eq-stat-atk").innerText = eq.stats.atk || 0;
-        document.getElementById("eq-stat-def").innerText = eq.stats.def || 0;
-        document.getElementById("eq-stat-crit").innerText =
-          (eq.stats.crit || 0) + "%";
-        document.getElementById("eq-stat-cdmg").innerText =
-          (eq.stats.cdmg || 0) + "%";
+        // LIMPAR TUDO ANTES
+        const statContainer = document.getElementById("eq-stat-container");
+        if (statContainer) {
+             statContainer.innerHTML = ""; // Limpar status antigos hardcoded
+             
+             // 1. STATUS PRINCIPAL (Destaque)
+             if (eq.stats.main) {
+                 const m = eq.stats.main;
+                 const mainDiv = document.createElement("div");
+                 mainDiv.className = "flex justify-between items-center text-white font-bold text-lg border-b border-white/10 pb-2 mb-2";
+                 mainDiv.innerHTML = `
+                    <span class="uppercase text-sm text-slate-400">${m.type.toUpperCase()}</span>
+                    <span class="text-xl text-yellow-400">+${m.value}</span>
+                 `;
+                 statContainer.appendChild(mainDiv);
+             } else {
+                 // Fallback Legado
+                 const mainDiv = document.createElement("div");
+                 mainDiv.className = "text-center text-slate-500 italic text-xs mb-2";
+                 mainDiv.innerText = "Item Antigo (Status Legado)";
+                 statContainer.appendChild(mainDiv);
+             }
+
+             // 2. SUBSTATUS
+             if (eq.stats.subs && eq.stats.subs.length > 0) {
+                 eq.stats.subs.forEach(sub => {
+                     const subDiv = document.createElement("div");
+                     subDiv.className = "flex justify-between items-center text-sm text-slate-300";
+                     subDiv.innerHTML = `
+                        <span>${sub.type.toUpperCase()}</span>
+                        <span class="font-bold">+${sub.value}</span>
+                     `;
+                     statContainer.appendChild(subDiv);
+                 });
+             } else if (!eq.stats.main) {
+                 // Mostrar status legados se não houver estrutura nova
+                 const legacyStats = ['atk', 'def', 'hp', 'crit', 'cdmg', 'spd'];
+                 legacyStats.forEach(k => {
+                     if (eq.stats[k]) {
+                         const subDiv = document.createElement("div");
+                         subDiv.className = "flex justify-between items-center text-sm text-slate-300";
+                         subDiv.innerHTML = `<span>${k.toUpperCase()}</span><span class="font-bold">+${eq.stats[k]}</span>`;
+                         statContainer.appendChild(subDiv);
+                     }
+                 });
+             }
+        }
 
         const cost = 100 * (eq.lvl + 1);
         const chance = Math.max(5, 100 - eq.lvl * 5);
@@ -1964,13 +1997,13 @@ const renderStory = () => {
 
         btn.onclick = () => performUpgrade(eq, cost, chance);
         
-        // --- MANAGE BUTTON LOGIC ---
+        // --- GERENCIAR LÓGICA DO BOTÃO ---
         const manageBtn = document.getElementById("btn-equip-manage");
         const equippedBy = getEquipperName(eq.id);
         const ownerTxt = document.getElementById("eq-equipped-by");
         const container = document.getElementById("eq-icon-container"); // Missing declaration fixed
         
-        // Visual Rarity Feedback on Modal Icon
+        // Feedback Visual de Raridade no Ícone do Modal
         if (container) {
             const borderColor = conf.color.includes("yellow") ? "#fbbf24" : 
                                 conf.color.includes("purple") ? "#a855f7" : 
@@ -1980,15 +2013,14 @@ const renderStory = () => {
         }
 
         if (equippedBy) {
-          // ITEM IS EQUIPPED
+          // ITEM ESTÁ EQUIPADO
           ownerTxt.innerText = `Equipado em: ${equippedBy}`;
           ownerTxt.classList.remove("hidden");
           
           document.getElementById("btn-sell").disabled = true;
           document.getElementById("btn-sell").classList.add("opacity-50", "grayscale");
           
-          // Show UNEQUIP option if equipped by CURRENT monster (context aware)
-          // We check if it is equipped by the currently viewed monster in Detail View
+          // Mostrar opção de DESEQUIPAR se estiver equipado pelo monstro ATUAL (sensível ao contexto)
           const currentMon = state.inventory[selectedDetailIdx];
           const isOwnedByCurrent = currentMon && isEquippedByMon(currentMon, eq.id);
           
@@ -1998,7 +2030,7 @@ const renderStory = () => {
               manageBtn.classList.add("bg-red-600", "hover:bg-red-500");
               manageBtn.onclick = () => unequipItem(eq.id, 500);
           } else {
-              // Equipped by someone else -> Disable or Show Info
+              // Equipado por outro -> Desabilitar ou Mostrar Info
               manageBtn.textContent = `Equipado em ${equippedBy}`;
               manageBtn.classList.remove("hidden", "bg-indigo-600", "bg-red-600");
               manageBtn.classList.add("bg-slate-700", "cursor-not-allowed");
@@ -2006,12 +2038,12 @@ const renderStory = () => {
           }
           
         } else {
-          // ITEM IS NOT EQUIPPED
+          // ITEM NÃO ESTÁ EQUIPADO
           ownerTxt.classList.add("hidden");
           document.getElementById("btn-sell").disabled = false;
           document.getElementById("btn-sell").classList.remove("opacity-50", "grayscale");
           
-          // Show EQUIP option if we are in detail view
+          // Mostrar opção de EQUIPAR se estivermos na visualização de detalhes
           if (typeof selectedDetailIdx !== 'undefined' && selectedDetailIdx !== -1) {
              manageBtn.textContent = "Equipar";
              manageBtn.classList.remove("hidden", "bg-red-600", "bg-slate-700", "cursor-not-allowed");
@@ -2062,7 +2094,7 @@ const renderStory = () => {
         if (state.user.gold < cost)
           return showToast("Ouro insuficiente!", "error");
         
-        // Disable button during animation
+        // Desabilitar botão durante animação
         const upgradeBtn = document.getElementById("btn-upgrade");
         const sellBtn = document.getElementById("btn-sell");
         if (upgradeBtn) upgradeBtn.disabled = true;
@@ -2074,7 +2106,7 @@ const renderStory = () => {
         const roll = Math.random() * 100;
         const success = roll <= chance;
         
-        // Get animation elements
+        // Obter elementos de animação
         const container = document.getElementById("eq-icon-container");
         const glow = document.getElementById("eq-upgrade-glow");
         const ring1 = document.getElementById("eq-energy-ring-1");
@@ -2083,11 +2115,11 @@ const renderStory = () => {
         const animIcon = document.getElementById("eq-anim-icon");
         const modal = document.getElementById("eq-modal");
         
-        // Helper function for delays
+        // Função auxiliar para delays
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         
-        // === PHASE 1: PREPARATION (1s) ===
-        // Show energy rings spinning
+        // === FASE 1: PREPARAÇÃO (1s) ===
+        // Mostrar anéis de energia girando
         if (ring1 && ring2) {
           ring1.style.borderColor = "#6366f1"; // Indigo
           ring2.style.borderColor = "#8b5cf6"; // Purple
@@ -2099,15 +2131,15 @@ const renderStory = () => {
         
         await sleep(1000);
         
-        // === PHASE 2: PROCESSING (1s) ===
-        // Intensify glow
+        // === FASE 2: PROCESSAMENTO (1s) ===
+        // Intensificar brilho
         if (glow) {
           glow.style.background = "radial-gradient(circle, rgba(99,102,241,0.6), transparent)";
           glow.style.opacity = "1";
           glow.style.animation = "pulse 0.3s ease-in-out infinite";
         }
         
-        // Make rings spin faster
+        // Anéis giram mais rápido
         if (ring1 && ring2) {
           ring1.style.animation = "spin 0.3s linear infinite";
           ring2.style.animation = "spin 0.4s linear infinite reverse";
@@ -2115,54 +2147,54 @@ const renderStory = () => {
         
         await sleep(1000);
         
-        // === PHASE 3: RESULT REVEAL (1s+) ===
-        // Hide rings and glow
+        // === FASE 3: REVELAR RESULTADO (1s+) ===
+        // Esconder anéis e brilho
         if (ring1) ring1.style.opacity = "0";
         if (ring2) ring2.style.opacity = "0";
         if (glow) glow.style.opacity = "0";
         
         if (success) {
-          // Update equipment stats
+          // Atualizar status do equipamento
           eq.lvl++;
           
-          // 1. Upgrade Main Stat
+          // 1. Melhorar Status Principal
           if (eq.stats.main) {
              const type = eq.stats.main.type;
              const val = eq.stats.main.value;
              
-             // Flat stats (weapon/armor/helmet slots 1-3 usually)
+             // Status Flat (arma/armadura/elte slots 1-3 geralmente)
              if (["atk", "def", "hp"].includes(type) && [1,2,3].includes(eq.slot) && type !== "spd") {
                  eq.stats.main.value = Math.ceil(val * 1.1); // +10% base increase per level
              } else {
-                 // % stats or SPD
-                 // SPD usually doesn't increase on main stat in SW unless it's slot 2, but here we simplify
-                 // % stats usually +2% or +3% per level
+                 // Status % ou SPD
+                 // SPD geralmente não aumenta no status principal no SW a menos que seja slot 2, mas aqui simplificamos
+                 // Status % geralmente +2% ou +3% por nível
                  if (type === "spd") eq.stats.main.value += 1; // +1 spd
                  else if (val < 20) eq.stats.main.value += 1;
                  else eq.stats.main.value += 2;
              }
           } else {
-              // Legacy fallback
+              // Fallback Legado
               if (eq.stats.atk) eq.stats.atk += Math.ceil(eq.stats.atk * 0.1) + 2;
               if (eq.stats.def) eq.stats.def += Math.ceil(eq.stats.def * 0.1) + 1;
               if (eq.stats.crit) eq.stats.crit += 1;
               if (eq.stats.cdmg) eq.stats.cdmg += 2;
           }
 
-          // 2. Milestones / Substats logic (+3, +6, +9, +12)
+          // 2. Lógica de Milestones / Substatus (+3, +6, +9, +12)
           let upgradeMsg = "";
           
           if (eq.lvl % 3 === 0 && eq.lvl <= 12) {
               if (!eq.stats.subs) eq.stats.subs = [];
               
               if (eq.stats.subs.length < 4) {
-                  // Add NEW substat
+                  // Adicionar NOVO substatus
                   const existing = [eq.stats.main?.type, ...eq.stats.subs.map(s=>s.type)];
                   const newSub = generateSubStat(existing);
                   eq.stats.subs.push(newSub);
                   upgradeMsg = `Novo Substatus: ${newSub.type.toUpperCase()} +${newSub.value}`;
               } else {
-                  // Enhance EXISTING substat
+                  // Melhorar substatus EXISTENTE
                   const idx = Math.floor(Math.random() * eq.stats.subs.length);
                   const sub = eq.stats.subs[idx];
                   const roll = generateSubStat([]).value; // Get a roll value
@@ -2171,13 +2203,13 @@ const renderStory = () => {
               }
           }
           
-          // Success flash
+          // Flash de Sucesso
           if (container) {
             container.style.borderColor = "#22c55e";
             container.style.boxShadow = "0 0 30px rgba(34,197,94,0.8)";
           }
           
-          // Show success icon
+          // Mostrar ícone de sucesso
           if (animOverlay && animIcon) {
             animIcon.innerText = "✅";
             animIcon.className = "text-6xl text-green-400 drop-shadow-[0_0_20px_rgba(34,197,94,0.8)]";
@@ -2191,13 +2223,13 @@ const renderStory = () => {
           await sleep(1200);
           
         } else {
-          // Fail flash
+          // Flash de Falha
           if (container) {
             container.style.borderColor = "#ef4444";
             container.style.boxShadow = "0 0 30px rgba(239,68,68,0.8)";
           }
           
-          // Show fail icon
+          // Mostrar ícone de falha
           if (animOverlay && animIcon) {
             animIcon.innerText = "❌";
             animIcon.className = "text-6xl text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]";
@@ -2206,7 +2238,7 @@ const renderStory = () => {
             animOverlay.classList.add("flex");
           }
           
-          // Shake modal
+          // Tremer modal
           const panel = modal?.querySelector(".glass-panel");
           if (panel) {
             panel.classList.add("animate-shake");
@@ -2218,8 +2250,8 @@ const renderStory = () => {
           await sleep(1200);
         }
         
-        // === CLEANUP ===
-        // Reset animations
+        // === LIMPEZA ===
+        // Resetar animações
         if (ring1) ring1.style.animation = "";
         if (ring2) ring2.style.animation = "";
         if (glow) glow.style.animation = "";
@@ -2234,20 +2266,20 @@ const renderStory = () => {
         
         save();
         
-        // Re-enable buttons and refresh
+        // Re-habilitar botões e atualizar
         if (upgradeBtn) upgradeBtn.disabled = false;
         if (sellBtn) sellBtn.disabled = false;
         
         renderUpgradeModal();
         
-        // Refresh views underneath
+        // Atualizar visualizações abaixo
         if (!document.getElementById("view-inventory")?.classList.contains("hidden-view"))
           renderInventory();
         if (!document.getElementById("mon-detail-overlay")?.classList.contains("hidden"))
           openDetail(selectedDetailIdx);
       };
 
-      // --- INVENTORY VIEW LOGIC ---
+      // --- LÓGICA DE VISUALIZAÇÃO DE INVENTÁRIO ---
       const filterInventory = (type) => {
         currentInvFilter = type;
         document.querySelectorAll(".inv-tab").forEach((b) => {
@@ -2289,7 +2321,7 @@ const renderStory = () => {
 
     const el = document.createElement("div");
     el.className = `aspect-square bg-slate-900 rounded-xl border relative cursor-pointer active:scale-95 transition-transform ${conf.color}`;
-    // override text color for border
+    // sobrescrever cor do texto para borda
     el.style.borderColor =
       eq.rarity === "legendary"
         ? "#fbbf24"
@@ -2299,7 +2331,7 @@ const renderStory = () => {
         ? "#3b82f6"
         : "#94a3b8";
 
-    // Deduce type if missing (robustness)
+    // Deduzir tipo se estiver faltando (robustez)
     let eqType = eq.type;
     if (!eqType) {
         if (eq.slot === 1) eqType = "weapon";
@@ -2348,7 +2380,7 @@ const renderStory = () => {
       };
 
       // --- DUNGEON & PREP ---
-      // --- DUNGEON & PREP ---
+      // --- MASMORRA E PREPARAÇÃO ---
       let selectedDungeonType = "golem";
 
       const openDungeonSelect = (type) => {
@@ -2375,7 +2407,7 @@ const renderStory = () => {
     grad = "from-indigo-900";
   }
 
-  // Inject Hero Header
+  // Injetar Cabeçalho Hero
   const headerHTML = `
      <div class="relative w-full h-40 rounded-[2rem] overflow-hidden shadow-2xl mb-6 shrink-0">
         <img src="${imgSrc}" class="absolute inset-0 w-full h-full object-cover">
@@ -2393,11 +2425,11 @@ const renderStory = () => {
      </div>
   `;
 
-  // Clear previous manually added "h2" if any, we are replacing the top part logic
+  // Limpar "h2" adicionado manualmente anteriormente, estamos substituindo a lógica superior
   const container = document.getElementById("view-dungeon");
   if (!container) return; // Safety check
 
-  // Remove ALL children to rebuild properly
+  // Remover TODOS os filhos para reconstruir corretamente
   container.innerHTML = `
    <button
     onclick="changeView('view-home')"
@@ -2415,8 +2447,7 @@ const renderStory = () => {
   for (let i = 1; i <= 12; i++) {
     const btn = document.createElement("div");
     
-    // Check Lock Status
-    // Unlocked if previous floor (i-1) is cleared.
+    // Verificar Status de Bloqueio
     // Floor 1 is always unlocked.
     // progress stores the MAX floor cleared. e.g. 0 initially.
     // So floor 1 is unlocked if 1 <= 0 + 1 (True).
@@ -2430,7 +2461,7 @@ const renderStory = () => {
         : "cursor-pointer active:scale-95 hover:bg-white/5"
     }`;
     
-    // Lock Icon
+    // Ícone de Cadeado
     const lockIcon = isLocked ? "🔒" : "▶️";
 
     btn.innerHTML = `<div><h4 class="text-white font-bold">${
@@ -2460,21 +2491,21 @@ const renderStory = () => {
           tower: `Torre Andar ${lvl}`,
           story: `Campanha Fase ${lvl}`,
         };
-        // Normalize dungeon cost
+        // Normalizar custo da masmorra
         let cost = 5;
         if (mode.startsWith("dungeon")) cost = 5 + Math.floor(lvl / 2);
 
         document.getElementById("prep-title").innerText = titles[mode];
         document.getElementById("prep-cost").innerText = `${cost} ⚡`;
         
-        // Farm Button Logic
+        // Lógica do Botão de Farmar
         const farmBtn = document.getElementById("btn-prep-farm");
         if (farmBtn) {
             let canFarm = false;
             
-            // Allow farm if dungeon and cleared previous difficulty? 
-            // The requirement is "concluir a fase uma vez".
-            // So if dungeonProgress[type] >= level.
+            // Permitir farmar se masmorra e dificuldade anterior concluída?
+            // O requisito é "concluir a fase uma vez".
+            // Então se dungeonProgress[type] >= level.
             
             if (mode.startsWith("dungeon")) {
                 const type = mode.replace("dungeon_", "");
@@ -2532,24 +2563,19 @@ const renderStory = () => {
         ).innerText = `Atk: ${stats.atk} | HP: ${stats.hp}`;
       };
       
-      // Detect active equipment sets (2 pieces = bonus)
+      // Detectar conjuntos ativos (2 peças = bônus)
       const detectActiveSets = (mon) => {
         if (!mon.equipped) return [];
         
         const equippedItems = [];
         
-        // NEW SYSTEM: 4 slots
+        // NOVO SISTEMA: 4 slots
         if (mon.equipped.slot1) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.slot1));
         if (mon.equipped.slot2) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.slot2));
         if (mon.equipped.slot3) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.slot3));
         if (mon.equipped.slot4) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.slot4));
         
-        // OLD SYSTEM COMPATIBILITY (will be removed later)
-        if (mon.equipped.weapon) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.weapon));
-        if (mon.equipped.armor) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.armor));
-        if (mon.equipped.acc) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.acc));
-        
-        // Count sets
+        // Contar conjuntos
         const setCounts = {};
         equippedItems.forEach(eq => {
           if (eq && eq.set) {
@@ -2578,8 +2604,8 @@ const renderStory = () => {
       };
 
       const calculateStats = (mon) => {
-        // Growth: 3% per level
-        // Star Bonus: +12% base stats per star above 1
+        // Crescimento: 3% por nível
+        // Bônus de Estrela: +12% status base por estrela acima de 1
         
         const lvlMult = 1 + (mon.lvl - 1) * 0.03;
         const starMult = 1 + (mon.stars - 1) * 0.12; 
@@ -2606,10 +2632,9 @@ const renderStory = () => {
         let cdmg = 50;
         let spd = 100; // Base speed
         
-        // Equipment Stats (NEW SYSTEM)
-        // Equipment Stats (NEW SYSTEM)
+        // Status de Equipamento (NOVO SISTEMA)
         if (mon.equipped) {
-            // Helper to apply stat
+            // Auxiliar para aplicar status
             const addStat = (type, val) => {
                 if (!val) return;
                 switch(type) {
@@ -2624,19 +2649,19 @@ const renderStory = () => {
                 }
             };
             
-            // Helper for % stats (if we had them as distinct types, e.g. "atk%")
-            // For now, our generateSubStat uses "atk" but the value is small (5-8), implying %?
-            // "val = Math.floor(Math.random() * 4) + 5; // 5-8%" in createEquipment comment.
-            // But here we add to 'atk' (flat).
-            // Users wanted "functional" stats. 
-            // If base ATK is 100, +5 ATK is +5%. 
-            // But if base ATK is 1000, +5 ATK is nothing.
-            // Summoners War uses % stats heavily.
-            // Let's assume the generated substats ARE percentages for Atk/Def/Hp if the value is small?
-            // No, that's ambiguous.
-            // Let's stick to adding them as-is to the total for now, or treat them as % if we change logic layer.
-            // For this iteration/prompt "manter a mesma aleatoriedade... capaz de ficar muito bom",
-            // if we treat them as %, we need to calculate base * pct.
+            // Auxiliar para % stats (se tivéssemos tipos distintos, ex: "atk%")
+            // Por enquanto, nosso generateSubStat usa "atk" mas o valor é baixo (5-8), implicando %?
+            // "val = Math.floor(Math.random() * 4) + 5; // 5-8%" no comentário de createEquipment.
+            // Mas aqui adicionamos ao 'atk' (flat).
+            // Usuários queriam status "funcionais".
+            // Se ATK base é 100, +5 ATK é +5%.
+            // Mas se ATK base é 1000, +5 ATK é nada.
+            // Summoners War usa % stats pesadamente.
+            // Vamos assumir que os substats gerados SÃO porcentagens para Atk/Def/Hp se o valor for baixo?
+            // Não, isso é ambíguo.
+            // Vamos manter adicionando como está ao total por enquanto, ou tratar como % se mudarmos a camada lógica.
+            // Para esta iteração/prompt "manter a mesma aleatoriedade... capaz de ficar muito bom",
+            // se tratarmos como %, precisamos calcular base * pct.
             
             // REVISED LOGIC: Treat ALL secondary Atk/Def/Hp as PERCENTAGE of base?
             // Or just keep them as flat for simplicity but boost the numbers?
@@ -2650,13 +2675,13 @@ const renderStory = () => {
               if (mon.equipped[slotKey]) {
                 const eq = state.equipment.find(e => e.id === mon.equipped[slotKey]);
                 if (eq && eq.stats) {
-                  // 1. Handle NEW Structure
+                  // 1. Lidar com NOVA Estrutura
                   if (eq.stats.main) {
-                      // Main Stat
+                      // Status Principal
                       const m = eq.stats.main;
-                      // Determine if it's % or flat.
-                      // Slot 1/2/3 Main stats are usually flat in our createEquipment
-                      // Slot 4 was "atk", "hp", etc with value 10 -> likely %.
+                      // Determinar se é % ou flat.
+                      // Slot 1/2/3 Status Principais geralmente são flat no nosso createEquipment
+                      // Slot 4 era "atk", "hp", etc com valor 10 -> provavelmente %.
                       if (eq.slot === 4 || m.type === 'crit' || m.type === 'cdmg') {
                            if (['atk','def','hp'].includes(m.type)) bonusPct[m.type] += m.value;
                            else addStat(m.type, m.value);
@@ -2676,7 +2701,7 @@ const renderStory = () => {
                       });
                   }
 
-                  // 2. Handle LEGACY Structure
+                  // 2. Lidar com Estrutura LEGADO
                   if (!eq.stats.main && !eq.stats.subs) {
                        if (eq.stats.atk) atk += eq.stats.atk;
                        if (eq.stats.hp) hp += eq.stats.hp;
@@ -2688,12 +2713,12 @@ const renderStory = () => {
               }
             });
             
-            // Compatibility: Legacy items had "atk: 15" which was flat.
-            // New items have "subs: [{type: atk, value: 5}]".
-            // If we treat new subs as %, +5% is better than +5 flat for high level mons.
+            // Compatibilidade: Itens legados tinham "atk: 15" que era flat.
+            // Novos itens têm "subs: [{type: atk, value: 5}]".
+            // Se tratarmos novos subs como %, +5% é melhor que +5 flat para monstros de nível alto.
             
-            // Apply Percentages to Base (before flat additions? No, base stats are `mon.atk * m`)
-            // Let's apply % to the calculated base using `m` (lvl/star multiplier)
+            // Aplicar Porcentagens à Base (antes de adições flat? Não, status base são `mon.atk * m`)
+            // Vamos aplicar % à base calculada usando `m` (multiplicador lvl/estrela)
             const baseAtk = Math.floor(mon.atk * m * rAtk);
             const baseHp = Math.floor(mon.hp * m * rHp);
             const baseDef = Math.floor(mon.def * m * rDef);
@@ -2702,14 +2727,14 @@ const renderStory = () => {
             hp += Math.floor(baseHp * (bonusPct.hp / 100));
             def += Math.floor(baseDef * (bonusPct.def / 100));
             
-            // Legacy/Main Flat stats were added to `atk` already.
-            // Ideally: Total = Base * (1 + Pct) + Flat.
-            // Current code above adds Flat to `atk`.
-            // Then we add % of Base.
-            // Result: Base + Flat + (Base * Pct) = Base(1+Pct) + Flat. Correct.
+            // Status Flat Legado/Principal já foram adicionados a `atk`.
+            // Idealmente: Total = Base * (1 + Pct) + Flat.
+            // Código atual acima adiciona Flat a `atk`.
+            // Depois adicionamos % da Base.
+            // Resultado: Base + Flat + (Base * Pct) = Base(1+Pct) + Flat. Correto.
         }
 
-        // Apply Set Bonuses
+        // Aplicar Bônus de Conjunto
         const activeSets = detectActiveSets(mon);
         activeSets.forEach(set => {
           const bonus = set.bonus;
@@ -2726,7 +2751,7 @@ const renderStory = () => {
           } else if (bonus.type === 'spd') {
             spd = Math.floor(spd * (1 + bonus.value / 100));
           }
-          // Note: lifesteal and extra_turn are handled in battle logic
+          // Nota: lifesteal e extra_turn são tratados na lógica de batalha
         });
 
         return { hp, atk, def, crit, cdmg, spd, activeSets };
@@ -2766,7 +2791,7 @@ const renderStory = () => {
 
       // --- BATTLE ---
       const startBattle = (modeArg, lvlArg, startRepeat = 0) => {
-        // Handle Restart or Fresh Start
+        // Lidar com Reinício ou Novo Início
         const isRestart = modeArg === true;
         const mode = isRestart ? prepState.mode : modeArg;
         const lvl = isRestart ? prepState.level : (lvlArg || 1);
@@ -2781,7 +2806,7 @@ const renderStory = () => {
         state.user.energy -= cost;
         updateHeader();
 
-        // Initialize Battle State
+        // Inicializar Estado de Batalha
         battleState = {
           active: true,
           mode: mode,
@@ -2791,13 +2816,13 @@ const renderStory = () => {
           repeatCount: isRestart ? battleState.repeatCount : startRepeat
         };
 
-        // Force Auto if Repeat is active (Farm Mode)
+        // Forçar Auto se Repetir estiver ativo (Modo Farm)
         if (battleState.repeatCount > 0) {
             battleState.auto = true;
             battleState.speed = 3; // Also force 3x speed for farm
         }
 
-        // Check Auto-10x toggle (only on fresh start)
+        // Verificar alternância Auto-10x (apenas no início fresco)
         if (!isRestart) {
             const cb = document.getElementById("prep-auto-10x");
             if (cb && cb.checked) {
@@ -2805,7 +2830,7 @@ const renderStory = () => {
             }
         }
 
-        // Auto-Enable Features for Cleared Dungeons
+        // Auto-Habilitar Funcionalidades para Masmorras Concluídas
         if (mode.startsWith("dungeon")) {
             if (state.user.dungeonClear && state.user.dungeonClear[mode]) {
                 battleState.auto = true;
@@ -2876,7 +2901,7 @@ const renderStory = () => {
         } else if (mode === "dungeon_xp") {
           template = MONSTERS_DB.find((m) => m.id === "metamorph");
         } else {
-          // --- NEW GENERATION LOGIC ---
+          // --- NOVA LÓGICA DE GERAÇÃO ---
           let availableMonsters = [];
           
           if (mode === "tower") {
@@ -2903,7 +2928,7 @@ const renderStory = () => {
              }
           }
 
-          // Exclude Dungeons bosses from random pool if they slipped in (they are 5* or 4*)
+          // Excluir chefes de masmorra do pool aleatório se eles entrarem (eles são 5* ou 4*)
           availableMonsters = availableMonsters.filter(m => m.id !== "dhorak" && m.id !== "vermithrax");
 
           // Fallback
@@ -2915,7 +2940,7 @@ const renderStory = () => {
         }
 
         let lvl = 1;
-        // Balance Patch Scalings
+        // Escalonamentos do Patch de Balanceamento
         if (mode.startsWith("dungeon")) {
             // Dungeon: Floor 1 = Lv 3, Floor 10 = Lv 30
             lvl = Math.max(1, lvlArg * 3);
@@ -2927,10 +2952,10 @@ const renderStory = () => {
             lvl = lvlArg;
         }
 
-        // New Growth formula is applied automatically by calculateStats or manual logic below
-        // Since we changed calculateStats to 5% growth, enemies should follow.
+        // Nova fórmula de Crescimento é aplicada automaticamente por calculateStats ou lógica manual abaixo
+        // Como mudamos calculateStats para 5% de crescimento, inimigos devem seguir.
         
-        // Manual stat calculation for enemy (simplified version of calculateStats)
+        // Cálculo manual de status para inimigo (versão simplificada de calculateStats)
         const m = 1 + (lvl - 1) * 0.05; // 5% per level
         
         battleState.enemy = {
@@ -3136,7 +3161,7 @@ const renderStory = () => {
           );
           attackerEl.classList.remove("anim-spin-atk");
         } else {
-          // Character Sprite Swap Logic for SPECIAL ATTACKS ONLY
+          // Lógica de Troca de Sprite de Personagem APENAS PARA ATAQUES ESPECIAIS
           const imgElement = attackerEl.querySelector("img");
           const origImg = imgElement ? imgElement.src : null;
           let didSwap = false;
@@ -3148,7 +3173,7 @@ const renderStory = () => {
 
           attackerEl.classList.add("anim-cast");
           
-          // Optimization: Only delay 1500ms if custom imgAtk provided (to show anim), otherwise fast cast
+          // Otimização: Apenas atrasar 1500ms se imgAtk personalizada for fornecida (para mostrar anim), senão cast rápido
           if (att.imgAtk) {
              await sleep(1500 / spd);
           } else {
@@ -3160,7 +3185,7 @@ const renderStory = () => {
           else await spawnVFX(skill.type, isPlayer);
           attackerEl.classList.remove("anim-cast");
 
-          // Revert sprite
+          // Reverter sprite
           if (didSwap && imgElement && origImg) {
             imgElement.src = origImg;
           }
@@ -3174,21 +3199,21 @@ const renderStory = () => {
           defenderEl.querySelector("img").classList.remove("anim-hit-spin");
         }, 600 / spd);
 
-        // IMPACT FRAMES & SCREEN SHAKE
+        // QUADROS DE IMPACTO E TREMOR DE TELA
         const impactDelay = 100 / spd; // Ms for freeze
         if (impactDelay > 20) await sleep(impactDelay); // Hit freeze!
 
-        // Shake Camera
+        // Tremer Câmera
         const arena = document.getElementById("app");
         arena.classList.add("anim-shake-impact");
         setTimeout(() => arena.classList.remove("anim-shake-impact"), 300);
 
-        // Skill Up Bonus: +5% per level
+        // Bônus de Skill Up: +5% por nível
         const skillMod = 1 + ((att.skillUps || 0) * 0.05);
         const raw = (att.atk || 10) * skill.p * skillMod;
         
-        // NEW DAMAGE FORMULA (Mitigation based)
-        // Damage = Raw * (1200 / (1200 + 3 * DEF))
+        // NOVA FÓRMULA DE DANO (Baseada em Mitigação)
+        // Dano = Bruto * (1200 / (1200 + 3 * DEF))
         const defVal = def.def || 0;
         const mitigation = 1200 / (1200 + (defVal * 3));
         let dmg = raw * mitigation;
@@ -3201,7 +3226,7 @@ const renderStory = () => {
         if (att.crit && Math.random() * 100 < att.crit) {
           isCrit = true;
           dmg = dmg * (1 + (att.cdmg || 50) / 100);
-          // Stronger shake for crit
+          // Tremor mais forte para crítico
           arena.classList.add("anim-shake-crit");
           setTimeout(() => arena.classList.remove("anim-shake-crit"), 400);
         }
@@ -3224,7 +3249,7 @@ const renderStory = () => {
         const startPos = start;
         const flash = document.getElementById("screen-flash");
 
-        // GLOBAL FLASH RESTRICTION (Only trigger flash if explicitly allowed)
+        // RESTRIÇÃO GLOBAL DE FLASH (Apenas acionar flash se explicitamente permitido)
         const triggerFlash = (duration = 100) => {
           if (
             type === "lightning" ||
@@ -3237,7 +3262,7 @@ const renderStory = () => {
           }
         };
 
-        // WAVE 2 SKILLS VFX
+        // VFX HABILIDADES ONDA 2
         if (type === "tornado") {
           const wind = document.createElement("div");
           wind.style.position = "absolute";
@@ -3270,7 +3295,7 @@ const renderStory = () => {
         if (type === "earthquake") {
           const ground = document.querySelector(".ground-plane");
           const app = document.getElementById("app");
-          // Shake harder
+          // Tremer mais forte
           app.classList.add("anim-shake-impact");
           setTimeout(() => app.classList.remove("anim-shake-impact"), 800);
 
@@ -3308,7 +3333,7 @@ const renderStory = () => {
         }
 
         if (type === "blizzard") {
-          triggerFlash(50); // Maybe a tiny flash for ultimate feel
+          triggerFlash(50); // Talvez um flash pequeno para sensação de ultimate
           for (let i = 0; i < 20; i++) {
             const snow = document.createElement("div");
             snow.style.position = "absolute";
@@ -3369,8 +3394,8 @@ const renderStory = () => {
         }
 
         if (type === "solar_flare") {
-          triggerFlash(300); // Fire ultimate flash? Or strict lightning? User said "somente habilidades do tipo trovao". Okay, removing flash here.
-          // Actually, "solar_flare" implies bright light. But user rule is strict. No flash.
+          triggerFlash(300); // Flash de ultimate de fogo? Ou raio estrito? Usuário disse "somente habilidades do tipo trovao". Ok, removendo flash aqui.
+          // Na verdade, "solar_flare" implica luz brilhante. Mas regra do usuário é estrita. Sem flash.
 
           const sun = document.createElement("div");
           sun.className = "vfx-fireball";
@@ -3762,7 +3787,7 @@ const renderStory = () => {
         await anim.finished;
         proj.remove();
 
-      // NEW ELEMENTAL SKILLS VFX
+      // VFX DE NOVAS HABILIDADES ELEMENTAIS
       if (type === "crystal_spear") {
         for (let i = 0; i < 8; i++) {
           const crystal = document.createElement("div");
@@ -3887,7 +3912,7 @@ const renderStory = () => {
         const targetPos = fromPlayer ? ePos : pPos;
         const startPos = fromPlayer ? pPos : ePos;
 
-        // Flash ONLY for lightning/electric types
+        // Flash APENAS para tipos raio/elétrico
         if (type.includes("lightning")) {
           flash.className = "flash-screen";
           setTimeout(() => (flash.className = "hidden"), 300 / spd);
@@ -4025,7 +4050,7 @@ const renderStory = () => {
           return;
         }
 
-        // NEW SUPREME SKILLS
+        // NOVAS HABILIDADES SUPREMAS
         if (type === "sup_silver_rain") {
           for (let i = 0; i < 15; i++) {
             const beam = document.createElement("div");
@@ -4432,7 +4457,7 @@ const renderStory = () => {
         let repeatCancelled = false;
         
         
-        // AUTO REPEAT LOGIC UI
+        // LÓGICA DE UI DE REPETIÇÃO AUTOMÁTICA
         // Fix: Use > 1 because if it's 1, it will decrement to 0 and stop, so we want "Continuar"
         if (battleState.repeatCount > 1) {
              const btn = document.querySelector("#battle-overlay button");
@@ -4453,7 +4478,7 @@ const renderStory = () => {
         if (win) {
           let rewards = "";
           
-          // --- MONSTER XP LOGIC ---
+          // --- LÓGICA DE XP DE MONSTRO ---
           const hero = state.inventory[prepState.selectedMonIdx]; // FIXED: selectedIdx -> selectedMonIdx
           // XP Formula: Base * Level * Multiplier
           let xpBase = 100;
@@ -4462,16 +4487,16 @@ const renderStory = () => {
           
           let xpAmount = Math.floor(xpBase * (1 + prepState.level * 0.2));
 
-          // XP BOOST CHECK
+          // VERIFICAÇÃO DE BOOST DE XP
           if (state.user.xpBoostEndTime && Date.now() < state.user.xpBoostEndTime) {
                xpAmount *= 3;
                rewards += `<div class='text-emerald-400 font-bold text-xs mt-1 animate-pulse'>XP BOOST ATIVO (3x)!</div>`;
           }
           
-           // Apply XP
+           // Aplicar XP
            addXP(hero, xpAmount);
 
-          // Account XP (Minor)
+          // XP da Conta (Menor)
           const accXp = 50;
           state.user.xp += accXp;
 
@@ -4489,20 +4514,20 @@ const renderStory = () => {
           if (battleState.mode.startsWith("dungeon")) {
             const floor = prepState.level;
             
-            // Update Dungeon Progress
+            // Atualizar Progresso da Masmorra
             if (!state.user.dungeonProgress) state.user.dungeonProgress = { golem: 0, dragon: 0, xp: 0 };
             const type = battleState.mode.replace("dungeon_", ""); // golem, dragon, xp
             
-            // Fix: Treat undefined as 0 so comparison works
+            // Correção: Tratar indefinido como 0 para que a comparação funcione
             const currentProg = state.user.dungeonProgress[type] || 0;
             
             if (currentProg < floor) {
                 state.user.dungeonProgress[type] = floor;
-                // Toast for unlock?
+                // Toast para desbloqueio?
                 if (floor < 12) showToast(`Andar B${floor + 1} Liberado!`, "success");
             }
             
-            // Dungeon Cleared? Mark it for Auto/Speed unlock
+            // Masmorra Concluída? Marcar para desbloqueio Auto/Speed
             state.user.dungeonClear = state.user.dungeonClear || {};
             if (!state.user.dungeonClear[battleState.mode]) {
                 state.user.dungeonClear[battleState.mode] = true;
@@ -4512,10 +4537,10 @@ const renderStory = () => {
             goldGained = 4000 + floor * 500; 
             crystalsGained = 1 + Math.floor(floor/2);
 
-            // DROP LOGIC
+            // LÓGICA DE DROP
             let dropRate = 0.3 + floor * 0.02; // Base 30%
             
-            // XP Dungeon drops LESS items/gold, mostly XP
+            // Masmorra de XP dropa MENOS itens/ouro, principalmente XP
             if (battleState.mode === "dungeon_xp") {
                 goldGained = 1000 + floor * 100; // Less gold in XP dungeon
                 dropRate = 0.05; // Very low drop rate
@@ -4601,19 +4626,19 @@ const renderStory = () => {
               }
           `;
           
-          // Expose helper for the button
+          // Expor auxiliar para o botão
           window.startFarm5x = () => {
              battleState.repeatCount = 5;
              startBattle(true);
           };
           
-          // AUTO REPEAT HANDLER
+          // HANDLER DE REPETIÇÃO AUTOMÁTICA
           if (battleState.repeatCount > 0) {
               
-              // Energy Check for Next Round
+              // Verificação de Energia para Próxima Rodada
               let nextCost = 5;
               if (battleState.mode.startsWith("dungeon")) {
-                  // lvl is in prepState or battleState? battleState.enemy.lvl is scaled. prepState.level is floor.
+                  // lvl está em prepState ou battleState? battleState.enemy.lvl é escalonado. prepState.level é andar.
                   nextCost = 5 + Math.floor(prepState.level / 2);
               }
               
@@ -4642,7 +4667,7 @@ const renderStory = () => {
           }
           
         } else {
-          battleState.repeatCount = 0; // Stop on lose
+          battleState.repeatCount = 0; // Parar se perder
           document.getElementById("outcome-rewards").innerText =
             "Tente melhorar seu time";
         }
@@ -4678,8 +4703,8 @@ const renderStory = () => {
 
   const fragment = document.createDocumentFragment();
   
-  // Sort for display: Stars Desc > Level Desc
-  // Maintain original index for actions
+  // Classificar para exibição: Estrelas Desc > Nível Desc
+  // Manter índice original para ações
   const displayList = state.inventory.map((mon, idx) => ({mon, idx}));
   displayList.sort((a,b) => {
       if (b.mon.stars !== a.mon.stars) return b.mon.stars - a.mon.stars;
@@ -4690,7 +4715,7 @@ const renderStory = () => {
     const slot = document.createElement("div");
     const isLeader = idx === state.leaderIdx;
     
-    // Rarity classes for automatic styling from CSS
+    // Classes de raridade para estilização automática do CSS
     let rarityClass = "rarity-common";
     if (mon.stars === 5) rarityClass = "rarity-legendary";
     else if (mon.stars === 4) rarityClass = "rarity-epic";
@@ -4716,25 +4741,25 @@ const renderStory = () => {
       <!-- Element Background Glow -->
       <div class="element-glow ${elGradient}"></div>
       
-      <!-- Leader Badge -->
+      <!-- Insígnia de Líder -->
       ${isLeader ? '<div class="leader-badge">L</div>' : ''}
       
-      <!-- Element Badge -->
+      <!-- Insígnia de Elemento -->
       <div class="elem-badge ${elColor}"></div>
       
-      <!-- Level Badge -->
+      <!-- Insígnia de Nível -->
       <div class="level-badge">Lv.${mon.lvl}</div>
       ${mon.lvl >= (MAX_LEVELS[mon.stars] || 40) ? '<div class="absolute top-0 left-0 bg-gradient-to-br from-red-600 to-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-br-lg z-50 border-r border-b border-red-700 shadow-lg">MAX</div>' : ''}
       
-      <!-- Character Image / Emoji Fallback -->
+      <!-- Imagem do Personagem / Emoji Fallback -->
       <div class="character-visual-container flex items-center justify-center w-[85%] h-[85%] z-10 transition-transform group-hover:scale-110">
         ${getMonsterVisuals(mon)}
       </div>
       
-      <!-- Name Label -->
+      <!-- Rótulo de Nome -->
       <div class="name-label">${mon.name}</div>
       
-      <!-- Star Row -->
+      <!-- Linha de Estrelas -->
       <div class="star-row">
         ${
            mon.stars === 6 
@@ -4752,7 +4777,7 @@ const renderStory = () => {
       let selectedDetailIdx = 0;
 
 
-      // EVOLUTION MODAL & LOGIC
+      // MODAL E LÓGICA DE EVOLUÇÃO
       let evolveTargetIdx = -1;
       let evolveFoodIndices = [];
 
@@ -4763,7 +4788,7 @@ const renderStory = () => {
       };
 
       const renderEvolutionModal = () => {
-         // Create modal if not exists
+         // Criar modal se não existir
          let modal = document.getElementById("evo-modal");
          if (!modal) {
              document.body.insertAdjacentHTML('beforeend', `
@@ -4773,10 +4798,10 @@ const renderStory = () => {
                         <p id="evo-desc" class="text-center text-slate-400 text-xs mb-6"></p>
                         
                         <div class="flex justify-center items-center gap-4 mb-6">
-                             <!-- Target -->
+                             <!-- Alvo -->
                              <div id="evo-target-preview" class="w-20 h-20 border border-white rounded-xl bg-slate-800 flex items-center justify-center relative"></div>
                              <div class="text-xl text-slate-500">?</div>
-                             <!-- Result -->
+                             <!-- Resultado -->
                              <div id="evo-result-preview" class="w-20 h-20 border border-fuchsia-500 rounded-xl bg-slate-800 flex items-center justify-center relative shadow-[0_0_15px_rgba(192,38,211,0.3)]"></div>
                         </div>
 
@@ -4802,13 +4827,13 @@ const renderStory = () => {
          document.getElementById("evo-desc").innerText = `Selecione ${reqAmount} monstro(s) de ${target.stars}? para sacrificar.`;
          document.getElementById("evo-req").innerText = reqAmount;
          
-         // Helper to render preview
+          // Auxiliar para renderizar prévia
          const renderPrev = (el, mon, nextStars = false) => {
              const s = nextStars ? mon.stars + 1 : mon.stars;
              const isAwakened = s === 6;
              const starsHtml = isAwakened 
                 ? '<span class="text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">★</span>'.repeat(6)
-                : "★".repeat(s);
+           : '<span class="star-icon">★</span>'.repeat(s);
              
              el.innerHTML = `
                  <img src="${mon.img}" class="w-full h-full object-contain p-1">
@@ -4824,11 +4849,11 @@ const renderStory = () => {
          renderPrev(tDiv, target);
          renderPrev(rDiv, target, true);
 
-         // Render Food List
+          // Renderizar Lista de Material
          const grid = document.getElementById("evo-food-grid");
          grid.innerHTML = "";
          
-         // Filter Fodder: Same Stars, Not Locked (if lock exists), Not the target itself
+          // Filtrar Forragem: Mesmas Estrelas, Não Bloqueado (se existir bloqueio), Não o próprio alvo
          const fodder = state.inventory.map((m, i) => ({...m, idx: i})).filter(m => 
              m.idx !== evolveTargetIdx && 
              m.stars === target.stars &&
@@ -4884,21 +4909,21 @@ const renderStory = () => {
 
            if (evolveFoodIndices.length !== req) return;
            
-           // Sort indices descending to remove from end first and not shift indices
+            // Classificar índices descendente para remover do fim primeiro e não deslocar índices
            const toRemove = [...evolveFoodIndices].sort((a,b) => b - a);
            
            toRemove.forEach(idx => {
                state.inventory.splice(idx, 1);
-               // If removed index was before target index, adjust target index
+                // Se índice removido estava antes do índice alvo, ajustar índice alvo
                if (idx < evolveTargetIdx) evolveTargetIdx--;
            });
            
-           // Update Target
+            // Atualizar Alvo
            target.stars++;
            target.lvl = 1; // RESET
            
-           // Fix ref if leader index was affected
-           // If we removed a mon before leader, leaderIdx--
+            // Corrigir ref se índice do líder foi afetado
+            // Se removemos um monstro antes do líder, leaderIdx--
            toRemove.forEach(idx => {
                if (idx < state.leaderIdx) state.leaderIdx--;
            });
@@ -4906,19 +4931,19 @@ const renderStory = () => {
            save();
            
            document.getElementById("evo-modal").classList.add("hidden");
-           document.getElementById("evo-modal").classList.remove("flex"); // Ensure flex is removed
+            document.getElementById("evo-modal").classList.remove("flex"); // Garantir que flex seja removido
            
-           // UI Update: Keep detail open and refresh it
+            // Atualização de UI: Manter detalhes abertos e atualizar
            selectedDetailIdx = evolveTargetIdx; // Sync selection
            
            showToast(`EVOLUÇÃO SUCESSO! ${target.name} agora é ${target.stars}★`, "success");
            
-           renderMonsterBox(); // Update background list
-           openDetail(selectedDetailIdx); // Refresh current view
+            renderMonsterBox(); // Atualizar lista de fundo
+            openDetail(selectedDetailIdx); // Atualizar visualização atual
       };
 
       
-      // SKILL UP MODAL
+      // MODAL DE SKILL UP
       let skillTargetIdx = -1;
       let skillFeederIdx = -1;
 
@@ -4943,13 +4968,13 @@ const renderStory = () => {
                         <p class="text-center text-slate-400 text-xs mb-8">Sacrifique um monstro idêntico ou um <span class="text-white font-bold">Skillupper</span>.</p>
                         
                         <div class="flex justify-center items-center gap-6 mb-8">
-                             <!-- Target -->
+                             <!-- Alvo -->
                              <div class="flex flex-col items-center gap-2">
                                  <span class="text-[10px] text-slate-500 font-bold uppercase">Alvo</span>
                                  <div id="skill-target-preview" class="w-24 h-24 border-2 border-slate-700 rounded-2xl bg-slate-800 relative overflow-hidden"></div>
                              </div>
                              <div class="text-2xl text-orange-500 font-black animate-pulse">+</div>
-                             <!-- Feeder -->
+                             <!-- Material -->
                              <div class="flex flex-col items-center gap-2">
                                  <span class="text-[10px] text-slate-500 font-bold uppercase">Material</span>
                                  <div id="skill-feeder-preview" class="w-24 h-24 border-2 border-dashed border-slate-600 rounded-2xl bg-black/50 flex items-center justify-center text-4xl text-slate-700 select-none">?</div>
@@ -4974,11 +4999,11 @@ const renderStory = () => {
 
          const target = state.inventory[skillTargetIdx];
          
-         // Render Target Preview
+          // Renderizar Prévia do Alvo
          const tDiv = document.getElementById("skill-target-preview");
          tDiv.innerHTML = `<img src="${target.img}" class="w-full h-full object-contain">`;
 
-         // Render Feeder Preview
+          // Renderizar Prévia do Material
          const fDiv = document.getElementById("skill-feeder-preview");
          if (skillFeederIdx !== -1) {
              const feeder = state.inventory[skillFeederIdx];
@@ -4993,9 +5018,9 @@ const renderStory = () => {
          const grid = document.getElementById("skill-food-grid");
          grid.innerHTML = "";
          
-         // Filter: Same ID via template (safeMon check?) or just mon.id
-         // Need to be careful: target.id might be unique if we generated UUIDs, but here id IS the monster type ID.
-         // And check for 'skillupper'.
+          // Filtro: Mesmo ID via template (verificação segura?) ou apenas mon.id
+          // Precisa ter cuidado: target.id pode ser único se gerarmos UUIDs, mas aqui id É o ID do tipo de monstro.
+          // E verificar por 'skillupper'.
          const candidates = state.inventory.map((m, i) => ({...m, idx: i})).filter(m => 
              m.idx !== skillTargetIdx &&
              m.idx !== state.leaderIdx &&
@@ -5031,31 +5056,31 @@ const renderStory = () => {
           const target = state.inventory[skillTargetIdx];
           const feeder = state.inventory[skillFeederIdx];
           
-          // Consume Feeder
+           // Consumir Material
           
           let realTargetIdx = skillTargetIdx;
           if (skillFeederIdx < skillTargetIdx) realTargetIdx--;
           
           state.inventory.splice(skillFeederIdx, 1);
           
-          // Logic: Apply Skill Up
-          // Add 'skillUps' property
+           // Lógica: Aplicar Skill Up
+           // Adicionar propriedade 'skillUps'
           const realTarget = state.inventory[realTargetIdx];
           realTarget.skillUps = (realTarget.skillUps || 0) + 1;
           
-          // Leader Check
+           // Verificação de Líder
           if (skillFeederIdx < state.leaderIdx) state.leaderIdx--;
           
           save();
           
-           // UI Reset
+            // Resetar UI
            document.getElementById("skill-modal").classList.add("hidden");
            document.getElementById("skill-modal").classList.remove("flex");
            
            selectedDetailIdx = realTargetIdx; // Sync selection
 
-           renderMonsterBox(); // Re-renders the grid
-           openDetail(selectedDetailIdx); // Refresh current view
+            renderMonsterBox(); // Re-renderiza a grade
+            openDetail(selectedDetailIdx); // Atualiza visualização atual
            
            showToast(`✨ Habilidade Melhorada! Total: +${realTarget.skillUps}`, "success");
       };
@@ -5086,10 +5111,10 @@ const renderStory = () => {
         state.leaderIdx = selectedDetailIdx;
         save();
         
-        // UI Feedback
+        // Feedback de UI
         showToast("Líder definido com sucesso!", "success");
-        renderMonsterBox(); // Update grid badges
-        openDetail(selectedDetailIdx); // Refresh button state
+        renderMonsterBox(); // Atualizar insígnias da grade
+        openDetail(selectedDetailIdx); // Atualizar estado do botão
       };
 
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -5101,24 +5126,24 @@ const renderStory = () => {
         while (didAction) {
           didAction = false;
           
-          // Strategy: Find the first valid evolution pair that hasn't been touched this cycle
-          // We look for a candidate (1 or 2 stars) that HAS available fodder
+          // Estratégia: Encontrar o primeiro par de evolução válido que não foi tocado neste ciclo
+          // Procuramos um candidato (1 ou 2 estrelas) que TENHA forragem disponível
           
           for (let i = 0; i < state.inventory.length; i++) {
               const m = state.inventory[i];
               
-              // Candidate Criteria: 1 or 2 stars, Not Leader
+              // Critério de Candidato: 1 ou 2 estrelas, Não Líder
               if ((m.stars === 1 || m.stars === 2) && i !== state.leaderIdx) {
                   
-                  // Try to find fodder for this specific candidate
+                  // Tentar encontrar forragem para este candidato específico
                   const reqStars = m.stars;
                   let fodderIndices = [];
                   let reqFodderCount = reqStars; // 1* needs 1, 2* needs 2
 
                   for (let j = 0; j < state.inventory.length; j++) {
                       if (fodderIndices.length >= reqFodderCount) break;
-                      if (j === i) continue; // Skip self
-                      if (j === state.leaderIdx) continue; // Skip leader
+                      if (j === i) continue; // Pular a si mesmo
+                      if (j === state.leaderIdx) continue; // Pular líder
                       
                       const f = state.inventory[j];
                       if (f.stars === reqStars) {
@@ -5126,39 +5151,39 @@ const renderStory = () => {
                       }
                   }
 
-                  // If we found enough fodder, EVOLVE!
+                  // Se encontramos forragem suficiente, EVOLUIR!
                   if (fodderIndices.length === reqFodderCount) {
-                      // Execute Evolution
-                      // Prepare indices to delete (fodder only)
-                      // Sort descending to splice correctly
+                      // Executar Evolução
+                      // Preparar índices para deletar (apenas forragem)
+                      // Classificar descendente para splice corretamente
                       fodderIndices.sort((a,b) => b - a);
 
-                      // Remove fodder
+                      // Remover forragem
                       fodderIndices.forEach(delIdx => {
                           state.inventory.splice(delIdx, 1);
-                          // Adjust current candidate index if needed (though we break after this, so i is irrelevant for next loop)
-                          // But we MUST adjust state.leaderIdx globally
+                          // Ajustar índice do candidato atual se necessário (embora quebremos o loop, então i é irrelevante para o próximo loop)
+                          // Mas DEVEMOS ajustar state.leaderIdx globalmente
                           if (delIdx < state.leaderIdx) state.leaderIdx--;
-                          // We don't need to adjust 'i' because we will break and restart the BIG loop
+                          // Não precisamos ajustar 'i' porque quebraremos e reiniciaremos o GRANDE loop
                       });
                       
-                      // Now 'm' is at a new index potentially? 
-                      // Wait. If we splice, indices shift. 
-                      // We need to find 'm' again or rely on the fact that if i < delIdx (usually true if we picked first available), it's fine.
-                      // But fodder could be BEFORE candidate.
-                      // TO BE SAFE: We restart the search from scratch after every evolution. 
-                      // It's O(N^2) but N is small (inventory limit).
+                      // Agora 'm' está em um novo índice potencialmente?
+                      // Espere. Se fizermos splice, os índices mudam.
+                      // Precisamos encontrar 'm' de novo ou confiar no fato de que se i < delIdx (geralmente verdade se pegarmos o primeiro disponível), está ok.
+                      // Mas forragem poderia estar ANTES do candidato.
+                      // PARA GARANTIR: Reiniciamos a busca do zero após cada evolução.
+                      // É O(N^2) mas N é pequeno (limite de inventário).
                       
-                      // However, we need to locate the candidate 'm' produced.
-                      // Actually, let's just grab the candidate by reference BEFORE splice? 
-                      // JS arrays reference objects. 'm' is still the object.
+                      // No entanto, precisamos localizar o candidato 'm' produzido.
+                      // Na verdade, vamos apenas pegar o candidato por referência ANTES do splice?
+                      // Arrays JS referenciam objetos. 'm' ainda é o objeto.
                       
                       m.stars++;
                       m.lvl = 1;
                       
                       evolvedCount++;
                       didAction = true;
-                      break; // Break mostly to safely restart the loop since indices shifted
+                      break; // Quebrar principalmente para reiniciar o loop com segurança já que índices mudaram
                   }
               }
           }
@@ -5175,7 +5200,7 @@ const renderStory = () => {
       };
 
       window.onload = init;
-// --- XP POTION LOGIC ---
+// --- LÓGICA DE POÇÃO DE XP ---
 const usePotion = () => {
   const mon = state.inventory[selectedDetailIdx];
   if (!mon) return;
@@ -5189,15 +5214,15 @@ const usePotion = () => {
       return showToast("Este monstro já está no nível máximo!", "info");
   }
 
-  // Consume
+  // Consumir
   state.user.potions--;
   
-  // Add XP (500)
+  // Adicionar XP (500)
   addXP(mon, 500);
   
   save();
   
-  // UI Update
+  // Atualização de UI
   openDetail(selectedDetailIdx);
   showToast("+500 XP Aplicado!", "success");
   
