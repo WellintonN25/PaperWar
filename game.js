@@ -809,6 +809,7 @@
           xp: 0,
           potions: 0,
           firstClear: {},
+          dungeonProgress: {}, // { golem: 0, dragon: 0, xp: 0 }
         },
         inventory: [], // Start with NO monsters
         equipment: [], // Global Equipment Storage
@@ -913,6 +914,16 @@
           if (!m.equipped)
             m.equipped = { weapon: null, armor: null, acc: null };
         });
+        
+        // Init Dungeon Progress if missing
+        if (!state.user.dungeonProgress) {
+            state.user.dungeonProgress = { golem: 0, dragon: 0, xp: 0 };
+        }
+        
+        // Init Energy Regen
+        if (!state.user.lastEnergyRegen) {
+            state.user.lastEnergyRegen = Date.now();
+        }
       };
 
       const save = () => {
@@ -1149,6 +1160,34 @@ const renderStory = () => {
         const xpReq = 100 * state.user.lvl;
         const pct = Math.min(100, (state.user.xp / xpReq) * 100);
         document.getElementById("header-xp-bar").style.width = `${pct}%`;
+
+        // ENERGY REGEN LOGIC
+        const now = Date.now();
+        if (!state.user.lastEnergyRegen) state.user.lastEnergyRegen = now;
+        
+        const msPassed = now - state.user.lastEnergyRegen;
+        const twoMinutes = 2 * 60 * 1000;
+        
+        // Max Energy Soft Cap: 100 + Level (e.g. Lvl 10 = 110)
+        const maxEnergy = 100 + state.user.lvl;
+        
+        if (msPassed >= twoMinutes) {
+            if (state.user.energy < maxEnergy) {
+                const intervals = Math.floor(msPassed / twoMinutes);
+                const regenAmount = intervals * 5;
+                
+                if (state.user.energy < maxEnergy) {
+                     state.user.energy = Math.min(maxEnergy, state.user.energy + regenAmount);
+                     state.user.lastEnergyRegen += intervals * twoMinutes; 
+                     save();
+                     document.getElementById("val-energy").innerText = state.user.energy;
+                } else {
+                    state.user.lastEnergyRegen = now;
+                }
+            } else {
+                state.user.lastEnergyRegen = now;
+            }
+        }
       };
 
       const logout = () => {
@@ -1209,6 +1248,11 @@ const renderStory = () => {
           if (state.user.crystals < 50) return showToast("Cristais insuficientes! Requ: 50", "error");
           state.user.crystals -= 50;
           state.user.energy += 50;
+        }
+        if (item === "energy_100") {
+          if (state.user.crystals < 90) return showToast("Cristais insuficientes! Requ: 90", "error");
+          state.user.crystals -= 90;
+          state.user.energy += 100;
         }
         
         if (item === "xp_pot") {
@@ -1940,8 +1984,25 @@ const renderStory = () => {
 
   for (let i = 1; i <= 12; i++) {
     const btn = document.createElement("div");
-    btn.className =
-      "glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer active:scale-95 transition-transform border border-white/5 hover:bg-white/5";
+    
+    // Check Lock Status
+    // Unlocked if previous floor (i-1) is cleared.
+    // Floor 1 is always unlocked.
+    // progress stores the MAX floor cleared. e.g. 0 initially.
+    // So floor 1 is unlocked if 1 <= 0 + 1 (True).
+    // Floor 2 unlocks if 2 <= 1 + 1 (True if floor 1 cleared).
+    const currentProgress = (state.user.dungeonProgress && state.user.dungeonProgress[selectedDungeonType]) || 0;
+    const isLocked = i > currentProgress + 1;
+
+    btn.className = `glass-panel p-4 rounded-xl flex justify-between items-center transition-transform border border-white/5 ${
+      isLocked 
+        ? "opacity-50 grayscale cursor-not-allowed bg-slate-900" 
+        : "cursor-pointer active:scale-95 hover:bg-white/5"
+    }`;
+    
+    // Lock Icon
+    const lockIcon = isLocked ? "🔒" : "▶️";
+
     btn.innerHTML = `<div><h4 class="text-white font-bold">${
       selectedDungeonType === "golem"
         ? "Golem"
@@ -1950,8 +2011,11 @@ const renderStory = () => {
         : "Fenda XP"
     } B${i}</h4><p class="text-xs text-purple-400">Lv. ${i * 5} • ${
       5 + Math.floor(i / 2)
-    } ⚡</p></div><div class="text-white">▶️</div>`;
-    btn.onclick = () => openPrep("dungeon_" + selectedDungeonType, i);
+    } ⚡</p></div><div class="text-white">${lockIcon}</div>`;
+    
+    if (!isLocked) {
+        btn.onclick = () => openPrep("dungeon_" + selectedDungeonType, i);
+    }
     fragment.appendChild(btn);
   }
   listInner.appendChild(fragment);
@@ -1972,8 +2036,44 @@ const renderStory = () => {
 
         document.getElementById("prep-title").innerText = titles[mode];
         document.getElementById("prep-cost").innerText = `${cost} ⚡`;
+        
+        // Farm Button Logic
+        const farmBtn = document.getElementById("btn-prep-farm");
+        if (farmBtn) {
+            let canFarm = false;
+            
+            // Allow farm if dungeon and cleared previous difficulty? 
+            // The requirement is "concluir a fase uma vez".
+            // So if dungeonProgress[type] >= level.
+            
+            if (mode.startsWith("dungeon")) {
+                const type = mode.replace("dungeon_", "");
+                const progress = (state.user.dungeonProgress && state.user.dungeonProgress[type]) || 0;
+                // progress is the MAX cleared level.
+                // So if I want to farm level 1, progress needs to be >= 1.
+                if (progress >= lvl) canFarm = true;
+            } else if (mode === "story") {
+                 // For story, if stage < storyProgress? 
+                 // Usually farm is for dungeons. User said "concluir a fase".
+                 // Let's enable for story too if completed.
+                 if (lvl < state.storyProgress) canFarm = true;
+            }
+            
+            if (canFarm) {
+                farmBtn.disabled = false;
+                farmBtn.className = "flex-1 py-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl text-white font-bold uppercase text-sm shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center gap-1 cursor-pointer hover:brightness-110";
+            } else {
+                farmBtn.disabled = true;
+                farmBtn.className = "flex-1 py-4 bg-slate-800 rounded-2xl text-slate-500 font-bold uppercase text-sm shadow-lg border border-white/5 transition-all flex flex-col items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed";
+            }
+        }
+
         renderPrepUnit();
         renderPrepRoster();
+      };
+
+      window.startFarmPrep = () => {
+         startBattle(prepState.mode, prepState.level, 5);
       };
 
       const renderPrepUnit = () => {
@@ -2076,10 +2176,14 @@ const renderStory = () => {
   grid.appendChild(fragment);
 };
 
+      window.startFarmPrep = () => {
+         startBattle(prepState.mode, prepState.level, 5);
+      };
+    
       const confirmBattle = () => startBattle(prepState.mode, prepState.level);
 
       // --- BATTLE ---
-      const startBattle = (modeArg, lvlArg) => {
+      const startBattle = (modeArg, lvlArg, startRepeat = 0) => {
         // Handle Restart or Fresh Start
         const isRestart = modeArg === true;
         const mode = isRestart ? prepState.mode : modeArg;
@@ -2102,8 +2206,14 @@ const renderStory = () => {
           busy: false,
           auto: false,
           speed: 1,
-          repeatCount: isRestart ? battleState.repeatCount : 0 
+          repeatCount: isRestart ? battleState.repeatCount : startRepeat
         };
+
+        // Force Auto if Repeat is active (Farm Mode)
+        if (battleState.repeatCount > 0) {
+            battleState.auto = true;
+            battleState.speed = 3; // Also force 3x speed for farm
+        }
 
         // Check Auto-10x toggle (only on fresh start)
         if (!isRestart) {
@@ -2122,6 +2232,12 @@ const renderStory = () => {
         }
 
         updateBattleControls();
+        
+        // Removed addLog call as it doesn't exist
+        
+        if(battleState.auto) {
+             setTimeout(triggerAuto, 500); 
+        }
 
         const pBase = state.inventory[prepState.selectedMonIdx];
         const stats = calculateStats(pBase);
@@ -3681,8 +3797,10 @@ const renderStory = () => {
 
         let repeatCancelled = false;
         
+        
         // AUTO REPEAT LOGIC UI
-        if (battleState.repeatCount > 0) {
+        // Fix: Use > 1 because if it's 1, it will decrement to 0 and stop, so we want "Continuar"
+        if (battleState.repeatCount > 1) {
              const btn = document.querySelector("#battle-overlay button");
              if (btn) btn.innerText = `Parar Auto (${battleState.repeatCount})`;
              btn.onclick = () => {
@@ -3736,6 +3854,15 @@ const renderStory = () => {
 
           if (battleState.mode.startsWith("dungeon")) {
             const floor = prepState.level;
+            
+            // Update Dungeon Progress
+            if (!state.user.dungeonProgress) state.user.dungeonProgress = { golem: 0, dragon: 0, xp: 0 };
+            const type = battleState.mode.replace("dungeon_", ""); // golem, dragon, xp
+            if (state.user.dungeonProgress[type] < floor) {
+                state.user.dungeonProgress[type] = floor;
+                // Toast for unlock?
+                if (floor < 12) showToast(`Andar B${floor + 1} Liberado!`, "success");
+            }
             
             // Dungeon Cleared? Mark it for Auto/Speed unlock
             state.user.dungeonClear = state.user.dungeonClear || {};
@@ -3827,10 +3954,42 @@ const renderStory = () => {
                  ${rewards}
                  ${xpHTML}
               </div>
+              ${
+                  win && battleState.mode.startsWith("dungeon") && battleState.repeatCount === 0
+                  ? `<button onclick="startFarm5x()" class="w-full mt-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl text-white font-black uppercase shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <span>🔄</span> Farm 5x
+                     </button>`
+                  : ""
+              }
           `;
+          
+          // Expose helper for the button
+          window.startFarm5x = () => {
+             battleState.repeatCount = 5;
+             startBattle(true);
+          };
           
           // AUTO REPEAT HANDLER
           if (battleState.repeatCount > 0) {
+              
+              // Energy Check for Next Round
+              let nextCost = 5;
+              if (battleState.mode.startsWith("dungeon")) {
+                  // lvl is in prepState or battleState? battleState.enemy.lvl is scaled. prepState.level is floor.
+                  nextCost = 5 + Math.floor(prepState.level / 2);
+              }
+              
+              if (state.user.energy < nextCost) {
+                  battleState.repeatCount = 0;
+                  showToast("Ciclo interrompido: Energia Insuficiente!", "error");
+                  const btn = document.querySelector("#battle-overlay button");
+                  if (btn) {
+                       btn.innerText = "Continuar";
+                       btn.onclick = closeBattle;
+                  }
+                  return;
+              }
+
               battleState.repeatCount--;
               if (battleState.repeatCount > 0) {
                   showToast(`Próxima batalha em 2s... (${battleState.repeatCount} restantes)`);

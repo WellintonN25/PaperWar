@@ -503,12 +503,23 @@
               <span>Custo Energia:</span>
               <span class="text-yellow-400" id="prep-cost">5 ⚡</span>
             </div>
-            <button
-              onclick="confirmBattle()"
-              class="w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl text-white font-black uppercase text-lg shadow-lg active:scale-95 transition-transform"
-            >
-              INICIAR
-            </button>
+            <div class="flex gap-3">
+              <button
+                id="btn-prep-farm"
+                onclick="startFarmPrep()"
+                disabled
+                class="flex-1 py-4 bg-slate-800 rounded-2xl text-slate-500 font-bold uppercase text-sm shadow-lg border border-white/5 transition-all flex flex-col items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed group"
+              >
+                <span>🔄</span>
+                <span>Farm 5x</span>
+              </button>
+              <button
+                onclick="confirmBattle()"
+                class="flex-[2] py-4 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl text-white font-black uppercase text-lg shadow-lg active:scale-95 transition-transform"
+              >
+                INICIAR
+              </button>
+            </div>
           </div>
         </div>
 
@@ -722,6 +733,19 @@
              <p class="text-[10px] text-slate-400 mb-3">+50 Energia</p>
              <button onclick="buyShopItem('energy')" class="w-full py-2 rounded-lg bg-slate-800 border border-white/10 text-white font-bold text-[10px] hover:bg-slate-700 active:scale-95 transition-all">
                 50 💎
+             </button>
+          </div>
+
+          <!-- Pack 100 Energy (NEW) -->
+          <div class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300 border-yellow-500/20 bg-yellow-900/10">
+             <!-- Discount Badge -->
+             <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-green-600 text-white text-[8px] font-black rounded shadow-sm">-10%</div>
+             
+             <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-xl mb-2 text-yellow-400 font-black">⚡+</div>
+             <h4 class="text-white font-bold text-sm mb-1">Pacote Energia</h4>
+             <p class="text-[10px] text-slate-400 mb-3">+100 Energia</p>
+             <button onclick="buyShopItem('energy_100')" class="w-full py-2 rounded-lg bg-yellow-600 text-white font-bold text-[10px] shadow-lg shadow-yellow-900/20 hover:bg-yellow-500 active:scale-95 transition-all">
+                90 💎
              </button>
           </div>
 
@@ -1415,7 +1439,7 @@
                 onclick="doSummon('epic', 10)"
                 class="w-full py-2 rounded-xl bg-slate-900 border border-slate-800 text-[10px] text-amber-700 hover:text-amber-400 hover:border-amber-900/50 transition-colors uppercase font-bold"
               >
-                Invocar 10x
+                  Invocar 10x
               </button>
             </div>
           </div>
