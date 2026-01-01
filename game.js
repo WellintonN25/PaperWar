@@ -44,7 +44,7 @@
           def: 300,
           emoji: "🧜‍♀️",
           img: "src/Neriah.png",
-          imgAtk: "src/Neriah_atk.webp",
+          imgAtk: "src/Neriah.png",
           skills: ["melee", "ice_shards", "sup_water"],
         },
         {
