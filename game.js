@@ -833,9 +833,9 @@
         const container = document.getElementById("toast-container");
         const toast = document.createElement("div");
 
-        let icon = "?";
-        if (type === "error") icon = "?";
-        if (type === "info") icon = "??";
+        let icon = "✅";
+        if (type === "error") icon = "❌";
+        if (type === "info") icon = "ℹ️";
 
         toast.className = `toast ${type}`;
         toast.innerHTML = `<span class="toast-icon">${icon}</span><span>${message}</span>`;
@@ -845,7 +845,7 @@
         setTimeout(() => {
           toast.style.animation = "toast-fade 0.3s ease-in forwards";
           setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        }, 1000);
       };
 
       const addMonster = (id) => {
@@ -1102,10 +1102,10 @@ const renderStory = () => {
 
       stageBtn.innerHTML = `
         <div class="node-content">
-          <span class="node-icon">${isBoss ? '??' : isLocked ? '??' : isCompleted ? '?' : stage}</span>
+          <span class="node-icon">${isBoss ? '☠️' : isLocked ? '🔒' : isCompleted ? '✅' : stage}</span>
         </div>
         ${isCurrent ? '<div class="current-indicator"></div>' : ''}
-        <div class="node-label">${isBoss ? 'BOS' : stage}</div>
+        <div class="node-label">${mapNum}-${stage}</div>
       `;
 
       stagesFragment.appendChild(stageBtn);
@@ -1497,12 +1497,12 @@ const renderStory = () => {
     card.innerHTML = `
           <div class="w-full h-full rounded-xl border-2 ${borderCol} bg-gradient-to-br ${bgGrad} p-2 flex flex-col items-center justify-between ${glow}">
               <div class="w-full flex justify-between items-start">
-                  <span class="text-[10px] text-white font-bold bg-black/50 px-1 rounded">${"?".repeat(
+                  <span class="text-[10px] text-white font-bold bg-black/50 px-1 rounded">${"★".repeat(
                     mon.stars
                   )}</span>
                   ${
                     mon.stars >= 5
-                      ? '<span class="animate-pulse text-amber-300">?</span>'
+                      ? '<span class="animate-pulse text-amber-300">✨</span>'
                       : ""
                   }
               </div>
@@ -1912,7 +1912,7 @@ const renderStory = () => {
         </div>
      </div>
      <div class="flex items-center gap-3 mb-4 px-2">
-        <div class="text-2xl animate-bounce">??</div>
+        <div class="text-2xl animate-bounce">💎</div>
          <p class="text-[10px] text-slate-300 leading-tight">
           Ultrapasse andares para aumentar chances de <span class="text-purple-400 font-bold">Épicos</span> e <span class="text-yellow-400 font-bold">Lendários</span>.
         </p>
@@ -1929,7 +1929,7 @@ const renderStory = () => {
     onclick="changeView('view-home')"
     class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max shrink-0"
    >
-    ? Voltar
+    ⬅️ Voltar
    </button>
    ${headerHTML}
    <div class="scroll-container content-start overflow-y-auto space-y-3 pr-2 pb-20" id="dungeon-list-inner"></div>
@@ -1950,7 +1950,7 @@ const renderStory = () => {
         : "Fenda XP"
     } B${i}</h4><p class="text-xs text-purple-400">Lv. ${i * 5} • ${
       5 + Math.floor(i / 2)
-    } ?</p></div><div class="text-white">?</div>`;
+    } ⚡</p></div><div class="text-white">▶️</div>`;
     btn.onclick = () => openPrep("dungeon_" + selectedDungeonType, i);
     fragment.appendChild(btn);
   }
@@ -1971,7 +1971,7 @@ const renderStory = () => {
         if (mode.startsWith("dungeon")) cost = 5 + Math.floor(lvl / 2);
 
         document.getElementById("prep-title").innerText = titles[mode];
-        document.getElementById("prep-cost").innerText = `${cost} ?`;
+        document.getElementById("prep-cost").innerText = `${cost} ⚡`;
         renderPrepUnit();
         renderPrepRoster();
       };
@@ -2562,7 +2562,7 @@ const renderStory = () => {
           for (let i = 0; i < 20; i++) {
             const snow = document.createElement("div");
             snow.style.position = "absolute";
-            snow.innerText = "??";
+            snow.innerText = "❄️";
             snow.style.fontSize = "20px";
             layer.appendChild(snow);
 
@@ -3300,7 +3300,7 @@ const renderStory = () => {
         if (type === "sup_black_lotus") {
           const flower = document.createElement("div");
           flower.style.position = "absolute";
-          flower.innerText = "??";
+          flower.innerText = "🪷";
           flower.style.fontSize = "8rem";
           flower.style.filter = "drop-shadow(0 0 20px #a855f7) hue-rotate(280deg)";
           layer.appendChild(flower);
@@ -3372,7 +3372,7 @@ const renderStory = () => {
         if (type === "sup_ice_butterflies") {
           for (let i = 0; i < 12; i++) {
             const b = document.createElement("div");
-            b.innerText = "??";
+            b.innerText = "🦋";
             b.style.position = "absolute";
             b.style.fontSize = "2rem";
             b.style.filter = "hue-rotate(180deg) brightness(2)";
@@ -3413,7 +3413,7 @@ const renderStory = () => {
           setTimeout(() => (flash.className = "hidden"), 200 / spd);
           const sword = document.createElement("div");
           sword.style.position = "absolute";
-          sword.innerText = "??";
+          sword.innerText = "🗡️";
           sword.style.fontSize = "15rem";
           sword.style.filter = "drop-shadow(0 0 30px #fff) brightness(2)";
           layer.appendChild(sword);
@@ -3728,7 +3728,7 @@ const renderStory = () => {
             state.user.xp = state.user.xp - accXpReq;
             state.user.lvl++;
             state.user.crystals += 25;
-            showToast(`LEVEL UP! Nível ${state.user.lvl} (+25 ??)`);
+            showToast(`LEVEL UP! Nível ${state.user.lvl} (+25 💎)`);
           }
 
           let crystalsGained = 0;
@@ -3769,7 +3769,7 @@ const renderStory = () => {
             } else {
               rewards = rewards || `<div class='flex gap-4 justify-center'>
                                       <div class='text-yellow-400 font-bold text-sm'>+${goldGained} Ouro</div>
-                                      <div class='text-cyan-400 font-bold text-sm'>+${crystalsGained} ??</div>
+                                      <div class='text-cyan-400 font-bold text-sm'>+${crystalsGained} 💎</div>
                                     </div>`;
             }
           } else if (battleState.mode === "tower") {
@@ -3779,7 +3779,7 @@ const renderStory = () => {
             rewards = `<div class='text-green-400 font-bold text-lg'>Andar ${state.towerFloor - 1} Completo!</div>
                        <div class='flex gap-4 justify-center mt-2'>
                           <span class='text-yellow-400'>+${goldGained} Ouro</span>
-                          <span class='text-cyan-400'>+${crystalsGained} ??</span>
+                          <span class='text-cyan-400'>+${crystalsGained} 💎</span>
                        </div>`;
           } else {
             const stage = prepState.level;
@@ -3791,15 +3791,15 @@ const renderStory = () => {
               if (stage === state.storyProgress) state.storyProgress++;
               rewards = `<div class='text-purple-400 font-black text-lg animate-pulse'>PRIMEIRA VEZ!</div>
                          <div class='flex gap-4 justify-center mt-2'>
-                            <span class='text-yellow-400 font-bold'>+${goldGained} ??</span>
-                            <span class='text-cyan-400 font-bold'>+${crystalsGained} ??</span>
+                            <span class='text-yellow-400 font-bold'>+${goldGained} 🪙</span>
+                            <span class='text-cyan-400 font-bold'>+${crystalsGained} 💎</span>
                          </div>`;
             } else {
               crystalsGained = 5;
               goldGained = 1000 + stage * 300; 
               rewards = `<div class='flex gap-4 justify-center'>
-                            <span class='text-yellow-400 font-bold'>+${goldGained} ??</span>
-                            <span class='text-cyan-400 font-bold'>+${crystalsGained} ??</span>
+                            <span class='text-yellow-400 font-bold'>+${goldGained} 🪙</span>
+                            <span class='text-cyan-400 font-bold'>+${crystalsGained} 💎</span>
                          </div>`;
             }
           }
@@ -3835,7 +3835,7 @@ const renderStory = () => {
               if (battleState.repeatCount > 0) {
                   showToast(`Próxima batalha em 2s... (${battleState.repeatCount} restantes)`);
                   setTimeout(() => {
-                      if (document.getElementById("battle-overlay").style.opacity === "1") { // Check if not closed manually
+                      if (!document.getElementById("battle-overlay").classList.contains("hidden")) { // Check if not closed manually
                         startBattle(true); // Restart
                       }
                   }, 2000);
@@ -3880,7 +3880,16 @@ const renderStory = () => {
   document.getElementById("mon-count").innerText = state.inventory.length;
 
   const fragment = document.createDocumentFragment();
-  state.inventory.forEach((mon, idx) => {
+  
+  // Sort for display: Stars Desc > Level Desc
+  // Maintain original index for actions
+  const displayList = state.inventory.map((mon, idx) => ({mon, idx}));
+  displayList.sort((a,b) => {
+      if (b.mon.stars !== a.mon.stars) return b.mon.stars - a.mon.stars;
+      return b.mon.lvl - a.mon.lvl;
+  });
+
+  displayList.forEach(({mon, idx}) => {
     const slot = document.createElement("div");
     const isLeader = idx === state.leaderIdx;
     
@@ -3918,7 +3927,7 @@ const renderStory = () => {
       
       <!-- Level Badge -->
       <div class="level-badge">Lv.${mon.lvl}</div>
-      ${mon.lvl >= (MAX_LEVELS[mon.stars] || 40) ? '<div class="absolute top-0 left-0 bg-red-600 text-white text-[9px] font-black px-1 rounded-br-lg z-20 shadow-sm">MAX</div>' : ''}
+      ${mon.lvl >= (MAX_LEVELS[mon.stars] || 40) ? '<div class="absolute top-0 left-0 bg-gradient-to-br from-red-600 to-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-br-lg z-50 border-r border-b border-red-700 shadow-lg">MAX</div>' : ''}
       
       <!-- Character Image / Emoji Fallback -->
       <img src="${mon.img}" class="w-[85%] h-[85%] object-contain filter drop-shadow-lg z-10 transition-transform group-hover:scale-110" 
@@ -4041,6 +4050,7 @@ const renderStory = () => {
        lvlEl.parentNode.innerHTML = `
           <span id="det-lvl" class="text-3xl font-black text-white leading-none">${safeMon.lvl}</span>
           <span class="text-xs text-slate-500">/ ${maxLvl}</span>
+          ${safeMon.lvl >= maxLvl ? '<span class="ml-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg border border-red-400">MAX</span>' : ''}
        `;
   }
 
@@ -4120,7 +4130,7 @@ const renderStory = () => {
              const evolveBtn = document.createElement("button");
              evolveBtn.onclick = openEvolutionModal;
              evolveBtn.className = "py-2 bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white font-bold text-xs uppercase rounded-lg border border-fuchsia-400 shadow-[0_0_10px_rgba(192,38,211,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1";
-             evolveBtn.innerHTML = `<span>?</span> Evoluir`;
+             evolveBtn.innerHTML = `<span>🌟</span> Evoluir`;
              evoContainer.appendChild(evolveBtn);
         }
         
@@ -4128,7 +4138,7 @@ const renderStory = () => {
         const skillBtn = document.createElement("button");
         skillBtn.onclick = () => openSkillUpModal();
         skillBtn.className = "py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-xs uppercase rounded-lg border border-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1";
-        skillBtn.innerHTML = `<span>??</span> Evoluir Skill`;
+        skillBtn.innerHTML = `<span>✨</span> Evoluir Skill`;
         evoContainer.appendChild(skillBtn);
 
         acts.appendChild(evoContainer);
@@ -4293,8 +4303,7 @@ const renderStory = () => {
            // UI Update: Keep detail open and refresh it
            selectedDetailIdx = evolveTargetIdx; // Sync selection
            
-           // FX
-           showToast(`EVOLUÇÃO SUCESSO! ${target.name} agora é ${target.stars}?`, "success");
+           showToast(`EVOLUÇÃO SUCESSO! ${target.name} agora é ${target.stars}★`, "success");
            
            renderMonsterBox(); // Update background list
            openDetail(selectedDetailIdx); // Refresh current view
@@ -4440,7 +4449,7 @@ const renderStory = () => {
            renderMonsterBox(); // Re-renders the grid
            openDetail(selectedDetailIdx); // Refresh current view
            
-           showToast(`? Habilidade Melhorada! Total: +${realTarget.skillUps}`, "success");
+           showToast(`✨ Habilidade Melhorada! Total: +${realTarget.skillUps}`, "success");
       };
 
       const renderEqSlot = (type, id) => {
@@ -4477,67 +4486,72 @@ const renderStory = () => {
 
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       const autoEvolveLowStars = () => {
+
         let evolvedCount = 0;
-        let keepGoing = true;
+        let didAction = true;
 
-        while (keepGoing) {
-          keepGoing = false;
-          let candidateIdx = -1;
-          let reqStars = 0;
-
+        while (didAction) {
+          didAction = false;
+          
+          // Strategy: Find the first valid evolution pair that hasn't been touched this cycle
+          // We look for a candidate (1 or 2 stars) that HAS available fodder
+          
           for (let i = 0; i < state.inventory.length; i++) {
               const m = state.inventory[i];
-              const maxLvl = MAX_LEVELS[m.stars] || 40;
               
-              // Target: 1 or 2 stars, Not Leader (Any Level allowed)
-              if (
-                  (m.stars === 1 || m.stars === 2) &&
-                  i !== state.leaderIdx
-              ) {
-                  candidateIdx = i;
-                  reqStars = m.stars;
-                  break; 
-              }
-          }
-
-          if (candidateIdx !== -1) {
-              // Find Fodder
-              // Fodder: Same Stars, Not Leader, Not the Candidate
-              let fodderIndices = [];
-              let reqFodderCount = reqStars; // 1* needs 1, 2* needs 2
-
-              for (let j = 0; j < state.inventory.length; j++) {
-                  if (fodderIndices.length >= reqFodderCount) break;
+              // Candidate Criteria: 1 or 2 stars, Not Leader
+              if ((m.stars === 1 || m.stars === 2) && i !== state.leaderIdx) {
                   
-                  const f = state.inventory[j];
-                  if (
-                      j !== candidateIdx &&
-                      j !== state.leaderIdx &&
-                      f.stars === reqStars
-                  ) {
-                      fodderIndices.push(j);
+                  // Try to find fodder for this specific candidate
+                  const reqStars = m.stars;
+                  let fodderIndices = [];
+                  let reqFodderCount = reqStars; // 1* needs 1, 2* needs 2
+
+                  for (let j = 0; j < state.inventory.length; j++) {
+                      if (fodderIndices.length >= reqFodderCount) break;
+                      if (j === i) continue; // Skip self
+                      if (j === state.leaderIdx) continue; // Skip leader
+                      
+                      const f = state.inventory[j];
+                      if (f.stars === reqStars) {
+                          fodderIndices.push(j);
+                      }
                   }
-              }
 
-              if (fodderIndices.length === reqFodderCount) {
-                   // EXECUTE EVOLUTION
-                   // Sort fodder indices desc to remove safely
-                   fodderIndices.sort((a,b) => b - a);
+                  // If we found enough fodder, EVOLVE!
+                  if (fodderIndices.length === reqFodderCount) {
+                      // Execute Evolution
+                      // Prepare indices to delete (fodder only)
+                      // Sort descending to splice correctly
+                      fodderIndices.sort((a,b) => b - a);
 
-                   fodderIndices.forEach(delIdx => {
-                       state.inventory.splice(delIdx, 1);
-                       // Adjust logic indices
-                       if (delIdx < candidateIdx) candidateIdx--;
-                       if (delIdx < state.leaderIdx) state.leaderIdx--;
-                   });
-
-                   // Upgrade Target
-                   const target = state.inventory[candidateIdx];
-                   target.stars++;
-                   target.lvl = 1;
-                   
-                   evolvedCount++;
-                   keepGoing = true; // Try to find more in next iteration
+                      // Remove fodder
+                      fodderIndices.forEach(delIdx => {
+                          state.inventory.splice(delIdx, 1);
+                          // Adjust current candidate index if needed (though we break after this, so i is irrelevant for next loop)
+                          // But we MUST adjust state.leaderIdx globally
+                          if (delIdx < state.leaderIdx) state.leaderIdx--;
+                          // We don't need to adjust 'i' because we will break and restart the BIG loop
+                      });
+                      
+                      // Now 'm' is at a new index potentially? 
+                      // Wait. If we splice, indices shift. 
+                      // We need to find 'm' again or rely on the fact that if i < delIdx (usually true if we picked first available), it's fine.
+                      // But fodder could be BEFORE candidate.
+                      // TO BE SAFE: We restart the search from scratch after every evolution. 
+                      // It's O(N^2) but N is small (inventory limit).
+                      
+                      // However, we need to locate the candidate 'm' produced.
+                      // Actually, let's just grab the candidate by reference BEFORE splice? 
+                      // JS arrays reference objects. 'm' is still the object.
+                      
+                      m.stars++;
+                      m.lvl = 1;
+                      
+                      evolvedCount++;
+                      didAction = true;
+                      break; // Break mostly to safely restart the loop since indices shifted
+                  }
               }
           }
         }
