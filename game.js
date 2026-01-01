@@ -11,8 +11,8 @@
           atk: 350,
           def: 250,
           emoji: "🐲",
-          img: "src/Vermithrax.png",
-          imgAtk: "src/Vermithrax_atk.webp",
+          img: "src/dragon.png",
+          imgAtk: "",
           skills: ["melee", "fire", "sup_fire"],
         },
         {
@@ -4388,7 +4388,11 @@ const renderStory = () => {
             // Update Dungeon Progress
             if (!state.user.dungeonProgress) state.user.dungeonProgress = { golem: 0, dragon: 0, xp: 0 };
             const type = battleState.mode.replace("dungeon_", ""); // golem, dragon, xp
-            if (state.user.dungeonProgress[type] < floor) {
+            
+            // Fix: Treat undefined as 0 so comparison works
+            const currentProg = state.user.dungeonProgress[type] || 0;
+            
+            if (currentProg < floor) {
                 state.user.dungeonProgress[type] = floor;
                 // Toast for unlock?
                 if (floor < 12) showToast(`Andar B${floor + 1} Liberado!`, "success");
