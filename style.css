@@ -1,10 +1,10 @@
 ﻿      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap");
 
       :root {
-        --p-x: 35px;
-        --p-y: 60px;
+        --p-x: 70px;
+        --p-y: 100px;
         --p-z: 250px;
-        --e-x: -35px;
+        --e-x: -70px;
         --e-y: -100px;
         --e-z: -450px;
       }
@@ -37,24 +37,24 @@
         display: none;
       }
 
-      /* CUSTOM SCROLLBAR (Visible & Styled for Summon/Lists) */
+      /* CUSTOM SCROLLBAR (Premium Look) */
       .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-        height: 6px; /* Horizontal scroll if needed */
+        width: 10px; /* Wider */
+        height: 10px;
       }
       .custom-scrollbar::-webkit-scrollbar-track {
-        background: rgba(15, 23, 42, 0.3); /* Transparent dark track */
-        border-radius: 4px;
+        background: rgba(2, 6, 23, 0.5);
+        border-radius: 6px;
         margin: 4px;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(148, 163, 184, 0.3); /* Subtle Slate */
-        border-radius: 4px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: linear-gradient(to bottom, #475569, #334155);
+        border-radius: 6px;
+        border: 2px solid rgba(2, 6, 23, 0.5); /* Inner spacing effect */
         transition: background 0.2s;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: rgba(148, 163, 184, 0.6); /* Brighter on hover */
+        background: linear-gradient(to bottom, #64748b, #475569);
       }
 
       .hidden-view {
@@ -343,6 +343,62 @@
         height: 100%;
       }
 
+      /* BATTLE BACKGROUNDS BY MODE */
+      /* Aventura/Story - Mantém o fundo padrão */
+      .battle-scene.mode-story {
+        background: linear-gradient(
+            to bottom,
+            rgba(2, 6, 23, 0.5),
+            rgba(2, 6, 23, 0.95)
+          ),
+          url("src/area.avif") no-repeat center center;
+        background-size: cover;
+      }
+
+      /* Masmorra do Gigante (Golem) - Tema de caverna rochosa */
+      .battle-scene.mode-golem {
+        background: linear-gradient(
+            to bottom,
+            rgba(41, 37, 36, 0.6),
+            rgba(28, 25, 23, 0.95)
+          ),
+          url("src/area2.jpg") no-repeat center center;
+        background-size: cover;
+      }
+
+      /* Masmorra do Dragão - Tema de vulcão/lava */
+      .battle-scene.mode-dragon {
+        background: linear-gradient(
+            to bottom,
+            rgba(127, 29, 29, 0.5),
+            rgba(69, 10, 10, 0.95)
+          ),
+          url("src/area3.jpg") no-repeat center center;
+        background-size: cover;
+      }
+
+      /* XP Rift - Tema místico/dimensional */
+      .battle-scene.mode-xp {
+        background: linear-gradient(
+            to bottom,
+            rgba(49, 46, 129, 0.5),
+            rgba(30, 27, 75, 0.95)
+          ),
+          url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&q=80&w=1000") no-repeat center center;
+        background-size: cover;
+      }
+
+      /* Torre - Tema celestial/dourado */
+      .battle-scene.mode-tower {
+        background: linear-gradient(
+            to bottom,
+            rgba(133, 77, 14, 0.5),
+            rgba(69, 26, 3, 0.95)
+          ),
+          url("https://images.unsplash.com/photo-1444491741275-3747c33cc99b?auto=format&fit=crop&q=80&w=1000") no-repeat center center;
+        background-size: cover;
+      }
+
       .arena-container {
         position: relative;
         width: 100%;
@@ -382,8 +438,8 @@
       }
 
       .sprite-renderer {
-        width: 160px;
-        height: 160px;
+        width: 250px;
+        height: 250px;
         display: flex;
         align-items: center;
         justify-content: center;

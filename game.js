@@ -206,6 +206,20 @@
           skills: ["melee"],
           description: "Use para aumentar o nível de habilidade de qualquer monstro."
         },
+        {
+          id: "metamorph",
+          name: "Metamorph",
+          type: "Shapeshifter",
+          role: "attacker",
+          element: "void",
+          stars: 4,
+          hp: 2500,
+          atk: 300,
+          def: 150,
+          emoji: "👥",
+          img: "",
+          skills: ["melee"],
+        },
         // --- NEW CHARACTERS (WAVE 2) ---
         // 5 STARS (LEGENDARY)
         {
@@ -797,6 +811,74 @@
         legendary: { name: "Lendário", mult: 3.5, color: "rarity-legendary" },
       };
 
+      // Equipment Sets (2 pieces = bonus)
+      const EQUIPMENT_SETS = {
+        energy: {
+          name: "Energy",
+          icon: "💚",
+          color: "#22c55e",
+          pieces: 2,
+          bonus: { type: "hp", value: 15, display: "+15% HP" },
+          display: "HP +15%"
+        },
+        guard: {
+          name: "Guard",
+          icon: "🛡️",
+          color: "#3b82f6",
+          pieces: 2,
+          bonus: { type: "def", value: 15, display: "+15% DEF" },
+          display: "DEF +15%"
+        },
+        blade: {
+          name: "Blade",
+          icon: "⚔️",
+          color: "#ef4444",
+          pieces: 2,
+          bonus: { type: "crit", value: 12, display: "+12% CRIT" },
+          display: "CRIT +12%"
+        },
+        rage: {
+          name: "Rage",
+          icon: "💢",
+          color: "#dc2626",
+          pieces: 2,
+          bonus: { type: "cdmg", value: 40, display: "+40% CDMG" },
+          display: "CDMG +40%"
+        },
+        swift: {
+          name: "Swift",
+          icon: "💨",
+          color: "#06b6d4",
+          pieces: 2,
+          bonus: { type: "spd", value: 25, display: "+25% SPD" },
+          display: "SPD +25%"
+        },
+        fatal: {
+          name: "Fatal",
+          icon: "🔥",
+          color: "#f97316",
+          pieces: 2,
+          bonus: { type: "atk", value: 35, display: "+35% ATK" },
+          display: "ATK +35%"
+        },
+        vampire: {
+          name: "Vampire",
+          icon: "🧛",
+          color: "#7c3aed",
+          pieces: 2,
+          bonus: { type: "lifesteal", value: 35, display: "Recupera 35% do dano" },
+          display: "Life Steal +35%"
+        },
+        violent: {
+          name: "Violent",
+          icon: "⚡",
+          color: "#a855f7",
+          pieces: 2,
+          bonus: { type: "extra_turn", value: 22, display: "22% turno extra" },
+          display: "Turno Extra 22%"
+        }
+      };
+
       let state = {
         user: {
           name: "",
@@ -849,8 +931,8 @@
         }, 1000);
       };
 
-      const addMonster = (id) => {
-        const template = MONSTERS_DB.find((m) => m.id === id);
+      function addMonster(id) {
+        const template = MONSTERS_DB.find((m) => m.id === id) || MONSTERS_DB.find((m) => m.id === id?.toLowerCase());
         if (!template) {
           console.error("Monster ID not found:", id);
           return;
@@ -861,12 +943,12 @@
           instanceId: Date.now() + Math.random().toString(),
           xp: 0,
           lvl: 1,
-          equipped: { weapon: null, armor: null, acc: null },
-          stars: template.stars, // Ensure stars from DB
+          equipped: { slot1: null, slot2: null, slot3: null, slot4: null },
+          stars: template.stars,
         };
 
         state.inventory.push(newMon);
-      };
+      }
 
       // --- CORE ---
       // --- CORE ---
@@ -893,38 +975,62 @@
         renderLoginIcons(); // Init login icons
       };
 
-      const loadMigration = () => {
+      function loadMigration() {
+        if (!state.user) state.user = {};
+        if (!state.inventory) state.inventory = [];
         if (!state.equipment) state.equipment = [];
         if (state.user.potions === undefined) state.user.potions = 0;
         if (state.user.lvl === undefined) state.user.lvl = 1;
-        if (state.user.icon === undefined)
-          state.user.icon =
-            "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200"; // Default
-
+        
         state.inventory.forEach((m) => {
-          const db = MONSTERS_DB.find((x) => x.id === m.id);
+          // ULTRA ROBUST LOOKUP (ID, Name, or Type)
+          const mid = (m.id || "").toLowerCase();
+          const mname = (m.name || "").toLowerCase();
+          const mtype = (m.type || "").toLowerCase();
+
+          const db = MONSTERS_DB.find(x => x.id.toLowerCase() === mid) || 
+                     MONSTERS_DB.find(x => x.name.toLowerCase() === mname) ||
+                     MONSTERS_DB.find(x => x.type?.toLowerCase() === mtype) ||
+                     MONSTERS_DB.find(x => x.id.toLowerCase() === mname) ||
+                     MONSTERS_DB.find(x => x.name.toLowerCase() === mid) ||
+                     MONSTERS_DB.find(x => x.id === "slime");
+
           if (db) {
-            if (!m.img) m.img = db.img;
-            if (!m.imgBack) m.imgBack = db.imgBack || "";
-            if (!m.imgAtk) m.imgAtk = db.imgAtk || "";
+            // Force core properties
+            m.id = db.id;
+            if (!m.name) m.name = db.name;
+            if (!m.type) m.type = db.type;
+            if (!m.role) m.role = db.role;
+            if (!m.element) m.element = db.element;
+            if (!m.stars) m.stars = db.stars;
+            if (!m.skills || !Array.isArray(m.skills)) m.skills = [...db.skills];
             if (!m.emoji) m.emoji = db.emoji;
-            m.skills = db.skills;
-            m.stars = db.stars;
+            if (!m.img) m.img = db.img;
+            if (m.imgBack === undefined) m.imgBack = db.imgBack || "";
+            if (m.imgAtk === undefined) m.imgAtk = db.imgAtk || "";
           }
-          if (!m.equipped)
-            m.equipped = { weapon: null, armor: null, acc: null };
+          
+          // Force new equipment structure if missing
+          if (!m.equipped || m.equipped.weapon !== undefined || m.equipped.armor !== undefined) {
+            const old = m.equipped || {};
+            m.equipped = {
+              slot1: old.slot1 || old.weapon || null,
+              slot2: old.slot2 || old.armor || null,
+              slot3: old.slot3 || null,
+              slot4: old.slot4 || old.acc || null
+            };
+          }
+          
+          // Skill Levels check - consistent key: skillLvls
+          if (!m.skillLvls) {
+            m.skillLvls = {};
+            if (m.skills) m.skills.forEach(s => m.skillLvls[s] = 1);
+          }
         });
         
-        // Init Dungeon Progress if missing
-        if (!state.user.dungeonProgress) {
-            state.user.dungeonProgress = { golem: 0, dragon: 0, xp: 0 };
-        }
-        
-        // Init Energy Regen
-        if (!state.user.lastEnergyRegen) {
-            state.user.lastEnergyRegen = Date.now();
-        }
-      };
+        if (!state.user.dungeonProgress) state.user.dungeonProgress = { golem: 0, dragon: 0, xp: 0 };
+        if (!state.user.lastEnergyRegen) state.user.lastEnergyRegen = Date.now();
+      }
 
       const save = () => {
         if (!state.user.name) return;
@@ -1143,13 +1249,21 @@ const renderStory = () => {
         const iconEl = document.getElementById("header-icon-img");
         const initEl = document.getElementById("header-initial");
         if (state.user.icon) {
-          iconEl.innerText = state.user.icon; // Display emoji as text
+          const iconStr = state.user.icon;
+          // Flexible rendering: Image Path, HTML, or Text/Emoji
+          if ((typeof iconStr === 'string') && (iconStr.match(/\.(jpeg|jpg|gif|png|avif|webp|bmp)$/i) || iconStr.startsWith("src/") || iconStr.startsWith("http"))) {
+              iconEl.innerHTML = `<img src="${iconStr}" class="w-full h-full object-cover rounded-xl" />`;
+          } else if ((typeof iconStr === 'string') && (iconStr.includes("<") && iconStr.includes(">"))) {
+              iconEl.innerHTML = iconStr;
+          } else {
+              iconEl.innerText = iconStr;
+          }
           iconEl.classList.remove("hidden");
           initEl.classList.add("hidden");
         } else {
           iconEl.classList.add("hidden");
           initEl.classList.remove("hidden");
-          initEl.innerText = state.user.name[0].toUpperCase();
+          initEl.innerText = state.user.name ? state.user.name[0].toUpperCase() : "?";
         }
 
         document.getElementById("val-crystals").innerText = state.user.crystals;
@@ -1158,8 +1272,14 @@ const renderStory = () => {
         document.getElementById("header-lvl").innerText = state.user.lvl;
 
         const xpReq = 100 * state.user.lvl;
-        const pct = Math.min(100, (state.user.xp / xpReq) * 100);
-        document.getElementById("header-xp-bar").style.width = `${pct}%`;
+        const pct = Math.min(100, Math.max(0, (state.user.xp / xpReq) * 100));
+        const xpBar = document.getElementById("header-xp-bar");
+        if (xpBar) {
+            xpBar.style.width = `${pct}%`;
+            // Force redraw hack? No, basic style should work.
+            // Maybe class 'w-0' is conflicting? Remove it?
+            xpBar.classList.remove("w-0");
+        }
 
         // ENERGY REGEN LOGIC
         const now = Date.now();
@@ -1373,7 +1493,7 @@ const renderStory = () => {
             instanceId: Date.now() + Math.random().toString() + i, // unique
             xp: 0,
             lvl: 1,
-            equipped: { weapon: null, armor: null, acc: null },
+            equipped: { slot1: null, slot2: null, slot3: null, slot4: null },
             stars: template.stars,
           };
 
@@ -1583,14 +1703,39 @@ const renderStory = () => {
       };
 
       const createEquipment = (floorLevel = 1, dungeonType = "golem") => {
-        let types = ["weapon", "armor", "acc"];
-        if (dungeonType === "golem") types = ["weapon", "armor"];
-        if (dungeonType === "dragon") types = ["acc"];
+        // NEW SYSTEM: 4 Slots
+        // Slot 1: Weapon (ATK)
+        // Slot 2: Armor (DEF + HP)
+        // Slot 3: Helmet (HP)
+        // Slot 4: Accessory (CRIT/CDMG)
+        
+        // Determine slot based on dungeon type
+        let slot;
+        if (dungeonType === "golem") {
+          // Golem drops slots 1, 2, 3
+          slot = [1, 2, 3][Math.floor(Math.random() * 3)];
+        } else if (dungeonType === "dragon") {
+          // Dragon drops slots 2, 3, 4
+          slot = [2, 3, 4][Math.floor(Math.random() * 3)];
+        } else {
+          // XP Rift drops all slots
+          slot = Math.floor(Math.random() * 4) + 1;
+        }
 
-        const type = types[Math.floor(Math.random() * types.length)];
+        // Determine set based on dungeon type
+        let availableSets;
+        if (dungeonType === "golem") {
+          availableSets = ["energy", "guard", "swift"];
+        } else if (dungeonType === "dragon") {
+          availableSets = ["rage", "blade", "fatal", "violent"];
+        } else {
+          // XP Rift can drop any set
+          availableSets = Object.keys(EQUIPMENT_SETS);
+        }
+        
+        const set = availableSets[Math.floor(Math.random() * availableSets.length)];
 
-        // Logic for Rarity based on Floor Level (Dungeon)
-        // Floors: 1-12
+        // Rarity logic based on floor level
         let rarity = "common";
         const r = Math.random();
 
@@ -1599,21 +1744,17 @@ const renderStory = () => {
         let chanceEpic = 1.0;
 
         if (floorLevel <= 3) {
-          // 1-3: Mostly common
           chanceCommon = 0.8;
           chanceRare = 0.99;
         } else if (floorLevel <= 6) {
-          // 4-6: Better
           chanceCommon = 0.5;
           chanceRare = 0.9;
           chanceEpic = 0.99;
         } else if (floorLevel <= 9) {
-          // 7-9: Good
           chanceCommon = 0.3;
           chanceRare = 0.8;
           chanceEpic = 0.95;
         } else {
-          // 10-12: High tier
           chanceCommon = 0.1;
           chanceRare = 0.5;
           chanceEpic = 0.85;
@@ -1627,21 +1768,35 @@ const renderStory = () => {
         const base = EQ_RARITY[rarity];
         const eq = {
           id: "eq_" + Date.now() + Math.random().toString(36).substr(2, 9),
-          type: type,
+          slot: slot,
+          set: set,
           rarity: rarity,
           lvl: 0,
-          stats: { atk: 0, def: 0, crit: 0, cdmg: 0 },
+          stats: { atk: 0, hp: 0, def: 0, crit: 0, cdmg: 0 },
         };
 
-        // Stat Generation
-        if (type === "weapon") eq.stats.atk = Math.floor(10 * base.mult);
-        if (type === "armor") {
-          eq.stats.def = Math.floor(5 * base.mult);
-          eq.stats.hp = Math.floor(50 * base.mult);
-        }
-        if (type === "acc") {
-          eq.stats.crit = Math.floor(2 * base.mult);
-          eq.stats.cdmg = Math.floor(5 * base.mult);
+        // Main stat based on slot
+        if (slot === 1) {
+          // Weapon: ATK
+          eq.type = "weapon";
+          eq.stats.atk = Math.floor(15 * base.mult);
+        } else if (slot === 2) {
+          // Armor: DEF + HP
+          eq.type = "armor";
+          eq.stats.def = Math.floor(10 * base.mult);
+          eq.stats.hp = Math.floor(80 * base.mult);
+        } else if (slot === 3) {
+          // Helmet: HP
+          eq.type = "helmet";
+          eq.stats.hp = Math.floor(120 * base.mult);
+        } else if (slot === 4) {
+          // Accessory: CRIT or CDMG
+          eq.type = "acc";
+          if (Math.random() < 0.5) {
+            eq.stats.crit = Math.floor(4 * base.mult);
+          } else {
+            eq.stats.cdmg = Math.floor(10 * base.mult);
+          }
         }
 
         // Random Substats
@@ -1653,14 +1808,19 @@ const renderStory = () => {
             : rarity === "rare"
             ? 1
             : 0;
+            
         for (let i = 0; i < subStatCount; i++) {
           const sub = Math.random();
           if (sub < 0.25)
             eq.stats.atk = (eq.stats.atk || 0) + Math.floor(5 * base.mult);
           else if (sub < 0.5)
-            eq.stats.def = (eq.stats.def || 0) + Math.floor(3 * base.mult);
-          else if (sub < 0.75) eq.stats.crit = (eq.stats.crit || 0) + 1;
-          else eq.stats.cdmg = (eq.stats.cdmg || 0) + 2;
+            eq.stats.def = (eq.stats.def || 0) + Math.floor(5 * base.mult);
+          else if (sub < 0.625)
+            eq.stats.hp = (eq.stats.hp || 0) + Math.floor(30 * base.mult);
+          else if (sub < 0.8125) 
+            eq.stats.crit = (eq.stats.crit || 0) + 1;
+          else 
+            eq.stats.cdmg = (eq.stats.cdmg || 0) + 2;
         }
 
         return eq;
@@ -1675,18 +1835,34 @@ const renderStory = () => {
           currentEqId = equippedId;
           renderUpgradeModal();
         } else {
-          // Equip Logic: Find best available or just list
+          // Equip Logic: Find best available for this slot
+          // NEW SYSTEM: slot1-4, OLD SYSTEM: weapon/armor/acc
+          let slotNumber;
+          if (slot === 'slot1') slotNumber = 1;
+          else if (slot === 'slot2') slotNumber = 2;
+          else if (slot === 'slot3') slotNumber = 3;
+          else if (slot === 'slot4') slotNumber = 4;
+          // Old system compatibility
+          else if (slot === 'weapon') slotNumber = 1;
+          else if (slot === 'armor') slotNumber = 2;
+          else if (slot === 'acc') slotNumber = 4;
+          
           const items = state.equipment.filter(
-            (e) => e.type === slot && !isEquipped(e.id)
+            (e) => e.slot === slotNumber && !isEquipped(e.id)
           );
+          
           if (items.length > 0) {
-            // Sort by rarity/stats ideally, but just take first for now
+            // Sort by rarity/level, take best
+            items.sort((a, b) => {
+              const rarityOrder = {legendary: 4, epic: 3, rare: 2, common: 1};
+              return (rarityOrder[b.rarity] || 0) - (rarityOrder[a.rarity] || 0) || b.lvl - a.lvl;
+            });
             mon.equipped[slot] = items[0].id;
             save();
             openDetail(selectedDetailIdx);
-            showToast("Equipado!");
+            showToast("Equipado!", "success");
           } else {
-            showToast("Nenhum item disponível no Baú!", "info");
+            showToast("Nenhum item disponível para este slot!", "info");
           }
         }
       };
@@ -1694,6 +1870,12 @@ const renderStory = () => {
       const isEquipped = (id) => {
         return state.inventory.some(
           (m) =>
+            // NEW SYSTEM
+            m.equipped.slot1 === id ||
+            m.equipped.slot2 === id ||
+            m.equipped.slot3 === id ||
+            m.equipped.slot4 === id ||
+            // OLD SYSTEM COMPATIBILITY
             m.equipped.weapon === id ||
             m.equipped.armor === id ||
             m.equipped.acc === id
@@ -1703,6 +1885,12 @@ const renderStory = () => {
       const getEquipperName = (id) => {
         const mon = state.inventory.find(
           (m) =>
+            // NEW SYSTEM
+            m.equipped.slot1 === id ||
+            m.equipped.slot2 === id ||
+            m.equipped.slot3 === id ||
+            m.equipped.slot4 === id ||
+            // OLD SYSTEM COMPATIBILITY
             m.equipped.weapon === id ||
             m.equipped.armor === id ||
             m.equipped.acc === id
@@ -1719,9 +1907,30 @@ const renderStory = () => {
         modal.classList.add("flex");
 
         const conf = EQ_RARITY[eq.rarity];
+        
+        // Set equipment icon
+        // Helper to get type if missing (legacy items)
+        let eqType = eq.type;
+        if (!eqType) {
+            if (eq.slot === 1) eqType = "weapon";
+            else if (eq.slot === 2) eqType = "armor";
+            else if (eq.slot === 3) eqType = "helmet";
+            else if (eq.slot === 4) eqType = "acc";
+            else eqType = "unknown";
+        }
+
+        const iconMap = {
+          weapon: "⚔️",
+          armor: "🛡️",
+          helmet: "⛑️",
+          acc: "💍"
+        };
+        const iconEl = document.getElementById("eq-modal-icon");
+        if (iconEl) iconEl.innerText = iconMap[eqType] || "⚔️";
+        
         document.getElementById("eq-modal-title").innerText = `${
           conf.name
-        } ${eq.type.toUpperCase()}`;
+        } ${eqType.toUpperCase()}`;
         document.getElementById(
           "eq-modal-title"
         ).className = `text-xl font-bold mb-2 ${conf.color.replace(
@@ -1746,24 +1955,68 @@ const renderStory = () => {
         document.getElementById("sell-price").innerText = Math.floor(sellPrice);
         document.getElementById("upg-chance").innerText = `Sucesso: ${chance}%`;
 
+        btn.onclick = () => performUpgrade(eq, cost, chance);
+        
+        // --- MANAGE BUTTON LOGIC ---
+        const manageBtn = document.getElementById("btn-equip-manage");
         const equippedBy = getEquipperName(eq.id);
         const ownerTxt = document.getElementById("eq-equipped-by");
-        if (equippedBy) {
-          ownerTxt.innerText = `Equipado em: ${equippedBy}`;
-          ownerTxt.classList.remove("hidden");
-          document.getElementById("btn-sell").disabled = true;
-          document
-            .getElementById("btn-sell")
-            .classList.add("opacity-50", "grayscale");
-        } else {
-          ownerTxt.classList.add("hidden");
-          document.getElementById("btn-sell").disabled = false;
-          document
-            .getElementById("btn-sell")
-            .classList.remove("opacity-50", "grayscale");
+        const container = document.getElementById("eq-icon-container"); // Missing declaration fixed
+        
+        // Visual Rarity Feedback on Modal Icon
+        if (container) {
+            const borderColor = conf.color.includes("yellow") ? "#fbbf24" : 
+                                conf.color.includes("purple") ? "#a855f7" : 
+                                conf.color.includes("blue") ? "#3b82f6" : "#475569";
+            container.style.borderColor = borderColor;
+            container.style.boxShadow = `0 0 15px ${borderColor}40`;
         }
 
-        btn.onclick = () => performUpgrade(eq, cost, chance);
+        if (equippedBy) {
+          // ITEM IS EQUIPPED
+          ownerTxt.innerText = `Equipado em: ${equippedBy}`;
+          ownerTxt.classList.remove("hidden");
+          
+          document.getElementById("btn-sell").disabled = true;
+          document.getElementById("btn-sell").classList.add("opacity-50", "grayscale");
+          
+          // Show UNEQUIP option if equipped by CURRENT monster (context aware)
+          // We check if it is equipped by the currently viewed monster in Detail View
+          const currentMon = state.inventory[selectedDetailIdx];
+          const isOwnedByCurrent = currentMon && isEquippedByMon(currentMon, eq.id);
+          
+          if (isOwnedByCurrent) {
+              manageBtn.textContent = "Desequipar (500 💰)";
+              manageBtn.classList.remove("hidden", "bg-indigo-600");
+              manageBtn.classList.add("bg-red-600", "hover:bg-red-500");
+              manageBtn.onclick = () => unequipItem(eq.id, 500);
+          } else {
+              // Equipped by someone else -> Disable or Show Info
+              manageBtn.textContent = `Equipado em ${equippedBy}`;
+              manageBtn.classList.remove("hidden", "bg-indigo-600", "bg-red-600");
+              manageBtn.classList.add("bg-slate-700", "cursor-not-allowed");
+              manageBtn.onclick = null;
+          }
+          
+        } else {
+          // ITEM IS NOT EQUIPPED
+          ownerTxt.classList.add("hidden");
+          document.getElementById("btn-sell").disabled = false;
+          document.getElementById("btn-sell").classList.remove("opacity-50", "grayscale");
+          
+          // Show EQUIP option if we are in detail view
+          if (typeof selectedDetailIdx !== 'undefined' && selectedDetailIdx !== -1) {
+             manageBtn.textContent = "Equipar";
+             manageBtn.classList.remove("hidden", "bg-red-600", "bg-slate-700", "cursor-not-allowed");
+             manageBtn.classList.add("bg-indigo-600", "hover:bg-indigo-500");
+             manageBtn.onclick = () => {
+                 equipFromDetail(eq.id);
+                 document.getElementById("eq-modal").classList.add("hidden");
+             };
+          } else {
+             manageBtn.classList.add("hidden");
+          }
+        }
       };
 
       const sellEquipment = () => {
@@ -1798,47 +2051,150 @@ const renderStory = () => {
           openDetail(selectedDetailIdx);
       };
 
-      const performUpgrade = (eq, cost, chance) => {
+      const performUpgrade = async (eq, cost, chance) => {
         if (state.user.gold < cost)
           return showToast("Ouro insuficiente!", "error");
+        
+        // Disable button during animation
+        const upgradeBtn = document.getElementById("btn-upgrade");
+        const sellBtn = document.getElementById("btn-sell");
+        if (upgradeBtn) upgradeBtn.disabled = true;
+        if (sellBtn) sellBtn.disabled = true;
+        
         state.user.gold -= cost;
+        updateHeader();
 
         const roll = Math.random() * 100;
-        if (roll <= chance) {
+        const success = roll <= chance;
+        
+        // Get animation elements
+        const container = document.getElementById("eq-icon-container");
+        const glow = document.getElementById("eq-upgrade-glow");
+        const ring1 = document.getElementById("eq-energy-ring-1");
+        const ring2 = document.getElementById("eq-energy-ring-2");
+        const animOverlay = document.getElementById("eq-anim-overlay");
+        const animIcon = document.getElementById("eq-anim-icon");
+        const modal = document.getElementById("eq-modal");
+        
+        // Helper function for delays
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        
+        // === PHASE 1: PREPARATION (1s) ===
+        // Show energy rings spinning
+        if (ring1 && ring2) {
+          ring1.style.borderColor = "#6366f1"; // Indigo
+          ring2.style.borderColor = "#8b5cf6"; // Purple
+          ring1.style.opacity = "0.6";
+          ring2.style.opacity = "0.4";
+          ring1.style.animation = "spin 1s linear infinite";
+          ring2.style.animation = "spin 1.5s linear infinite reverse";
+        }
+        
+        await sleep(1000);
+        
+        // === PHASE 2: PROCESSING (1s) ===
+        // Intensify glow
+        if (glow) {
+          glow.style.background = "radial-gradient(circle, rgba(99,102,241,0.6), transparent)";
+          glow.style.opacity = "1";
+          glow.style.animation = "pulse 0.3s ease-in-out infinite";
+        }
+        
+        // Make rings spin faster
+        if (ring1 && ring2) {
+          ring1.style.animation = "spin 0.3s linear infinite";
+          ring2.style.animation = "spin 0.4s linear infinite reverse";
+        }
+        
+        await sleep(1000);
+        
+        // === PHASE 3: RESULT REVEAL (1s+) ===
+        // Hide rings and glow
+        if (ring1) ring1.style.opacity = "0";
+        if (ring2) ring2.style.opacity = "0";
+        if (glow) glow.style.opacity = "0";
+        
+        if (success) {
+          // Update equipment stats
           eq.lvl++;
-          // Boost Stats
           if (eq.stats.atk) eq.stats.atk += Math.ceil(eq.stats.atk * 0.1) + 2;
           if (eq.stats.def) eq.stats.def += Math.ceil(eq.stats.def * 0.1) + 1;
           if (eq.stats.crit) eq.stats.crit += 1;
           if (eq.stats.cdmg) eq.stats.cdmg += 2;
-
+          
+          // Success flash
+          if (container) {
+            container.style.borderColor = "#22c55e";
+            container.style.boxShadow = "0 0 30px rgba(34,197,94,0.8)";
+          }
+          
+          // Show success icon
+          if (animOverlay && animIcon) {
+            animIcon.innerText = "✅";
+            animIcon.className = "text-6xl text-green-400 drop-shadow-[0_0_20px_rgba(34,197,94,0.8)]";
+            animIcon.style.animation = "bounce 0.6s ease-out";
+            animOverlay.classList.remove("hidden");
+            animOverlay.classList.add("flex");
+          }
+          
           showToast("Upgrade Sucesso! +" + eq.lvl, "success");
+          
+          await sleep(1200);
+          
         } else {
+          // Fail flash
+          if (container) {
+            container.style.borderColor = "#ef4444";
+            container.style.boxShadow = "0 0 30px rgba(239,68,68,0.8)";
+          }
+          
+          // Show fail icon
+          if (animOverlay && animIcon) {
+            animIcon.innerText = "❌";
+            animIcon.className = "text-6xl text-red-400 drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]";
+            animIcon.style.animation = "pulse 0.5s ease-out 3";
+            animOverlay.classList.remove("hidden");
+            animOverlay.classList.add("flex");
+          }
+          
+          // Shake modal
+          const panel = modal?.querySelector(".glass-panel");
+          if (panel) {
+            panel.classList.add("animate-shake");
+            setTimeout(() => panel.classList.remove("animate-shake"), 500);
+          }
+          
           showToast("Falha no Upgrade...", "error");
-          document.getElementById("eq-modal").classList.add("animate-shake");
-          setTimeout(
-            () =>
-              document
-                .getElementById("eq-modal")
-                .classList.remove("animate-shake"),
-            500
-          );
+          
+          await sleep(1200);
         }
+        
+        // === CLEANUP ===
+        // Reset animations
+        if (ring1) ring1.style.animation = "";
+        if (ring2) ring2.style.animation = "";
+        if (glow) glow.style.animation = "";
+        if (animOverlay) {
+          animOverlay.classList.add("hidden");
+          animOverlay.classList.remove("flex");
+        }
+        if (container) {
+          container.style.borderColor = "";
+          container.style.boxShadow = "";
+        }
+        
         save();
-        updateHeader();
+        
+        // Re-enable buttons and refresh
+        if (upgradeBtn) upgradeBtn.disabled = false;
+        if (sellBtn) sellBtn.disabled = false;
+        
         renderUpgradeModal();
+        
         // Refresh views underneath
-        if (
-          !document
-            .getElementById("view-inventory")
-            .classList.contains("hidden-view")
-        )
+        if (!document.getElementById("view-inventory")?.classList.contains("hidden-view"))
           renderInventory();
-        if (
-          !document
-            .getElementById("mon-detail-overlay")
-            .classList.contains("hidden")
-        )
+        if (!document.getElementById("mon-detail-overlay")?.classList.contains("hidden"))
           openDetail(selectedDetailIdx);
       };
 
@@ -1857,18 +2213,24 @@ const renderStory = () => {
 
       const renderInventory = () => {
   const grid = document.getElementById("inventory-grid");
+  if (!grid) return;
   grid.innerHTML = "";
 
   let items = state.equipment;
   if (currentInvFilter !== "all")
     items = items.filter((e) => e.type === currentInvFilter);
 
+  const emptyMsg = document.getElementById("inv-empty-msg");
   if (items.length === 0) {
-    document.getElementById("inv-empty-msg").classList.remove("hidden");
-    document.getElementById("inv-empty-msg").classList.add("flex");
+    if (emptyMsg) {
+        emptyMsg.classList.remove("hidden");
+        emptyMsg.classList.add("flex");
+    }
   } else {
-    document.getElementById("inv-empty-msg").classList.add("hidden");
-    document.getElementById("inv-empty-msg").classList.remove("flex");
+    if (emptyMsg) {
+        emptyMsg.classList.add("hidden");
+        emptyMsg.classList.remove("flex");
+    }
   }
 
   const fragment = document.createDocumentFragment();
@@ -1888,23 +2250,42 @@ const renderStory = () => {
         ? "#3b82f6"
         : "#94a3b8";
 
+    // Deduce type if missing (robustness)
+    let eqType = eq.type;
+    if (!eqType) {
+        if (eq.slot === 1) eqType = "weapon";
+        else if (eq.slot === 2) eqType = "armor";
+        else if (eq.slot === 3) eqType = "helmet";
+        else if (eq.slot === 4) eqType = "acc";
+        else eqType = "weapon"; // fallback
+    }
+
     const icon =
-      eq.type === "weapon" ? "??" : eq.type === "armor" ? "???" : "??";
+      eqType === "weapon" ? "⚔️" : eqType === "armor" ? "🛡️" : eqType === "helmet" ? "⛑️" : "💍";
 
     el.innerHTML = `
               <div class="absolute inset-0 flex items-center justify-center text-2xl">${icon}</div>
               <div class="absolute top-1 right-1 text-[9px] font-black bg-black/60 px-1 rounded text-white">+${
                 eq.lvl
               }</div>
+              <div class="absolute bottom-1 left-1 text-[8px] text-slate-300 font-bold max-w-[90%] truncate">${EQUIPMENT_SETS[eq.set]?.name || eq.set}</div>
               ${
                 equippedBy
                   ? `<div class="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-indigo-600 border border-white flex items-center justify-center text-[8px] font-bold text-white" title="${equippedBy}">E</div>`
                   : ""
               }
           `;
-    el.onclick = () => {
+    el.onclick = (e) => {
+      e.stopPropagation(); // Prevent bubbling
       currentEqId = eq.id;
-      renderUpgradeModal();
+      // Ensure function exists
+      if (typeof window.renderUpgradeModal === 'function') {
+           window.renderUpgradeModal();
+      } else if (typeof renderUpgradeModal === 'function') {
+           renderUpgradeModal();
+      } else {
+           console.error("renderUpgradeModal not found");
+      }
     };
     fragment.appendChild(el);
   });
@@ -1941,7 +2322,7 @@ const renderStory = () => {
     grad = "from-red-900";
   } else if (selectedDungeonType === "xp") {
     title = "Fenda Dimensional (XP)";
-    imgSrc = "https://www.transparenttextures.com/patterns/cubes.png"; // Placeholder
+    imgSrc = "src/metamorfo.avif"; // Placeholder
     grad = "from-indigo-900";
   }
 
@@ -2080,7 +2461,13 @@ const renderStory = () => {
         const mon = state.inventory[prepState.selectedMonIdx];
         const stats = calculateStats(mon);
 
-        document.getElementById("prep-img").src = mon.img;
+        // Image & Visuals - Using helper
+        const visualsWrapper = document.getElementById("prep-img-wrapper");
+        if (visualsWrapper) {
+            visualsWrapper.innerHTML = getMonsterVisuals(mon);
+            const span = visualsWrapper.querySelector('span');
+            if (span) span.style.fontSize = "6rem";
+        }
         document.getElementById("prep-name").innerText = mon.name;
         document.getElementById("prep-el").innerText = {
           fire: "🔥",
@@ -2095,6 +2482,51 @@ const renderStory = () => {
           "prep-stats"
         ).innerText = `Atk: ${stats.atk} | HP: ${stats.hp}`;
       };
+      
+      // Detect active equipment sets (2 pieces = bonus)
+      const detectActiveSets = (mon) => {
+        if (!mon.equipped) return [];
+        
+        const equippedItems = [];
+        
+        // NEW SYSTEM: 4 slots
+        if (mon.equipped.slot1) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.slot1));
+        if (mon.equipped.slot2) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.slot2));
+        if (mon.equipped.slot3) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.slot3));
+        if (mon.equipped.slot4) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.slot4));
+        
+        // OLD SYSTEM COMPATIBILITY (will be removed later)
+        if (mon.equipped.weapon) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.weapon));
+        if (mon.equipped.armor) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.armor));
+        if (mon.equipped.acc) equippedItems.push(state.equipment.find(e => e.id === mon.equipped.acc));
+        
+        // Count sets
+        const setCounts = {};
+        equippedItems.forEach(eq => {
+          if (eq && eq.set) {
+            setCounts[eq.set] = (setCounts[eq.set] || 0) + 1;
+          }
+        });
+        
+        // Find active sets (2+ pieces)
+        const activeSets = [];
+        Object.keys(setCounts).forEach(setKey => {
+          if (setCounts[setKey] >= 2) {
+            const setInfo = EQUIPMENT_SETS[setKey];
+            if (setInfo) {
+              activeSets.push({
+                set: setKey,
+                pieces: setCounts[setKey],
+                bonus: setInfo.bonus,
+                name: setInfo.name,
+                icon: setInfo.icon
+              });
+            }
+          }
+        });
+        
+        return activeSets;
+      };
 
       const calculateStats = (mon) => {
         // Growth: 3% per level
@@ -2107,8 +2539,8 @@ const renderStory = () => {
         const m = lvlMult * starMult;
 
         // Role Modifiers
-        // Fetch role from DB if not in mon object (Legacy save support)
-        const tpl = MONSTERS_DB.find(x => x.id === mon.id);
+        // Role Modifiers
+        const tpl = MONSTERS_DB.find(x => x.id === mon.id) || MONSTERS_DB.find(x => x.name === mon.name);
         const role = mon.role || (tpl ? tpl.role : 'balanced');
 
         let rAtk = 1, rHp = 1, rDef = 1;
@@ -2117,39 +2549,84 @@ const renderStory = () => {
         else if (role === 'hp') { rHp = 1.40; rAtk = 0.85; rDef = 1.05; }
         else if (role === 'support') { rHp = 1.15; rDef = 1.15; rAtk = 0.9; }
         
-        // Base Stats (from DB or Mon)
-        // If mon has stats (it does), apply m.
-        // But base stats are in MONSTERS_DB.
-        // 'mon' object usually has saved stats? No, 'calculateStats' returns calculated.
-        // Wait. 'mon' passed here usually has 'atk', 'hp', 'def' properties.
-        // Are those BASE or Current?
-        // In `addMonster`, we do `...template`. So `mon.atk` IS `template.atk` (Base).
-        // Unless we overwrite them.
-        // Let's assume `mon` properties are BASE.
-        
+        // Base Stats
         let hp = Math.floor(mon.hp * m * rHp);
         let atk = Math.floor(mon.atk * m * rAtk);
         let def = Math.floor(mon.def * m * rDef);
         let crit = 15;
         let cdmg = 50;
+        let spd = 100; // Base speed
         
-        // Equipment
+        // Equipment Stats (NEW SYSTEM)
         if (mon.equipped) {
+            // NEW SYSTEM: 4 slots
+            ['slot1', 'slot2', 'slot3', 'slot4'].forEach(slotKey => {
+              if (mon.equipped[slotKey]) {
+                const eq = state.equipment.find(e => e.id === mon.equipped[slotKey]);
+                if (eq && eq.stats) {
+                  atk += eq.stats.atk || 0;
+                  hp += eq.stats.hp || 0;
+                  def += eq.stats.def || 0;
+                  crit += eq.stats.crit || 0;
+                  cdmg += eq.stats.cdmg || 0;
+                }
+              }
+            });
+            
+            // OLD SYSTEM COMPATIBILITY (weapon, armor, acc)
             if (mon.equipped.weapon) {
                 const eq = state.equipment.find(e => e.id === mon.equipped.weapon);
-                if (eq) { atk += eq.mainVal; crit += eq.subVal; }
+                if (eq && eq.stats) {
+                  atk += eq.stats.atk || 0;
+                  hp += eq.stats.hp || 0;
+                  def += eq.stats.def || 0;
+                  crit += eq.stats.crit || 0;
+                  cdmg += eq.stats.cdmg || 0;
+                }
             }
             if (mon.equipped.armor) {
                 const eq = state.equipment.find(e => e.id === mon.equipped.armor);
-                if (eq) { hp += eq.mainVal; def += eq.subVal; } // Armor gives HP + Def
+                if (eq && eq.stats) {
+                  atk += eq.stats.atk || 0;
+                  hp += eq.stats.hp || 0;
+                  def += eq.stats.def || 0;
+                  crit += eq.stats.crit || 0;
+                  cdmg += eq.stats.cdmg || 0;
+                }
             }
             if (mon.equipped.acc) {
                 const eq = state.equipment.find(e => e.id === mon.equipped.acc);
-                if (eq) { crit += eq.mainVal; cdmg += eq.subVal; }
+                if (eq && eq.stats) {
+                  atk += eq.stats.atk || 0;
+                  hp += eq.stats.hp || 0;
+                  def += eq.stats.def || 0;
+                  crit += eq.stats.crit || 0;
+                  cdmg += eq.stats.cdmg || 0;
+                }
             }
         }
 
-        return { hp, atk, def, crit, cdmg };
+        // Apply Set Bonuses
+        const activeSets = detectActiveSets(mon);
+        activeSets.forEach(set => {
+          const bonus = set.bonus;
+          if (bonus.type === 'hp') {
+            hp = Math.floor(hp * (1 + bonus.value / 100));
+          } else if (bonus.type === 'atk') {
+            atk = Math.floor(atk * (1 + bonus.value / 100));
+          } else if (bonus.type === 'def') {
+            def = Math.floor(def * (1 + bonus.value / 100));
+          } else if (bonus.type === 'crit') {
+            crit += bonus.value;
+          } else if (bonus.type === 'cdmg') {
+            cdmg += bonus.value;
+          } else if (bonus.type === 'spd') {
+            spd = Math.floor(spd * (1 + bonus.value / 100));
+          }
+          // Note: lifesteal and extra_turn are handled in battle logic
+        });
+
+        return { hp, atk, def, crit, cdmg, spd, activeSets };
       };
         
 
@@ -2164,7 +2641,9 @@ const renderStory = () => {
     el.className = `aspect-square bg-slate-800 rounded-lg p-1 border-2 cursor-pointer ${
       isSel ? "border-green-500" : "border-transparent"
     }`;
-    el.innerHTML = `<img src="${mon.img}" class="w-full h-full object-contain">`;
+    el.innerHTML = getMonsterVisuals(mon);
+    const span = el.querySelector('span');
+    if (span) span.style.fontSize = "2rem";
     el.onclick = () => {
       prepState.selectedMonIdx = idx;
       renderPrepUnit();
@@ -2256,6 +2735,30 @@ const renderStory = () => {
 
         setupEnemy(mode, lvl);
         changeView("view-battle");
+        
+        // Aplicar classe CSS baseada no modo de jogo para fundos dinâmicos
+        const battleView = document.getElementById("view-battle");
+        if (battleView) {
+          // Remover todas as classes de modo anteriores
+          battleView.classList.remove("mode-story", "mode-golem", "mode-dragon", "mode-xp", "mode-tower");
+          
+          // Adicionar classe apropriada baseada no modo
+          if (mode === "story") {
+            battleView.classList.add("mode-story");
+          } else if (mode === "dungeon_golem") {
+            battleView.classList.add("mode-golem");
+          } else if (mode === "dungeon_dragon") {
+            battleView.classList.add("mode-dragon");
+          } else if (mode === "dungeon_xp") {
+            battleView.classList.add("mode-xp");
+          } else if (mode === "tower") {
+            battleView.classList.add("mode-tower");
+          } else {
+            // Modo padrão (story) para qualquer outro caso
+            battleView.classList.add("mode-story");
+          }
+        }
+        
         renderBattleScene();
         document.getElementById("battle-overlay").classList.add("hidden");
         document.getElementById("battle-overlay").style.opacity = "0";
@@ -2340,13 +2843,34 @@ const renderStory = () => {
 
         updateBattleHUD();
         const el = document.getElementById("enemy-sprite-container");
-        el.innerHTML = `<img src="${template.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem;filter:drop-shadow(0 10px 10px rgba(0,0,0,0.5))">${template.emoji}</span>`;
-      };
+        if (el && template) {
+            el.innerHTML = getMonsterVisuals(template);
+            const span = el.querySelector('span');
+            if (span) span.style.fontSize = "4rem";
+        } else if (el) {
+            el.innerHTML = `<span style="font-size:4rem">❓</span>`;
+        }
+      }
 
       const renderBattleScene = () => {
         const pl = document.getElementById("player-sprite-container");
-        const sprite = battleState.player.imgBack || battleState.player.img;
-        pl.innerHTML = `<img src="${sprite}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"> <span style="display:none;font-size:4rem;filter:drop-shadow(0 10px 10px rgba(0,0,0,0.5))">${battleState.player.emoji}</span>`;
+        if (pl && battleState.player) {
+            const mon = battleState.player;
+            // Handle imgBack if available specifically for player in battle
+            const visualMon = {...mon};
+            if (mon.imgBack && typeof mon.imgBack === 'string' && mon.imgBack.length > 4 && !mon.imgBack.includes("undefined")) {
+                 visualMon.img = mon.imgBack;
+            }
+            
+            // Verify global function availability and use it
+            if (window.getMonsterVisuals) {
+                pl.innerHTML = window.getMonsterVisuals(visualMon);
+            } else {
+                pl.innerHTML = getMonsterVisuals(visualMon);
+            }
+            const span = pl.querySelector('span');
+            if (span) span.style.fontSize = "4rem";
+        }
         renderSkillGrid();
       };
 
@@ -2520,7 +3044,14 @@ const renderStory = () => {
           }
 
           attackerEl.classList.add("anim-cast");
-          await sleep(1500 / spd); // Increased from 500 to 1500 for full animation
+          
+          // Optimization: Only delay 1500ms if custom imgAtk provided (to show anim), otherwise fast cast
+          if (att.imgAtk) {
+             await sleep(1500 / spd);
+          } else {
+             await sleep(300 / spd);
+          }
+
           if (skill.type.endsWith("_sup") || skill.type.startsWith("sup_"))
             await spawnUltimateVFX(skill.type, isPlayer);
           else await spawnVFX(skill.type, isPlayer);
@@ -2551,12 +3082,12 @@ const renderStory = () => {
 
         // Skill Up Bonus: +5% per level
         const skillMod = 1 + ((att.skillUps || 0) * 0.05);
-        const raw = att.atk * skill.p * skillMod;
+        const raw = (att.atk || 10) * skill.p * skillMod;
         
         // NEW DAMAGE FORMULA (Mitigation based)
         // Damage = Raw * (1200 / (1200 + 3 * DEF))
-        // This resembles Summoners War / LoL damage reduction logic
-        const mitigation = 1200 / (1200 + (def.def * 3));
+        const defVal = def.def || 0;
+        const mitigation = 1200 / (1200 + (defVal * 3));
         let dmg = raw * mitigation;
         
         // Ensure at least some damage based on level diff?
@@ -4089,9 +4620,9 @@ const renderStory = () => {
       ${mon.lvl >= (MAX_LEVELS[mon.stars] || 40) ? '<div class="absolute top-0 left-0 bg-gradient-to-br from-red-600 to-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-br-lg z-50 border-r border-b border-red-700 shadow-lg">MAX</div>' : ''}
       
       <!-- Character Image / Emoji Fallback -->
-      <img src="${mon.img}" class="w-[85%] h-[85%] object-contain filter drop-shadow-lg z-10 transition-transform group-hover:scale-110" 
-           onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-      <span style="display:none;font-size:2.5rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));z-index:10;">${mon.emoji}</span>
+      <div class="character-visual-container flex items-center justify-center w-[85%] h-[85%] z-10 transition-transform group-hover:scale-110">
+        ${getMonsterVisuals(mon)}
+      </div>
       
       <!-- Name Label -->
       <div class="name-label">${mon.name}</div>
@@ -4113,195 +4644,6 @@ const renderStory = () => {
 };
       let selectedDetailIdx = 0;
 
-      const openDetail = (idx) => {
-  selectedDetailIdx = idx;
-  const mon = state.inventory[idx];
-  if (!mon) return;
-
-  const tpl = MONSTERS_DB.find(m => m.id === mon.id) || {};
-  const safeMon = { 
-      name: "Unknown", 
-      role: "fighter", 
-      type: "Normal", 
-      element: "neutral", 
-      stars: 1, 
-      img: "", 
-      emoji: "❓",
-      skills: [],
-      ...tpl, 
-      ...mon 
-  };
-  
-  if(!safeMon.name && mon.id) safeMon.name = mon.id.toUpperCase();
-
-  changeView("view-character-detail");
-
-  document.getElementById("det-name").innerText = safeMon.name || "Unknown";
-  document.getElementById("det-type").innerText = (safeMon.role ? `[${safeMon.role.toUpperCase()}] ` : "") + (safeMon.type || "Unknown Type");
-  
-  const maxLvl = MAX_LEVELS[safeMon.stars] || 40;
-  
-  const starContainer = document.getElementById("det-stars");
-  if(starContainer) {
-      if(safeMon.stars === 6) {
-          starContainer.innerHTML = '<span class="text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">★</span>'.repeat(6);
-      } else {
-          starContainer.innerHTML = "★".repeat(Math.max(1, safeMon.stars || 1));
-      }
-  }
-
-  document.getElementById("det-nat-grade").innerText = `NAT ${safeMon.stars || 1}`;
-  
-  const elMap = {
-    fire: "🔥",
-    water: "🌊",
-    lightning: "⚡",
-    earth: "🗿",
-    nature: "🍃",
-    void: "🌑",
-    neutral: "⚪"
-  };
-  document.getElementById("det-element-badge").innerText = elMap[safeMon.element] || "❓";
-  
-  const imgEL = document.getElementById("det-img");
-  const emojiEL = document.getElementById("det-emoji");
-  if (safeMon.img && safeMon.img !== "") {
-     imgEL.style.display = "block";
-     emojiEL.style.display = "none";
-     imgEL.src = safeMon.img;
-  } else {
-     imgEL.style.display = "none";
-     emojiEL.style.display = "block";
-     emojiEL.innerText = safeMon.emoji || "❓";
-  }
-
-  const stats = calculateStats(safeMon);
-  document.getElementById("val-hp").innerText = Math.floor(stats.hp);
-  document.getElementById("val-atk").innerText = Math.floor(stats.atk);
-  document.getElementById("val-def").innerText = Math.floor(stats.def);
-  document.getElementById("val-spd").innerText = 100;
-  document.getElementById("val-crit").innerText = (stats.crit||0) + "%";
-  document.getElementById("val-cdmg").innerText = (stats.cdmg||0) + "%";
-
-  document.getElementById("bar-hp").style.width = Math.min(100, (stats.hp / 30000) * 100) + "%";
-  document.getElementById("bar-atk").style.width = Math.min(100, (stats.atk / 4000) * 100) + "%";
-  document.getElementById("bar-def").style.width = Math.min(100, (stats.def / 2000) * 100) + "%";
-
-  if(safeMon.equipped) {
-      renderEqSlot("weapon", safeMon.equipped.weapon);
-      renderEqSlot("armor", safeMon.equipped.armor);
-      renderEqSlot("acc", safeMon.equipped.acc);
-  }
-
-  const btn = document.getElementById("btn-equip");
-  if (state.leaderIdx === idx) {
-    btn.innerText = "Líder Atual";
-    btn.className = "w-full py-2 mt-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold uppercase rounded-lg opacity-90 cursor-default shadow-md";
-    btn.onclick = null;
-  } else {
-    btn.innerText = "Definir Líder";
-    btn.className = "w-full py-2 mt-2 bg-white text-slate-900 text-sm font-bold uppercase rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 active:scale-95 transition-all";
-    btn.onclick = () => { equipLeader(idx); };
-  }
-  
-  const lvlEl = document.getElementById("det-lvl");
-  if (lvlEl && lvlEl.parentNode) {
-       lvlEl.parentNode.innerHTML = `
-          <span id="det-lvl" class="text-3xl font-black text-white leading-none">${safeMon.lvl}</span>
-          <span class="text-xs text-slate-500">/ ${maxLvl}</span>
-          ${safeMon.lvl >= maxLvl ? '<span class="ml-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg border border-red-400">MAX</span>' : ''}
-       `;
-  }
-
-  const xpReq = Math.floor(500 * Math.pow(safeMon.lvl, 1.1));
-  const curXp = safeMon.curXp || 0;
-  const xpPct = Math.min(100, (curXp / xpReq) * 100);
-  
-  const bar = document.getElementById("det-xp-bar");
-  if(bar) bar.style.width = `${xpPct}%`;
-  
-  const txt = document.getElementById("det-xp-text");
-  if(txt) txt.innerText = `${Math.floor(curXp)} / ${xpReq} XP`;
-
-  const potBtnContainer = document.getElementById("detail-pot-btn-container");
-  if(potBtnContainer) {
-     potBtnContainer.innerHTML = `
-       <button onclick="usePotion()" class="w-full bg-slate-800 border border-purple-500/30 rounded-xl px-4 py-3 flex items-center justify-between group active:scale-95 transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-lg text-purple-400">🧪</div>
-            <div class="text-left">
-              <div class="text-white font-bold text-xs uppercase">Usar Poção</div>
-              <div class="text-purple-300 text-[10px]">+500 XP</div>
-            </div>
-          </div>
-          <div class="text-right">
-            <div class="text-white font-black text-sm">x${state.user.potions || 0}</div>
-          </div>
-       </button>
-     `;
-  }
-
-  const skillCont = document.getElementById("det-skills-container");
-  if (skillCont) {
-      skillCont.innerHTML = "";
-      const header = document.createElement("div");
-      header.className = "text-[10px] uppercase font-bold text-slate-400 mb-2";
-      header.innerText = `Habilidades (Bônus: +${(safeMon.skillUps||0)*5}%)`;
-      skillCont.appendChild(header);
-
-      if(safeMon.skills) {
-          const sGrid = document.createElement("div");
-          sGrid.className = "flex flex-col gap-2";
-          safeMon.skills.forEach(sid => {
-              const s = SKILLS[sid];
-              if(!s) return;
-              const row = document.createElement("div");
-              row.className = "flex items-center gap-2 bg-slate-800 p-2 rounded-lg relative overflow-hidden border border-white/5";
-              row.innerHTML = `
-                  <div class="text-2xl">${s.icon}</div>
-                  <div class="flex-1">
-                      <div class="text-xs font-bold text-white">${s.n}</div>
-                      <div class="text-[9px] text-slate-400">Poder: ${Math.floor(s.p*100)}% | MP: ${s.mp}</div>
-                  </div>
-                  <div class="text-[9px] text-slate-500 absolute right-2 top-2 opacity-50 capitalize">${s.type ? s.type.replace("_", " ") : ""}</div>
-              `;
-              sGrid.appendChild(row);
-          });
-          skillCont.appendChild(sGrid);
-      }
-  }
-
-
-        // EVOLUTION & SKILL UP BUTTONS
-        // Fix: Use btn-equip parent as anchor since btn-xp is gone
-        const acts = btn.parentNode;
-        
-        // Remove old dynamic containers if any
-        const oldEvo = document.getElementById("evo-container");
-        if(oldEvo) oldEvo.remove();
-        
-        const evoContainer = document.createElement("div");
-        evoContainer.id = "evo-container";
-        evoContainer.className = "w-full mt-2 grid grid-cols-2 gap-2";
-        
-        // Evolve Button
-        if (safeMon.stars < 6) {
-             const evolveBtn = document.createElement("button");
-             evolveBtn.onclick = openEvolutionModal;
-             evolveBtn.className = "py-2 bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white font-bold text-xs uppercase rounded-lg border border-fuchsia-400 shadow-[0_0_10px_rgba(192,38,211,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1";
-             evolveBtn.innerHTML = `<span>🌟</span> Evoluir`;
-             evoContainer.appendChild(evolveBtn);
-        }
-        
-        // Skill Up Button
-        const skillBtn = document.createElement("button");
-        skillBtn.onclick = () => openSkillUpModal();
-        skillBtn.className = "py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-xs uppercase rounded-lg border border-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-1";
-        skillBtn.innerHTML = `<span>✨</span> Evoluir Skill`;
-        evoContainer.appendChild(skillBtn);
-
-        acts.appendChild(evoContainer);
-      };
 
       // EVOLUTION MODAL & LOGIC
       let evolveTargetIdx = -1;
@@ -4756,6 +5098,557 @@ const usePotion = () => {
   if(typeof updateShopUI !== "undefined") updateShopUI();
 };
 
+// === OPEN DETAIL MODAL (Complete Rendering) ===
+function openDetail(idx) {
+  selectedDetailIdx = idx;
+  const mon = state.inventory[idx];
+  if (!mon) return;
+
+  changeView("view-character-detail");
+
+  // Calculate stats with sets
+  // Calculate stats with sets
+  const stats = calculateStats(mon);
+  const maxLvl = MAX_LEVELS[mon.stars] || 40;
+  // Use global function explicitly to avoid scope issues
+  const xpNeeded = (window.getXPNeeded || getXPNeeded)(mon.lvl, mon.stars);
+
+  // === BASIC INFO ===
+  document.getElementById("det-name").innerText = mon.name;
+  document.getElementById("det-type").innerText = mon.type || "";
+  document.getElementById("det-stars").innerText = "⭐".repeat(mon.stars);
+  document.getElementById("det-nat-grade").innerText = `Natural ${mon.stars}★`;
+  document.getElementById("det-lvl").innerText = mon.lvl;
+  document.getElementById("det-lvl").nextElementSibling.innerText = `/ ${maxLvl}`;
+
+  // Element badge
+  const elementEmojis = {
+    fire: "🔥", water: "🌊", lightning: "⚡",
+    earth: "🗿", nature: "🍃", void: "🌑", neutral: "⚪"
+  };
+
+  document.getElementById("det-element-badge").innerText = elementEmojis[mon.element] || "❓";
+
+  // Image & Visuals - Using helper for consistency
+  const visualsWrapper = document.getElementById("det-img-wrapper");
+  if (visualsWrapper) {
+    try {
+        visualsWrapper.innerHTML = (window.getMonsterVisuals || getMonsterVisuals)(mon);
+    } catch(e) {
+        console.error("Visual render error:", e);
+        visualsWrapper.innerHTML = "<span>❓</span>";
+    }
+    // Restore IDs to support animations/css defined on #det-img and #det-emoji
+    const newImg = visualsWrapper.querySelector('img');
+    const newEmoji = visualsWrapper.querySelector('span');
+    if (newImg) newImg.id = "det-img";
+    if (newEmoji) {
+        newEmoji.id = "det-emoji";
+        newEmoji.style.fontSize = "6rem"; 
+    }
+  }
+
+  // XP Bar
+  document.getElementById("det-xp-text").innerText = `${mon.xp} / ${xpNeeded}`;
+  // XP Bar (Robust Logic)
+  const currentXP = mon.xp || 0;
+  const safeNeeded = xpNeeded > 0 ? xpNeeded : 100;
+  let xpPercent = (currentXP / safeNeeded) * 100;
+  
+  // Clamp
+  if (isNaN(xpPercent)) xpPercent = 0;
+  xpPercent = Math.max(0, Math.min(100, xpPercent));
+
+  const detXpBar = document.getElementById("det-xp-bar");
+  if (detXpBar) {
+      // Force remove potentially conflicting classes
+      detXpBar.classList.remove("w-0");
+      
+      // Apply width with a small delay to ensure transition triggers if it was 0
+      requestAnimationFrame(() => {
+          detXpBar.style.width = `${xpPercent}%`;
+      });
+      
+      // Debug text update
+      document.getElementById("det-xp-text").innerText = `${currentXP} / ${safeNeeded} (${Math.floor(xpPercent)}%)`;
+  }
+
+  // === STATS (COMPACT GRID) ===
+  document.getElementById("val-hp").innerText = stats.hp;
+  document.getElementById("val-atk").innerText = stats.atk;
+  document.getElementById("val-def").innerText = stats.def;
+  document.getElementById("val-spd").innerText = stats.spd || 100;
+  
+  document.getElementById("val-crit").innerText = `${stats.crit}%`;
+  document.getElementById("val-cdmg").innerText = `${stats.cdmg}%`;
+  document.getElementById("val-acc").innerText = `${stats.acc || 0}%`;
+  document.getElementById("val-res").innerText = `${stats.res || 15}%`;
+
+  // === EQUIPMENT SLOTS (4 SLOTS) ===
+  const slotIcons = {
+    slot1: "⚔️",  // Weapon
+    slot2: "🛡️",  // Armor
+    slot3: "⛑️",  // Helmet
+    slot4: "💍"   // Accessory
+  };
+  
+  // Rarity Colors for Slot Borders
+  const rarityColors = {
+    common: "#94a3b8",
+    rare: "#3b82f6",
+    epic: "#a855f7",
+    legendary: "#fbbf24"
+  };
+
+  ['slot1', 'slot2', 'slot3', 'slot4'].forEach(slotKey => {
+    const slotEl = document.getElementById(`eq-slot-${slotKey}`);
+    if (!slotEl) return;
+    
+    const equippedId = mon.equipped[slotKey];
+    if (equippedId) {
+      const eq = state.equipment.find(e => e.id === equippedId);
+      if (eq) {
+        const setInfo = EQUIPMENT_SETS[eq.set];
+        const rarityColors = {
+          common: "#94a3b8",
+          rare: "#3b82f6",
+          epic: "#a855f7",
+          legendary: "#fbbf24"
+        };
+        slotEl.style.borderColor = rarityColors[eq.rarity] || "#94a3b8";
+        slotEl.style.background = `linear-gradient(135deg, ${rarityColors[eq.rarity]}22, transparent)`;
+        slotEl.querySelector("span").innerText = setInfo ? setInfo.icon : slotIcons[slotKey];
+      }
+    } else {
+      slotEl.style.borderColor = "";
+      slotEl.style.background = "";
+      slotEl.querySelector("span").innerText = slotIcons[slotKey];
+    }
+  });
+
+  // === ACTIVE SETS ===
+  const activeSetsContainer = document.getElementById("active-sets-container");
+  const activeSetsList = document.getElementById("active-sets-list");
+  
+  if (stats.activeSets && stats.activeSets.length > 0) {
+    activeSetsContainer.classList.remove("hidden");
+    activeSetsList.innerHTML = "";
+    
+    stats.activeSets.forEach(set => {
+      const setDiv = document.createElement("div");
+      setDiv.className = "flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-white/10";
+      setDiv.innerHTML = `
+        <span class="text-xl">${set.icon}</span>
+        <div class="flex flex-col">
+          <span class="text-xs font-bold text-white">${set.name}</span>
+          <span class="text-[10px] text-slate-400">${set.bonus.display}</span>
+        </div>
+      `;
+      activeSetsList.appendChild(setDiv);
+    });
+  } else {
+    activeSetsContainer.classList.add("hidden");
+  }
+
+  // === SKILLS ===
+  renderSkills(mon);
+
+  // === POTION BUTTON ===
+  const potBtnContainer = document.getElementById("detail-pot-btn-container");
+  if (potBtnContainer) {
+      const potCount = state.user.potions || 0;
+      const isMax = mon.lvl >= maxLvl;
+      const canUse = potCount > 0 && !isMax;
+      
+      potBtnContainer.innerHTML = `
+        <button
+          onclick="usePotion()"
+          ${!canUse ? "disabled" : ""}
+          class="w-full py-3 ${canUse ? "bg-purple-600 hover:bg-purple-500" : "bg-slate-800 opacity-50 cursor-not-allowed"} text-white font-black uppercase rounded-xl shadow-lg active:scale-95 transition-all text-xs border border-white/10"
+        >
+          🧪 Usar Poção XP (${potCount}) ${isMax ? "- MAX" : ""}
+        </button>
+      `;
+  }
+
+  // === LEADER BUTTON ===
+  const btnEquip = document.getElementById("btn-equip");
+  if (btnEquip) {
+    if (state.leaderIdx === idx) {
+      btnEquip.innerText = "✓ LÍDER ATUAL";
+      btnEquip.classList.add("bg-green-600");
+      btnEquip.classList.remove("bg-indigo-600");
+    } else {
+      btnEquip.innerText = "DEFINIR LÍDER";
+      btnEquip.classList.remove("bg-green-600");
+      btnEquip.classList.add("bg-indigo-600");
+    }
+  }
+
+  // Render Evolution Button (Tab 1)
+  renderEvolutionButton(mon);
+  
+  // Update Real-Time Stats (Tab 3)
+  document.getElementById("gear-val-hp").innerText = stats.hp;
+  document.getElementById("gear-val-atk").innerText = stats.atk;
+  document.getElementById("gear-val-def").innerText = stats.def;
+  document.getElementById("gear-val-spd").innerText = stats.spd || 100;
+  
+  // Reset Tab to Status
+  switchDetailTab('status');
+};
+
+// === INVENTORY MODAL LOGIC ===
+window.openDetailInventoryModal = function() {
+    document.getElementById("det-inventory-modal").classList.remove("hidden");
+    filterDetailInv('all'); // Render all by default
+}
+
+// === RENDER SKILLS ===
+function renderSkills(mon) {
+  const container = document.getElementById("det-skills-container");
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-3">
+      Habilidades
+    </div>
+  `;
+
+  if (!mon.skills || mon.skills.length === 0) {
+    container.innerHTML += `<p class="text-slate-500 text-xs">Nenhuma habilidade</p>`;
+    return;
+  }
+
+  mon.skills.forEach((skillKey, idx) => {
+    const skill = SKILLS[skillKey];
+    if (!skill) return;
+
+    const skillDiv = document.createElement("div");
+    skillDiv.className = "mb-3 p-3 bg-slate-800/30 rounded-lg border border-white/5";
+    
+    // Correctly reference skillLvls object
+    const skillLvl = (mon.skillLvls && mon.skillLvls[skillKey]) || 1;
+    const maxSkillLvl = 5; 
+    const canUpgrade = skillLvl < maxSkillLvl;
+
+    skillDiv.innerHTML = `
+      <div class="flex justify-between items-start mb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">${skill.icon}</span>
+          <div>
+            <div class="text-sm font-bold text-white">${skill.n}</div>
+            <div class="text-[10px] text-slate-400">MP: ${skill.mp} | Poder: ${skill.p}x</div>
+          </div>
+        </div>
+        <div class="text-xs font-bold text-yellow-400">Lv ${skillLvl}</div>
+      </div>
+      ${canUpgrade ? `
+        <button
+          onclick="openSkillUpModal()"
+          class="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-white font-bold text-[10px] uppercase rounded-lg active:scale-95 transition-all"
+        >
+          ⬆️ Skill Up (Sacrifício)
+        </button>
+      ` : `
+        <div class="text-center text-[10px] text-green-400 font-bold">✓ MAX LEVEL</div>
+      `}
+    `;
+    
+    container.appendChild(skillDiv);
+  });
+
+};
+// Evolution Logic (Rendered in Tab 1 now)
+function renderEvolutionButton(mon) {
+   const container = document.getElementById("det-evolution-container");
+   if (!container) return;
+   
+   container.innerHTML = "";
+   if (mon.stars < 6) {
+      container.innerHTML = `
+        <button
+            onclick="openEvolutionModal()"
+            class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black uppercase rounded-xl shadow-lg active:scale-95 transition-all text-xs border border-white/10"
+        >
+            ✨ EVOLUIR PARA ${mon.stars + 1}★
+        </button>
+      `;
+   }
+}
+
+// === TAB SWITCHING LOGIC ===
+window.switchDetailTab = function(tabName) {
+    // Hide all tabs
+    document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+    document.querySelectorAll(".tab-btn").forEach(el => {
+        el.classList.remove("bg-indigo-600", "text-white", "shadow-[0_0_15px_rgba(79,70,229,0.4)]", "border-indigo-400");
+        el.classList.add("bg-slate-900", "text-slate-500", "border-white/10");
+    });
+    
+    // Show active tab
+    const target = document.getElementById(`tab-${tabName}`);
+    if (target) target.classList.remove("hidden");
+    
+    const btn = document.getElementById(`tab-btn-${tabName}`);
+    if (btn) {
+        btn.classList.remove("bg-slate-900", "text-slate-500", "border-white/10");
+        btn.classList.add("bg-indigo-600", "text-white", "border-indigo-400", "shadow-[0_0_15px_rgba(79,70,229,0.4)]");
+    }
+    
+    // Auto-render inventory is removed (User request for separate modal)
+}
 
 
+// === INTEGRATED INVENTORY (DETAIL MODAL) ===
+let detailInvFilter = 'all';
 
+function filterDetailInv(filter) {
+    detailInvFilter = filter;
+    
+    // UI Feedback for tabs
+    document.querySelectorAll(".det-inv-tab").forEach(tab => {
+        tab.classList.remove("bg-indigo-600", "text-white");
+        tab.classList.add("bg-slate-800", "text-slate-400");
+    });
+    
+    // Find active tab
+    const tabs = document.querySelectorAll(".det-inv-tab");
+    if (tabs.length > 0) {
+        if (filter === 'all') tabs[0].classList.add("bg-indigo-600", "text-white");
+        else if (filter === 1) tabs[1].classList.add("bg-indigo-600", "text-white");
+        else if (filter === 2) tabs[2].classList.add("bg-indigo-600", "text-white");
+        else if (filter === 3) tabs[3].classList.add("bg-indigo-600", "text-white");
+        else if (filter === 4) tabs[4].classList.add("bg-indigo-600", "text-white");
+    }
+    
+    renderDetailInventory();
+}
+
+function renderDetailInventory() {
+    const grid = document.getElementById("det-inv-grid");
+    if (!grid) return;
+    
+    grid.innerHTML = "";
+    
+    // Filter out equipped items
+    let avail = state.equipment.filter(e => !isEquipped(e.id));
+    
+    // Apply slot filter
+    if (detailInvFilter !== 'all') {
+        avail = avail.filter(e => e.slot === detailInvFilter);
+    }
+    
+    const countEl = document.getElementById("det-inv-count");
+    if (countEl) countEl.innerText = `${avail.length} disponíveis`;
+    
+    if (avail.length === 0) {
+        grid.innerHTML = `<div class="col-span-3 flex flex-col items-center justify-center py-10 border-2 border-dashed border-white/5 rounded-xl opacity-40">
+            <span class="text-4xl mb-2">📦</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Nenhum Item</span>
+            <span class="text-[10px] text-slate-600 mt-1">Vá às Masmorras para coletar loot</span>
+        </div>`;
+        return;
+    }
+    
+    const frag = document.createDocumentFragment();
+    avail.forEach(eq => {
+        const conf = EQ_RARITY[eq.rarity];
+        const slotMap = { 1: "⚔️", 2: "🛡️", 3: "⛑️", 4: "💍" };
+        const setInfo = EQUIPMENT_SETS[eq.set] || { name: "???", display: "???" };
+        
+        const el = document.createElement("div");
+        // Premium Card Layout
+        el.className = `relative p-3 rounded-xl border bg-slate-900/90 cursor-pointer active:scale-95 transition-all flex flex-col gap-1 group overflow-hidden ${conf.color}`;
+        
+        const borderColor = 
+            eq.rarity === "legendary" ? "#fbbf24" : 
+            eq.rarity === "epic" ? "#a855f7" : 
+            eq.rarity === "rare" ? "#3b82f6" : "#475569";
+            
+        el.style.border = `1px solid ${borderColor}`;
+        el.style.boxShadow = `inset 0 0 20px ${borderColor}11`;
+            
+        el.innerHTML = `
+            <!-- Hover Glow -->
+            <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+            
+            <div class="flex justify-between items-start relative z-10">
+                <span class="text-2xl filter drop-shadow-md">${slotMap[eq.slot] || "⚔️"}</span>
+                <span class="text-[9px] font-black text-white bg-black/40 px-1.5 py-0.5 rounded border border-white/10">+${eq.lvl}</span>
+            </div>
+            
+            <div class="relative z-10 mt-1">
+                <div class="text-[10px] font-bold text-slate-200 leading-tight truncate">${setInfo.name}</div>
+                <div class="text-[8px] text-indigo-300 truncate">${setInfo.display}</div>
+            </div>
+            
+            <div class="absolute bottom-0 right-0 p-1 opacity-20 text-[40px] leading-none pointer-events-none select-none grayscale group-hover:grayscale-0 transition-all duration-500">${setInfo.icon || "⚔️"}</div>
+        `;
+        
+        el.onclick = () => { 
+            currentEqId = eq.id;
+            renderUpgradeModal();
+        };
+        frag.appendChild(el);
+    });
+    
+    grid.appendChild(frag);
+}
+
+function equipFromDetail(eqId) {
+    const mon = state.inventory[selectedDetailIdx];
+    const eq = state.equipment.find(e => e.id === eqId);
+    if (!mon || !eq) return;
+    
+    const slotKey = `slot${eq.slot}`;
+    mon.equipped[slotKey] = eqId;
+    save();
+    
+    showToast("Equipado com sucesso!", "success");
+    openDetail(selectedDetailIdx);
+}
+
+// Expose to window
+window.filterDetailInv = filterDetailInv;
+window.equipFromDetail = equipFromDetail;
+
+window.openEvolutionModal = openEvolutionModal; // Ensure global
+window.openSkillUpModal = openSkillUpModal; // Ensure global
+
+// === GLOBAL HELPERS (MOVED FOR STABILITY) ===
+window.getXPNeeded = function(lvl, stars) {
+    return Math.floor(500 * Math.pow(lvl, 1.1));
+};
+
+window.getMonsterVisuals = function(mon) {
+    if (!mon) return "";
+    
+    // Find template
+    const tpl = MONSTERS_DB.find(m => m.id.toLowerCase() === mon.id?.toLowerCase()) || 
+                MONSTERS_DB.find(m => m.name.toLowerCase() === (mon.name || mon.id)?.toLowerCase()) || 
+                {};
+    
+    const imgSrc = mon.img || tpl.img || "";
+    // If no emoji, fallback to Question Mark
+    const emojiSrc = mon.emoji || tpl.emoji || "❓";
+
+    if (imgSrc && imgSrc !== "") {
+        return `
+            <img src="${imgSrc}" class="monster-image-el w-full h-full object-contain" 
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <span class="monster-emoji-el hidden items-center justify-center w-full h-full">${emojiSrc}</span>
+        `;
+    } else {
+        return `<span class="monster-emoji-el flex items-center justify-center w-full h-full">${emojiSrc}</span>`;
+    }
+};
+
+// === EQUIPMENT HELPERS ===
+function isEquippedByMon(mon, eqId) {
+    if (!mon || !mon.equipped) return false;
+    return (
+        mon.equipped.slot1 === eqId ||
+        mon.equipped.slot2 === eqId ||
+        mon.equipped.slot3 === eqId ||
+        mon.equipped.slot4 === eqId ||
+        /* Legacy compat */
+        mon.equipped.weapon === eqId ||
+        mon.equipped.armor === eqId ||
+        mon.equipped.acc === eqId
+    );
+}
+
+function unequipItem(eqId, cost) {
+    if (state.user.gold < cost) return showToast(`Ouro insuficiente! Custo: ${cost}`, "error");
+    
+    // Find owner
+    const mon = state.inventory.find(m => isEquippedByMon(m, eqId));
+    if (!mon) return showToast("Este item não está equipado!", "info");
+    
+    state.user.gold -= cost;
+    updateHeader();
+    
+    // Unequip from ALL slots to be safe
+    if (mon.equipped.slot1 === eqId) mon.equipped.slot1 = null;
+    if (mon.equipped.slot2 === eqId) mon.equipped.slot2 = null;
+    if (mon.equipped.slot3 === eqId) mon.equipped.slot3 = null;
+    if (mon.equipped.slot4 === eqId) mon.equipped.slot4 = null;
+    // Legacy
+    if (mon.equipped.weapon === eqId) mon.equipped.weapon = null;
+    if (mon.equipped.armor === eqId) mon.equipped.armor = null;
+    if (mon.equipped.acc === eqId) mon.equipped.acc = null;
+    
+    save();
+    showToast(`Item desequipado! (-${cost} Ouro)`, "success");
+    
+    // Refresh UI
+    renderUpgradeModal(); // Updates button to "Equip"
+    
+    // Refresh detail view if open
+    const detailOverlay = document.getElementById("mon-detail-overlay");
+    if (detailOverlay && !detailOverlay.classList.contains("hidden")) {
+         openDetail(selectedDetailIdx);
+    }
+}
+
+// Expose Helpers
+window.isEquippedByMon = isEquippedByMon;
+window.unequipItem = unequipItem;
+window.renderUpgradeModal = renderUpgradeModal; // Critical fix for scope access
+
+// Robust Visual Helper - Fixes image issues
+window.getMonsterVisuals = (mon) => {
+    // Strict image validation (Extension check + non-null)
+    const isValidImg = mon.img && 
+                       (typeof mon.img === 'string') && 
+                       mon.img.length > 4 && 
+                       !mon.img.includes("undefined") && 
+                       !mon.img.includes("null") &&
+                       /\.(png|jpg|jpeg|webp|avif|gif)$/i.test(mon.img);
+
+    if (isValidImg) {
+        // Safe fallback logic inline
+        const fallback = `this.style.display='none'; this.nextElementSibling.style.display='block';`;
+        return `
+            <img src="${mon.img}" 
+                 class="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-transform"
+                 onerror="${fallback}" 
+            />
+            <span class="hidden select-none" style="font-size: 8rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">
+                ${mon.emoji || '❓'}
+            </span>
+        `;
+    }
+    // Default to Emoji
+    return `<span class="select-none" style="font-size: 8rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">${mon.emoji || '❓'}</span>`;
+};
+
+// XP Mechanics Helpers (Global)
+window.getXPNeeded = (lvl, stars) => {
+    // Base 100 per level, scaling slightly with stars
+    return Math.floor((lvl * 100) * (1 + ((stars || 1) * 0.1)));
+};
+
+window.addXP = (mon, amount) => {
+    if (!mon) return;
+    mon.xp = (mon.xp || 0) + amount;
+    
+    // Retrieve Max Level from global constant or fallback
+    const maxLvl = (window.MAX_LEVELS && window.MAX_LEVELS[mon.stars]) || (mon.stars * 10) + 20; // fallback: 5* -> 70
+    
+    let required = window.getXPNeeded(mon.lvl, mon.stars);
+    
+    // Level Up Logic
+    while (mon.xp >= required && mon.lvl < maxLvl) {
+        mon.xp -= required;
+        mon.lvl++;
+        required = window.getXPNeeded(mon.lvl, mon.stars);
+    }
+    
+    // Cap
+    if (mon.lvl >= maxLvl) {
+        mon.lvl = maxLvl;
+        mon.xp = 0;
+    }
+};
