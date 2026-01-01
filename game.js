@@ -1,5 +1,6 @@
 ﻿      // --- BANCO DE DADOS ---
       const MONSTERS_DB = [
+        // --- 5 STARS (LEGENDARY) ---
         {
           id: "vermithrax",
           name: "Vermithrax",
@@ -13,7 +14,7 @@
           emoji: "🐲",
           img: "src/dragon.png",
           imgAtk: "",
-          skills: ["melee", "fire", "sup_fire"],
+          skills: ["melee", "flame_burst", "sup_dragon_breath"],
         },
         {
           id: "thyron",
@@ -29,7 +30,7 @@
           img: "src/Thyron.png",
           imgBack: "src/backThyron.png",
           imgAtk: "",
-          skills: ["melee", "bolt", "sup_lightning"],
+          skills: ["melee", "chain_lightning", "sup_lightning"],
         },
         {
           id: "neriah",
@@ -44,7 +45,7 @@
           emoji: "🧜‍♀️",
           img: "src/Neriah.png",
           imgAtk: "src/Neriah_atk.webp",
-          skills: ["melee", "water", "sup_water"],
+          skills: ["melee", "ice_shards", "sup_water"],
         },
         {
           id: "aelyra",
@@ -59,8 +60,114 @@
           emoji: "🧙‍♀️",
           img: "src/Aelyra.png",
           imgAtk: "src/Aelyra_atk.webp",
-          skills: ["melee", "fire", "sup_fire"],
+          skills: ["melee", "meteor_strike", "sup_plasma_vortex"],
         },
+        {
+          id: "ignis",
+          name: "Ignis",
+          type: "Fire Warlord",
+          role: "attacker",
+          element: "fire",
+          stars: 5,
+          hp: 4300,
+          atk: 380,
+          def: 220,
+          emoji: "🔥",
+          img: "src/ignis.png",
+          imgAtk: "src/ignis_atk.webp",
+          skills: ["melee", "lava_burst", "sup_infernal_apocalypse"],
+        },
+        {
+          id: "sylphid",
+          name: "Sylphid",
+          type: "Wind Queen",
+          role: "attacker",
+          element: "wind",
+          stars: 5,
+          hp: 3900,
+          atk: 370,
+          def: 210,
+          emoji: "🧚‍♀️",
+          img: "src/sylphid.png",
+          imgAtk: "src/sylphid_atk.webp",
+          skills: ["melee", "tornado", "sup_forest_fury"],
+        },
+        {
+          id: "gaia",
+          name: "Gaia",
+          type: "Earth Mother",
+          role: "hp",
+          element: "earth",
+          stars: 5,
+          hp: 4800,
+          atk: 250,
+          def: 350,
+          emoji: "🌍",
+          img: "src/Nyssae.png", // USER CHANGED
+          imgAtk: "",
+          skills: ["melee", "earth_shatter", "sup_earth"],
+        },
+        {
+          id: "zephyr",
+          name: "Zephyr",
+          type: "Storm God",
+          role: "attacker",
+          element: "lightning",
+          stars: 5,
+          hp: 4100,
+          atk: 400,
+          def: 180,
+          emoji: "🌪️",
+          img: "src/zephyr.png",
+          imgAtk: "src/zephyr_atk.webp",
+          skills: ["melee", "thunder_storm", "sup_celestial_judgement"],
+        },
+        {
+          id: "nyx",
+          name: "Nyx",
+          type: "Void Assassin",
+          role: "attacker",
+          element: "void",
+          stars: 5,
+          hp: 3500,
+          atk: 500,
+          def: 150,
+          emoji: "🌙",
+          img: "src/nyx.png",
+          imgAtk: "src/nyx_atk.webp",
+          skills: ["melee", "shadow_strike", "sup_void_collapse"],
+        },
+        {
+          id: "glacius",
+          name: "Glacius",
+          type: "Ice Titan",
+          role: "defender",
+          element: "water",
+          stars: 5,
+          hp: 4500,
+          atk: 320,
+          def: 300,
+          emoji: "🧊",
+          img: "src/glacius.png",
+          imgAtk: "src/glacius_atk.webp",
+          skills: ["melee", "ice_shards", "sup_frozen_eternity"],
+        },
+        {
+          id: "metamorph",
+          name: "Metamorfo",
+          type: "Shapeshifter",
+          role: "hp",
+          element: "void",
+          stars: 5,
+          hp: 6000,
+          atk: 250,
+          def: 200,
+          emoji: "🦠",
+          img: "src/metamorph.png", 
+          skills: ["melee", "sup_void", "sup_black_lotus"],
+        },
+
+        // --- 4 STARS (EPIC) ---
         {
           id: "kaelthar",
           name: "Kaelthar",
@@ -75,7 +182,7 @@
           img: "src/Kaelthar.png",
           imgBack: "src/backKaelthar.png",
           imgAtk: "src/atkKaelthar.webp",
-          skills: ["melee", "void_slash", "sup_void"],
+          skills: ["melee", "void_slash", "shadow_strike"], // T2, T3
         },
         {
           id: "dhorak",
@@ -88,11 +195,97 @@
           atk: 180,
           def: 400,
           emoji: "🗿",
-          img: "src/Dhorak.png",
-          imgBack: "src/backDhorak.png",
-          imgAtk: "src/atkDhorak.webp",
-          skills: ["melee", "rock_throw", "sup_earth"],
+          img: "src/golen.png", // USER CHANGED
+          imgBack: "",
+          imgAtk: "",
+          skills: ["melee", "rock_throw", "earth_shatter"], // T2, T3
         },
+        {
+          id: "vulcan",
+          name: "Vulcan",
+          type: "Smith",
+          role: "attacker",
+          element: "fire",
+          stars: 4,
+          hp: 3400,
+          atk: 300,
+          def: 250,
+          emoji: "🔨",
+          img: "src/vulcan.png",
+          skills: ["melee", "fire", "lava_burst"], // T2, T3
+        },
+        {
+          id: "nereid",
+          name: "Nereid",
+          type: "Mermaid",
+          role: "support",
+          element: "water",
+          stars: 4,
+          hp: 3200,
+          atk: 290,
+          def: 210,
+          emoji: "🧜",
+          img: "src/nereid.png",
+          skills: ["melee", "water", "tidal_wave"], // T2, T4
+        },
+        {
+          id: "druid",
+          name: "Druid",
+          type: "Keeper",
+          role: "support",
+          element: "nature",
+          stars: 4,
+          hp: 3500,
+          atk: 260,
+          def: 260,
+          emoji: "🐻",
+          img: "src/druid.png",
+          skills: ["melee", "leaf_cutter", "poison_cloud"], // T2, T3
+        },
+        {
+          id: "paladin",
+          name: "Paladin",
+          type: "Knight",
+          role: "defender",
+          element: "lightning",
+          stars: 4,
+          hp: 3800,
+          atk: 240,
+          def: 300,
+          emoji: "⚔️",
+          img: "src/paladin.png",
+          skills: ["melee", "bolt", "holy_beam"], // T2, T3
+        },
+        {
+          id: "necro",
+          name: "Necro",
+          type: "Mage",
+          role: "attacker",
+          element: "void",
+          stars: 4,
+          hp: 2800,
+          atk: 350,
+          def: 150,
+          emoji: "💀",
+          img: "src/necro.png",
+          skills: ["melee", "void_slash", "blood_drain"], // T2, T3
+        },
+        {
+          id: "ronin",
+          name: "Ronin",
+          type: "Samurai",
+          role: "attacker",
+          element: "wind",
+          stars: 4,
+          hp: 2900,
+          atk: 360,
+          def: 180,
+          emoji: "🗡️",
+          img: "src/ronin.png",
+          skills: ["melee", "wind_blade", "spectral_blade"], // T2, T3
+        },
+
+        // --- 3 STARS (RARE) ---
         {
           id: "vireya",
           name: "Vireya",
@@ -105,7 +298,7 @@
           def: 140,
           emoji: "🧚‍♀️",
           img: "src/Vireya.png",
-          skills: ["melee", "leaf_cutter"],
+          skills: ["melee", "leaf_cutter", "poison_cloud"], 
         },
         {
           id: "brann",
@@ -119,7 +312,7 @@
           def: 120,
           emoji: "🛡️",
           img: "src/Brann.png",
-          skills: ["melee", "fire"],
+          skills: ["melee", "fire", "flame_burst"],
         },
         {
           id: "lysara",
@@ -133,8 +326,119 @@
           def: 110,
           emoji: "❄️",
           img: "src/Lysara.png",
+          skills: ["melee", "water", "ice_shards"],
+        },
+        {
+          id: "goblin_king",
+          name: "Goblin King",
+          type: "Goblin",
+          role: "attacker",
+          element: "earth",
+          stars: 3,
+          hp: 2200,
+          atk: 180,
+          def: 150,
+          emoji: "👺",
+          img: "src/goblin.png",
+          skills: ["melee", "rock_throw", "boulder_crash"],
+        },
+        {
+          id: "harpy",
+          name: "Harpy",
+          type: "Beast",
+          element: "wind",
+          stars: 3,
+          hp: 2000,
+          atk: 220,
+          def: 110,
+          emoji: "🦅",
+          img: "src/harpy.png",
+          skills: ["melee", "wind_blade"],
+        },
+        {
+          id: "stone_giant",
+          name: "Stone Giant",
+          type: "Construct",
+          role: "defender",
+          element: "earth",
+          stars: 3,
+          hp: 2500,
+          atk: 150,
+          def: 220,
+          emoji: "🪨",
+          img: "src/golem.png",
+          skills: ["melee", "rock_throw"],
+        },
+        {
+          id: "lizardman",
+          name: "Lizardman",
+          type: "Beast",
+          element: "water",
+          stars: 3,
+          hp: 2300,
+          atk: 190,
+          def: 160,
+          emoji: "🦎",
+          img: "src/lizard.png",
           skills: ["melee", "water"],
         },
+        {
+          id: "skeleton_archer",
+          name: "Skeleton",
+          type: "Undead",
+          role: "attacker",
+          element: "void",
+          stars: 3,
+          hp: 1800,
+          atk: 240,
+          def: 80,
+          emoji: "🦴",
+          img: "src/skel.png",
+          skills: ["melee", "void_slash"],
+        },
+        {
+          id: "fairy",
+          name: "Fairy",
+          type: "Fey",
+          role: "support",
+          element: "lightning",
+          stars: 3,
+          hp: 1600,
+          atk: 150,
+          def: 120,
+          emoji: "🦋",
+          img: "src/fairy.png",
+          skills: ["melee", "bolt"],
+        },
+        {
+          id: "imp",
+          name: "Imp",
+          type: "Demon",
+          role: "attacker",
+          element: "fire",
+          stars: 3,
+          hp: 1700,
+          atk: 180,
+          def: 100,
+          emoji: "😈",
+          img: "src/imp.png",
+          skills: ["melee", "fire"],
+        },
+        {
+          id: "wolf",
+          name: "Wolf",
+          type: "Beast",
+          element: "nature",
+          stars: 3,
+          hp: 2100,
+          atk: 170,
+          def: 140,
+          emoji: "🐺",
+          img: "src/wolf.png",
+          skills: ["melee", "leaf_cutter"],
+        },
+
+        // --- 1-2 STARS (COMMON) ---
         {
           id: "lumem",
           name: "Lumem",
@@ -189,8 +493,10 @@
           def: 30,
           emoji: "🦇",
           img: "",
+          skills: ["melee"],
         },
-        // SKILL UP UNIT
+        
+        // --- UTIL ---
         {
           id: "skillupper",
           name: "Skillupper",
@@ -206,580 +512,63 @@
           skills: ["melee"],
           description: "Use para aumentar o nível de habilidade de qualquer monstro."
         },
-        {
-          id: "metamorph",
-          name: "Metamorph",
-          type: "Shapeshifter",
-          role: "attacker",
-          element: "void",
-          stars: 4,
-          hp: 2500,
-          atk: 300,
-          def: 150,
-          emoji: "👥",
-          img: "",
-          skills: ["melee"],
-        },
-        // --- NOVOS PERSONAGENS (ONDA 2) ---
-        // 5 ESTRELAS (LENDÁRIOS)
-        {
-          id: "ignis",
-          name: "Ignis",
-          type: "Fire Warlord",
-          role: "attacker",
-          element: "fire",
-          stars: 5,
-          hp: 4300,
-          atk: 380,
-          def: 220,
-          emoji: "🔥",
-          img: "src/ignis.png",
-          imgAtk: "src/ignis_atk.webp",
-          skills: ["melee", "fire", "meteor_strike"],
-        },
-        {
-          id: "sylphid",
-          name: "Sylphid",
-          type: "Wind Queen",
-          role: "attacker",
-          element: "wind",
-          stars: 5,
-          hp: 3900,
-          atk: 370,
-          def: 210,
-          emoji: "🧚‍♀️",
-          img: "src/sylphid.png",
-          imgAtk: "src/sylphid_atk.webp",
-          skills: ["melee", "wind_blade", "tornado"],
-        },
-        {
-          id: "gaia",
-          name: "Gaia",
-          type: "Earth Mother",
-          role: "hp",
-          element: "earth",
-          stars: 5,
-          hp: 4800,
-          atk: 250,
-          def: 350,
-          emoji: "🌍",
-          img: "src/gaia.png",
-          imgAtk: "src/gaia_atk.webp",
-          skills: ["melee", "earth_shatter", "earthquake"],
-        },
-        {
-          id: "zephyr",
-          name: "Zephyr",
-          type: "Storm God",
-          role: "attacker",
-          element: "lightning",
-          stars: 5,
-          hp: 4100,
-          atk: 400,
-          def: 180,
-          emoji: "🌪️",
-          img: "src/zephyr.png",
-          imgAtk: "src/zephyr_atk.webp",
-          skills: ["melee", "bolt", "thunder_storm"],
-        },
-        {
-          id: "nyx",
-          name: "Nyx",
-          type: "Void Assassin",
-          role: "attacker",
-          element: "void",
-          stars: 5,
-          hp: 3500,
-          atk: 500,
-          def: 150,
-          emoji: "🌙",
-          img: "src/nyx.png",
-          imgAtk: "src/nyx_atk.webp",
-          skills: ["melee", "shadow_strike", "void_slash"],
-        },
-        {
-          id: "glacius",
-          name: "Glacius",
-          type: "Ice Titan",
-          role: "defender",
-          element: "water",
-          stars: 5,
-          hp: 4500,
-          atk: 320,
-          def: 300,
-          emoji: "🧊",
-          img: "src/glacius.png",
-          imgAtk: "src/glacius_atk.webp",
-          skills: ["melee", "ice_shards", "blizzard"],
-        },
-        {
-          id: "metamorph",
-          name: "Metamorfo",
-          type: "Shapeshifter",
-          role: "hp",
-          element: "void",
-          stars: 5,
-          hp: 6000,
-          atk: 250,
-          def: 200,
-          emoji: "🦠",
-          img: "src/metamorph.png", 
-          skills: ["melee", "sup_void"],
-        },
-
-        // 4 ESTRELAS (ÉPICOS)
-        {
-          id: "vulcan",
-          name: "Vulcan",
-          type: "Smith",
-          role: "attacker",
-          element: "fire",
-          stars: 4,
-          hp: 3400,
-          atk: 300,
-          def: 250,
-          emoji: "🔨",
-          img: "src/vulcan.png",
-          skills: ["melee", "fire"],
-        },
-        {
-          id: "nereid",
-          name: "Nereid",
-          type: "Mermaid",
-          role: "support",
-          element: "water",
-          stars: 4,
-          hp: 3200,
-          atk: 290,
-          def: 210,
-          emoji: "🧜",
-          img: "src/nereid.png",
-          skills: ["melee", "ice_shards"],
-        },
-        {
-          id: "druid",
-          name: "Druid",
-          type: "Keeper",
-          role: "support",
-          element: "nature",
-          stars: 4,
-          hp: 3500,
-          atk: 260,
-          def: 260,
-          emoji: "🐻",
-          img: "src/druid.png",
-          skills: ["melee", "poison_cloud"],
-        },
-        {
-          id: "paladin",
-          name: "Paladin",
-          type: "Knight",
-          role: "defender",
-          element: "lightning",
-          stars: 4,
-          hp: 3800,
-          atk: 240,
-          def: 300,
-          emoji: "⚔️",
-          img: "src/paladin.png",
-          skills: ["melee", "holy_beam"],
-        },
-        {
-          id: "necro",
-          name: "Necro",
-          type: "Mage",
-          role: "attacker",
-          element: "void",
-          stars: 4,
-          hp: 2800,
-          atk: 350,
-          def: 150,
-          emoji: "💀",
-          img: "src/necro.png",
-          skills: ["melee", "blood_drain"],
-        },
-        {
-          id: "ronin",
-          name: "Ronin",
-          type: "Samurai",
-          role: "attacker",
-          element: "wind",
-          stars: 4,
-          hp: 2900,
-          atk: 360,
-          def: 180,
-          emoji: "🗡️",
-          img: "src/ronin.png",
-          skills: ["melee", "wind_blade"],
-        },
-
-        // 3 ESTRELAS (RAROS)
-        {
-          id: "goblin_king",
-          name: "Goblin King",
-          type: "Goblin",
-          role: "attacker",
-          element: "earth",
-          stars: 3,
-          hp: 2200,
-          atk: 180,
-          def: 150,
-          emoji: "👺",
-          img: "src/goblin.png",
-          skills: ["melee"],
-        },
-        {
-          id: "harpy",
-          name: "Harpy",
-          type: "Beast",
-          element: "wind",
-          stars: 3,
-          hp: 2000,
-          atk: 220,
-          def: 110,
-          emoji: "🦅",
-          img: "src/harpy.png",
-          skills: ["melee"],
-        },
-        {
-          id: "stone_giant",
-          name: "Stone Giant",
-          type: "Construct",
-          role: "defender",
-          element: "earth",
-          stars: 3,
-          hp: 2500,
-          atk: 150,
-          def: 220,
-          emoji: "🪨",
-          img: "src/golem.png",
-          skills: ["melee"],
-        },
-        {
-          id: "lizardman",
-          name: "Lizardman",
-          type: "Beast",
-          element: "water",
-          stars: 3,
-          hp: 2300,
-          atk: 190,
-          def: 160,
-          emoji: "🦎",
-          img: "src/lizard.png",
-          skills: ["melee"],
-        },
-        {
-          id: "skeleton_archer",
-          name: "Skeleton",
-          type: "Undead",
-          role: "attacker",
-          element: "void",
-          stars: 3,
-          hp: 1800,
-          atk: 240,
-          def: 80,
-          emoji: "🦴",
-          img: "src/skel.png",
-          skills: ["melee"],
-        },
-        {
-          id: "fairy",
-          name: "Fairy",
-          type: "Fey",
-          role: "support",
-          element: "lightning",
-          stars: 3,
-          hp: 1600,
-          atk: 150,
-          def: 120,
-          emoji: "🦋",
-          img: "src/fairy.png",
-          skills: ["melee"],
-        },
-        {
-          id: "imp",
-          name: "Imp",
-          type: "Demon",
-          role: "attacker",
-          element: "fire",
-          stars: 3,
-          hp: 1700,
-          atk: 180,
-          def: 100,
-          emoji: "😈",
-          img: "src/imp.png",
-          skills: ["melee"],
-        },
-        {
-          id: "wolf",
-          name: "Wolf",
-          type: "Beast",
-          element: "nature",
-          stars: 3,
-          hp: 2100,
-          atk: 170,
-          def: 140,
-          emoji: "🐺",
-          img: "src/wolf.png",
-          skills: ["melee"],
-        },
       ];
 
       const SKILLS = {
         melee: { n: "Ataque", p: 1.0, icon: "🗡️", type: "phys", mp: 0 },
+        // TIER 2 (LOW) - 20 MP
         bolt: { n: "Raio", p: 1.5, icon: "⚡", type: "lightning", mp: 20 },
         water: { n: "Jato", p: 1.4, icon: "💧", type: "water", mp: 20 },
         fire: { n: "Brasa", p: 1.6, icon: "🔥", type: "fire", mp: 20 },
-        void_slash: {
-          n: "Corte Vazio",
-          p: 1.8,
-          icon: "🟣",
-          type: "void",
-          mp: 25,
-        },
+        void_slash: { n: "Corte Vazio", p: 1.8, icon: "🟣", type: "void", mp: 25 },
         rock_throw: { n: "Rocha", p: 1.5, icon: "🪨", type: "earth", mp: 20 },
         leaf_cutter: { n: "Folha", p: 1.4, icon: "🍃", type: "nature", mp: 20 },
-        sup_lightning: {
-          n: "Tempestade",
-          p: 3.0,
-          icon: "🌩️",
-          type: "lightning_sup",
-          mp: 50,
-        },
-        sup_water: {
-          n: "Tsunami",
-          p: 2.8,
-          icon: "🌊",
-          type: "water_sup",
-          mp: 50,
-        },
-        sup_fire: {
-          n: "Chuva Meteoros",
-          p: 3.2,
-          icon: "☄️",
-          type: "fire_sup",
-          mp: 50,
-        },
-        sup_earth: {
-          n: "Avalanche",
-          p: 3.0,
-          icon: "🌋",
-          type: "earth_sup",
-          mp: 50,
-        },
-        sup_void: {
-          n: "Devastação",
-          p: 3.5,
-          icon: "⚫",
-          type: "void_sup",
-          mp: 60,
-        },
-        // NOVAS HABILIDADES PREMIUM
-        ice_shards: {
-          n: "Estilhaços",
-          p: 1.8,
-          icon: "🧊",
-          type: "ice_shards",
-          mp: 25,
-        },
-        poison_cloud: {
-          n: "Nuvem Tóxica",
-          p: 1.5,
-          icon: "☠️",
-          type: "poison_cloud",
-          mp: 30,
-        },
-        holy_beam: {
-          n: "Luz Divina",
-          p: 3.0,
-          icon: "✨",
-          type: "holy_beam",
-          mp: 45,
-        },
-        blood_drain: {
-          n: "Drenar Vida",
-          p: 1.6,
-          icon: "🩸",
-          type: "blood_drain",
-          mp: 35,
-        },
-        shadow_strike: {
-          n: "Golpe Sombrio",
-          p: 2.2,
-          icon: "🧛",
-          type: "shadow_strike",
-          mp: 30,
-        },
-        thunder_storm: {
-          n: "Tempestade",
-          p: 2.5,
-          icon: "⛈️",
-          type: "thunder_storm",
-          mp: 50,
-        },
-        wind_blade: {
-          n: "Lâmina de Vento",
-          p: 1.7,
-          icon: "🌪️",
-          type: "wind_blade",
-          mp: 25,
-        },
-        meteor_strike: {
-          n: "Meteoro",
-          p: 3.2,
-          icon: "☄️",
-          type: "meteor_strike",
-          mp: 55,
-        },
-        arcane_barrage: {
-          n: "Mísseis Arcanos",
-          p: 2.0,
-          icon: "🔮",
-          type: "arcane_barrage",
-          mp: 35,
-        },
-        earth_shatter: {
-          n: "Tremor",
-          p: 2.1,
-          icon: "🧱",
-          type: "earth_shatter",
-          mp: 40,
-        },
-        sup_silver_rain: {
-          n: "Chuva de Prata",
-          p: 3.5,
-          icon: "🌧️",
-          type: "sup_silver_rain",
-          mp: 60,
-        },
-        sup_black_lotus: {
-          n: "Lótus Negra",
-          p: 3.8,
-          icon: "🪷",
-          type: "sup_black_lotus",
-          mp: 70,
-        },
-        sup_dragon_breath: {
-          n: "Hálito Dragão",
-          p: 4.0,
-          icon: "🐲",
-          type: "sup_dragon_breath",
-          mp: 80,
-        },
-        sup_ether_chains: {
-          n: "Cadeias Éter",
-          p: 3.2,
-          icon: "⛓️",
-          type: "sup_ether_chains",
-          mp: 55,
-        },
-        sup_gravity_pulse: {
-          n: "Pulso Gravitacional",
-          p: 3.6,
-          icon: "🪐",
-          type: "sup_gravity_pulse",
-          mp: 65,
-        },
-        sup_ice_butterflies: {
-          n: "Butterflies Ice",
-          p: 3.4,
-          icon: "🦋",
-          type: "sup_ice_butterflies",
-          mp: 60,
-        },
-        sup_forest_fury: {
-          n: "Fúria Florestal",
-          p: 3.7,
-          icon: "🌲",
-          type: "sup_forest_fury",
-          mp: 65,
-        },
-        sup_celestial_judgement: {
-          n: "Julgamento",
-          p: 4.5,
-          icon: "⚖️",
-          type: "sup_celestial_judgement",
-          mp: 90,
-        },
-        sup_plasma_vortex: {
-          n: "Vórtice Plasma",
-          p: 3.9,
-          icon: "🌀",
-          type: "sup_plasma_vortex",
-          mp: 75,
-        },
-        sup_dark_comet: {
-          n: "Cometa Sombrio",
-          p: 4.2,
-          icon: "🌠",
-          type: "sup_dark_comet",
-          mp: 85,
-        },
-        // NOVAS HABILIDADES ELEMENTAIS (4)
-        crystal_spear: {
-          n: "Lança de Cristal",
-          p: 1.9,
-          icon: "💎",
-          type: "crystal_spear",
-          mp: 30,
-        },
-        lava_burst: {
-          n: "Erupção de Lava",
-          p: 2.0,
-          icon: "🌋",
-          type: "lava_burst",
-          mp: 35,
-        },
-        chain_lightning: {
-          n: "Raio em Cadeia",
-          p: 1.75,
-          icon: "🔗",
-          type: "chain_lightning",
-          mp: 28,
-        },
-        spectral_blade: {
-          n: "Lâmina Espectral",
-          p: 1.95,
-          icon: "👻",
-          type: "spectral_blade",
-          mp: 32,
-        },
-        // NOVAS HABILIDADES SUPREMAS (5)
-        sup_cosmic_storm: {
-          n: "Tempestade Cósmica",
-          p: 3.9,
-          icon: "🌌",
-          type: "sup_cosmic_storm",
-          mp: 70,
-        },
-        sup_infernal_apocalypse: {
-          n: "Apocalipse Infernal",
-          p: 4.3,
-          icon: "👺",
-          type: "sup_infernal_apocalypse",
-          mp: 85,
-        },
-        sup_frozen_eternity: {
-          n: "Eternidade Congelada",
-          p: 4.0,
-          icon: "🥶",
-          type: "sup_frozen_eternity",
-          mp: 75,
-        },
-        sup_natures_wrath: {
-          n: "Ira da Natureza",
-          p: 3.8,
-          icon: "🥀",
-          type: "sup_natures_wrath",
-          mp: 68,
-        },
-        sup_void_collapse: {
-          n: "Colapso do Vazio",
-          p: 4.6,
-          icon: "🕳️",
-          type: "sup_void_collapse",
-          mp: 95,
-        },
+        wind_blade: { n: "Lâmina de Vento", p: 1.7, icon: "🌪️", type: "wind_blade", mp: 25 },
+        
+        // TIER 3 (MID) - 30-40 MP
+        flame_burst: { n: "Explosão", p: 2.1, icon: "💥", type: "fire", mp: 35 },
+        ice_shards: { n: "Estilhaços", p: 1.8, icon: "🧊", type: "ice_shards", mp: 25 }, // Premium
+        poison_cloud: { n: "Nuvem Tóxica", p: 1.5, icon: "☠️", type: "poison_cloud", mp: 30 }, // Premium
+        shadow_strike: { n: "Golpe Sombrio", p: 2.2, icon: "🧛", type: "shadow_strike", mp: 30 }, // Premium
+        blood_drain: { n: "Drenar Vida", p: 1.6, icon: "🩸", type: "blood_drain", mp: 35 }, // Premium
+        earth_shatter: { n: "Tremor", p: 2.1, icon: "🧱", type: "earth_shatter", mp: 40 }, // Premium
+        chain_lightning: { n: "Raio em Cadeia", p: 1.75, icon: "🔗", type: "chain_lightning", mp: 30 }, // New
+        lava_burst: { n: "Tsunami de Lava", p: 2.2, icon: "🌋", type: "lava_burst", mp: 35 }, // New
+        spectral_blade: { n: "Lâmina Espectral", p: 1.95, icon: "👻", type: "spectral_blade", mp: 32 }, // New
+        crystal_spear: { n: "Lança de Cristal", p: 1.9, icon: "💎", type: "crystal_spear", mp: 30 }, // New
+
+        // TIER 4 (HIGH) - 45-55 MP
+        tornado: { n: "Tornado", p: 2.5, icon: "🌪️", type: "wind_blade", mp: 45 },
+        tidal_wave: { n: "Maremoto", p: 2.4, icon: "🌊", type: "water", mp: 45 },
+        boulder_crash: { n: "Desmoronamento", p: 2.6, icon: "🪨", type: "earth", mp: 50 },
+        thunder_storm: { n: "Tempestade", p: 2.5, icon: "⛈️", type: "thunder_storm", mp: 50 }, // Premium
+        holy_beam: { n: "Luz Divina", p: 3.0, icon: "✨", type: "holy_beam", mp: 45 }, // Premium
+        meteor_strike: { n: "Meteoro", p: 3.2, icon: "☄️", type: "meteor_strike", mp: 55 }, // Premium
+        arcane_barrage: { n: "Mísseis Arcanos", p: 2.0, icon: "🔮", type: "arcane_barrage", mp: 35 }, // Premium
+
+        // TIER 5 (ULTIMATE/SUPREME) - 60+ MP - 5 STAR EXCLUSIVE VISUALS
+        sup_lightning: { n: "Julgamento", p: 3.0, icon: "🌩️", type: "lightning_sup", mp: 50 }, // Original 5*
+        sup_water: { n: "Tsunami", p: 2.8, icon: "🌊", type: "water_sup", mp: 50 }, // Original 5*
+        sup_fire: { n: "Chuva Meteoros", p: 3.2, icon: "☄️", type: "fire_sup", mp: 50 }, // Original 5*
+        sup_earth: { n: "Avalanche", p: 3.0, icon: "🌋", type: "earth_sup", mp: 50 }, // Original 5*
+        sup_void: { n: "Devastação", p: 3.5, icon: "⚫", type: "void_sup", mp: 60 }, // Original 5*
+        
+        sup_dragon_breath: { n: "Hálito Dragão", p: 4.0, icon: "🐲", type: "sup_dragon_breath", mp: 80 },
+        sup_celestial_judgement: { n: "Espada Celestial", p: 4.5, icon: "⚖️", type: "sup_celestial_judgement", mp: 90 },
+        sup_forest_fury: { n: "Fúria Florestal", p: 3.7, icon: "🌲", type: "sup_forest_fury", mp: 65 },
+        sup_frozen_eternity: { n: "Eternidade Congelada", p: 4.0, icon: "🥶", type: "sup_frozen_eternity", mp: 75 },
+        sup_infernal_apocalypse: { n: "Apocalipse Infernal", p: 4.3, icon: "👺", type: "sup_infernal_apocalypse", mp: 85 },
+        sup_void_collapse: { n: "Colapso do Vazio", p: 4.6, icon: "🕳️", type: "sup_void_collapse", mp: 95 },
+        sup_plasma_vortex: { n: "Vórtice Plasma", p: 3.9, icon: "🌀", type: "sup_plasma_vortex", mp: 75 }, 
+        sup_black_lotus: { n: "Lótus Negra", p: 3.8, icon: "🪷", type: "sup_black_lotus", mp: 70 },
+        
+        sup_silver_rain: { n: "Chuva de Prata", p: 3.5, icon: "🌧️", type: "sup_silver_rain", mp: 60 },
+        sup_ether_chains: { n: "Cadeias Éter", p: 3.2, icon: "⛓️", type: "sup_ether_chains", mp: 55 },
+        sup_gravity_pulse: { n: "Pulso Gravitacional", p: 3.6, icon: "🪐", type: "sup_gravity_pulse", mp: 65 },
+        sup_ice_butterflies: { n: "Butterflies Ice", p: 3.4, icon: "🦋", type: "sup_ice_butterflies", mp: 60 },
+        sup_dark_comet: { n: "Cometa Sombrio", p: 4.2, icon: "🌠", type: "sup_dark_comet", mp: 85 },
+        sup_cosmic_storm: { n: "Tempestade Cósmica", p: 3.9, icon: "🌌", type: "sup_cosmic_storm", mp: 70 },
+        sup_natures_wrath: { n: "Ira da Natureza", p: 3.8, icon: "🥀", type: "sup_natures_wrath", mp: 68 },
       };
 
       const MAX_LEVELS = {
@@ -1096,14 +885,16 @@
             state.user.crystals = 200;
             state.user.gold = 0;
             state.user.lvl = 1;
-            state.user.tickets_common = 5;
+            state.user.tickets_common = 0; // Changed from 5
             state.user.tickets_epic = 10;
+            state.user.hasFirst5Star = false; // Newbie Luck Flag
             state.user.icon = selectedLoginIcon; // Save Icon
             state.inventory = [];
             state.equipment = [];
-            addMonster("thyron");
-            addMonster("vireya");
-            addMonster("slime");
+            
+            // Removed starter monsters (Thyron, Vireya, Slime)
+            // User starts with nothing and must summon using the 10 epic tickets
+            
             showToast(`Conta criada: ${val}`);
           }
 
@@ -1443,33 +1234,52 @@ const renderStory = () => {
         for (let i = 0; i < amount; i++) {
           let rarity = "common";
           const r = Math.random();
-
+          
           if (type === "common") {
-            // Common Ticket: Mostly 1-2 stars, rare chance for 3-4
-            if (r < 0.75) rarity = "common"; // 75% - nat 1-2
-            else if (r < 0.97) rarity = "rare"; // 22% - nat 3
-            else if (r < 0.995) rarity = "epic"; // 2.5% - nat 4
-            else rarity = "legendary"; // 0.5% - nat 5 (Summoners War rate!)
+            // TICKET COMUM: Apenas 1 a 3 estrelas
+            // 85% Comum (1-2*), 15% Raro (3*)
+            if (r < 0.85) rarity = "common";
+            else rarity = "rare";
           } else {
-            // Epic Ticket: Guaranteed 3+ stars
-            if (r < 0.925) rarity = "rare"; // 92.5% - nat 3
-            else if (r < 0.995) rarity = "epic"; // 7% - nat 4
-            else rarity = "legendary"; // 0.5% - nat 5 (Summoners War rate!)
+            // TICKET ÉPICO: Apenas 3 a 5 estrelas
+            // Newbie Luck Logic: If user hasn't gotten their first 5* yet, boost rates significantly
+            let chanceLegendary = 0.005; // 0.5% default (Summoners War standard)
+            let chanceEpic = 0.08;       // 8% default
+            
+            // NEWBIE LUCK BOOST
+            if (state.user.hasFirst5Star === false || state.user.hasFirst5Star === undefined) {
+                 chanceLegendary = 0.10; // 10% chance for first nat 5!
+                 console.log("Newbie Luck Active! 10% rate");
+            }
+
+            if (r < chanceLegendary) {
+                rarity = "legendary";
+            } else if (r < chanceLegendary + chanceEpic) {
+                rarity = "epic";
+            } else {
+                rarity = "rare"; // Fallback to 3*
+            }
           }
 
-          let minStar = 1,
-            maxStar = 2;
+          // Definir intervalo de estrelas baseado na raridade
+          let minStar = 1, maxStar = 2;
+          
+          if (rarity === "common") {
+              minStar = 1; maxStar = 2;
+          }
           if (rarity === "rare") {
-            minStar = 3;
-            maxStar = 3;
+            minStar = 3; maxStar = 3;
           }
           if (rarity === "epic") {
-            minStar = 4;
-            maxStar = 4;
+            minStar = 4; maxStar = 4;
           }
           if (rarity === "legendary") {
-            minStar = 5;
-            maxStar = 5;
+            minStar = 5; maxStar = 5;
+            // Mark newbie luck as used if this is a 5-star
+            // We'll update the state flag after the loop or right here
+            if (state.user.hasFirst5Star === false || state.user.hasFirst5Star === undefined) {
+                 state.user.hasFirst5Star = true;
+            }
           }
 
           const pool = MONSTERS_DB.filter(
