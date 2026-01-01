@@ -1701,126 +1701,134 @@ const renderStory = () => {
         document.getElementById("summon-results").classList.add("hidden");
       };
 
-      const createEquipment = (floorLevel = 1, dungeonType = "golem") => {
-        // NEW SYSTEM: 4 Slots
-        // Slot 1: Weapon (ATK)
-        // Slot 2: Armor (DEF + HP)
-        // Slot 3: Helmet (HP)
-        // Slot 4: Accessory (CRIT/CDMG)
-        
-        // Determine slot based on dungeon type
-        let slot;
-        if (dungeonType === "golem") {
-          // Golem drops slots 1, 2, 3
-          slot = [1, 2, 3][Math.floor(Math.random() * 3)];
-        } else if (dungeonType === "dragon") {
-          // Dragon drops slots 2, 3, 4
-          slot = [2, 3, 4][Math.floor(Math.random() * 3)];
-        } else {
-          // XP Rift drops all slots
-          slot = Math.floor(Math.random() * 4) + 1;
-        }
+      // Helper to generate a random substat
+      const generateSubStat = (excludeTypes = []) => {
+          const types = ["atk", "def", "hp", "crit", "cdmg", "spd", "res", "acc"].filter(t => !excludeTypes.includes(t));
+          const type = types[Math.floor(Math.random() * types.length)];
+          
+          let val = 0;
+          // Substat Ranges (SW Style - slightly simplified/adapted)
+          switch(type) {
+              case "atk": val = Math.floor(Math.random() * 4) + 5; break; // 5-8%
+              case "def": val = Math.floor(Math.random() * 4) + 5; break; // 5-8%
+              case "hp":  val = Math.floor(Math.random() * 4) + 5; break; // 5-8%
+              case "crit": val = Math.floor(Math.random() * 3) + 4; break; // 4-6%
+              case "cdmg": val = Math.floor(Math.random() * 4) + 4; break; // 4-7%
+              case "spd": val = Math.floor(Math.random() * 3) + 4; break; // 4-6
+              case "res": val = Math.floor(Math.random() * 4) + 4; break; // 4-8%
+              case "acc": val = Math.floor(Math.random() * 4) + 4; break; // 4-8%
+          }
+          return { type, value: val };
+      };
 
-        // Determine set based on dungeon type
+      const createEquipment = (floorLevel = 1, dungeonType = "golem") => {
+        // Slot selection
+        let slot;
+        if (dungeonType === "golem") slot = [1, 2, 3][Math.floor(Math.random() * 3)];
+        else if (dungeonType === "dragon") slot = [2, 3, 4][Math.floor(Math.random() * 3)];
+        else slot = Math.floor(Math.random() * 4) + 1;
+
+        // Set selection
         let availableSets;
-        if (dungeonType === "golem") {
-          availableSets = ["energy", "guard", "swift"];
-        } else if (dungeonType === "dragon") {
-          availableSets = ["rage", "blade", "fatal", "violent"];
-        } else {
-          // XP Rift can drop any set
-          availableSets = Object.keys(EQUIPMENT_SETS);
-        }
+        if (dungeonType === "golem") availableSets = ["energy", "guard", "swift"];
+        else if (dungeonType === "dragon") availableSets = ["rage", "blade", "fatal", "violent"];
+        else availableSets = Object.keys(EQUIPMENT_SETS);
         
         const set = availableSets[Math.floor(Math.random() * availableSets.length)];
 
-        // Rarity logic based on floor level
-        let rarity = "common";
+        // Rarity Logic
         const r = Math.random();
+        let rarity = "common";
+        // Simple rarity curve based on floor
+        let chanceLegend = 0.01 + (floorLevel * 0.005); // Max ~7% at floor 12
+        let chanceEpic = 0.05 + (floorLevel * 0.02);    // Max ~29%
+        let chanceRare = 0.2 + (floorLevel * 0.05);     // Max ~80%
+        
+        if (r < chanceLegend) rarity = "legendary";
+        else if (r < chanceLegend + chanceEpic) rarity = "epic";
+        else if (r < chanceLegend + chanceEpic + chanceRare) rarity = "rare";
+        else rarity = "common";
 
-        let chanceCommon = 0.8;
-        let chanceRare = 0.99;
-        let chanceEpic = 1.0;
-
-        if (floorLevel <= 3) {
-          chanceCommon = 0.8;
-          chanceRare = 0.99;
-        } else if (floorLevel <= 6) {
-          chanceCommon = 0.5;
-          chanceRare = 0.9;
-          chanceEpic = 0.99;
-        } else if (floorLevel <= 9) {
-          chanceCommon = 0.3;
-          chanceRare = 0.8;
-          chanceEpic = 0.95;
-        } else {
-          chanceCommon = 0.1;
-          chanceRare = 0.5;
-          chanceEpic = 0.85;
-        }
-
-        if (r < chanceCommon) rarity = "common";
-        else if (r < chanceRare) rarity = "rare";
-        else if (r < chanceEpic) rarity = "epic";
-        else rarity = "legendary";
-
-        const base = EQ_RARITY[rarity];
+        const base = EQ_RARITY[rarity]; // Keeps color/name info
+        
         const eq = {
           id: "eq_" + Date.now() + Math.random().toString(36).substr(2, 9),
           slot: slot,
           set: set,
           rarity: rarity,
           lvl: 0,
-          stats: { atk: 0, hp: 0, def: 0, crit: 0, cdmg: 0 },
+          // NEW STRUCTURE
+          stats: {
+              main: {},
+              subs: []
+          }
         };
 
-        // Main stat based on slot
+        // Main Stat Definition
         if (slot === 1) {
-          // Weapon: ATK
-          eq.type = "weapon";
-          eq.stats.atk = Math.floor(15 * base.mult);
+             eq.type = "weapon";
+             eq.stats.main = { type: "atk", value: 100 }; // Flat ATK for weapon usually, simplified to 100 base
         } else if (slot === 2) {
-          // Armor: DEF + HP
-          eq.type = "armor";
-          eq.stats.def = Math.floor(10 * base.mult);
-          eq.stats.hp = Math.floor(80 * base.mult);
+             eq.type = "armor";
+             // Can be DEF or HP or DEF% / HP%? Let's stick to flat or %?
+             // SW: Slot 1 flat Atk, Slot 3 flat Def, Slot 5 flat HP.
+             // Here we have 4 slots. 
+             // Slot 1: Weapon (ATK)
+             // Slot 2: Armor (DEF or HP)
+             // Slot 3: Helmet (HP or DEF)
+             // Slot 4: Acc (CRIT/CDMG/ATK%/HP%/DEF%)
+             
+             // Simplification for PaperWar:
+             // Slot 1: Flat ATK
+             // Slot 2: Flat DEF
+             // Slot 3: Flat HP
+             // Slot 4: % Stats (Crit, CDmg, Atk%, Hp%)
+             
+             // BUT user wants functionality. 
+             // Let's use:
+             // Slot 1: ATK (Flat)
+             // Slot 2: DEF (Flat)
+             // Slot 3: HP (Flat)
+             // Slot 4: Random % Main Stat (Crit, CDmg, Atk, Def, Hp, Spd)
+             
+             eq.type = "armor";
+             eq.stats.main = { type: "def", value: 70 };
         } else if (slot === 3) {
-          // Helmet: HP
-          eq.type = "helmet";
-          eq.stats.hp = Math.floor(120 * base.mult);
+             eq.type = "helmet";
+             eq.stats.main = { type: "hp", value: 300 };
         } else if (slot === 4) {
-          // Accessory: CRIT or CDMG
-          eq.type = "acc";
-          if (Math.random() < 0.5) {
-            eq.stats.crit = Math.floor(4 * base.mult);
-          } else {
-            eq.stats.cdmg = Math.floor(10 * base.mult);
-          }
+             eq.type = "acc";
+             const opts = ["crit", "cdmg", "atk", "hp", "def", "spd"];
+             const pick = opts[Math.floor(Math.random() * opts.length)];
+             
+             let val = 0;
+             if (pick === "crit") val = 7;
+             else if (pick === "cdmg") val = 11;
+             else if (pick === "spd") val = 7;
+             else val = 10; // atk/def/hp %
+             
+             eq.stats.main = { type: pick, value: val };
         }
 
-        // Random Substats
-        const subStatCount =
-          rarity === "legendary"
-            ? 3
-            : rarity === "epic"
-            ? 2
-            : rarity === "rare"
-            ? 1
-            : 0;
-            
-        for (let i = 0; i < subStatCount; i++) {
-          const sub = Math.random();
-          if (sub < 0.25)
-            eq.stats.atk = (eq.stats.atk || 0) + Math.floor(5 * base.mult);
-          else if (sub < 0.5)
-            eq.stats.def = (eq.stats.def || 0) + Math.floor(5 * base.mult);
-          else if (sub < 0.625)
-            eq.stats.hp = (eq.stats.hp || 0) + Math.floor(30 * base.mult);
-          else if (sub < 0.8125) 
-            eq.stats.crit = (eq.stats.crit || 0) + 1;
-          else 
-            eq.stats.cdmg = (eq.stats.cdmg || 0) + 2;
+        // Substats Generation
+        let subCount = 0;
+        if (rarity === "legendary") subCount = 4;
+        else if (rarity === "epic") subCount = 3;
+        else if (rarity === "rare") subCount = 2;
+        
+        const existingTypes = [eq.stats.main.type];
+        
+        for(let i=0; i<subCount; i++) {
+            const sub = generateSubStat(existingTypes);
+            eq.stats.subs.push(sub);
+            existingTypes.push(sub.type);
         }
+        
+        // BACKWARD COMPATIBILITY / FLATTENING
+        // For easy calculation in calculateStats, we might want a 'total' or handle it there.
+        // Let's ensure 'calculateStats' (next refactor) handles this structure.
+        // For now, I will NOT set flattened properties like eq.stats.atk = X. 
+        // I will rely on updating calculateStats.
 
         return eq;
       };
@@ -2116,10 +2124,52 @@ const renderStory = () => {
         if (success) {
           // Update equipment stats
           eq.lvl++;
-          if (eq.stats.atk) eq.stats.atk += Math.ceil(eq.stats.atk * 0.1) + 2;
-          if (eq.stats.def) eq.stats.def += Math.ceil(eq.stats.def * 0.1) + 1;
-          if (eq.stats.crit) eq.stats.crit += 1;
-          if (eq.stats.cdmg) eq.stats.cdmg += 2;
+          
+          // 1. Upgrade Main Stat
+          if (eq.stats.main) {
+             const type = eq.stats.main.type;
+             const val = eq.stats.main.value;
+             
+             // Flat stats (weapon/armor/helmet slots 1-3 usually)
+             if (["atk", "def", "hp"].includes(type) && [1,2,3].includes(eq.slot) && type !== "spd") {
+                 eq.stats.main.value = Math.ceil(val * 1.1); // +10% base increase per level
+             } else {
+                 // % stats or SPD
+                 // SPD usually doesn't increase on main stat in SW unless it's slot 2, but here we simplify
+                 // % stats usually +2% or +3% per level
+                 if (type === "spd") eq.stats.main.value += 1; // +1 spd
+                 else if (val < 20) eq.stats.main.value += 1;
+                 else eq.stats.main.value += 2;
+             }
+          } else {
+              // Legacy fallback
+              if (eq.stats.atk) eq.stats.atk += Math.ceil(eq.stats.atk * 0.1) + 2;
+              if (eq.stats.def) eq.stats.def += Math.ceil(eq.stats.def * 0.1) + 1;
+              if (eq.stats.crit) eq.stats.crit += 1;
+              if (eq.stats.cdmg) eq.stats.cdmg += 2;
+          }
+
+          // 2. Milestones / Substats logic (+3, +6, +9, +12)
+          let upgradeMsg = "";
+          
+          if (eq.lvl % 3 === 0 && eq.lvl <= 12) {
+              if (!eq.stats.subs) eq.stats.subs = [];
+              
+              if (eq.stats.subs.length < 4) {
+                  // Add NEW substat
+                  const existing = [eq.stats.main?.type, ...eq.stats.subs.map(s=>s.type)];
+                  const newSub = generateSubStat(existing);
+                  eq.stats.subs.push(newSub);
+                  upgradeMsg = `Novo Substatus: ${newSub.type.toUpperCase()} +${newSub.value}`;
+              } else {
+                  // Enhance EXISTING substat
+                  const idx = Math.floor(Math.random() * eq.stats.subs.length);
+                  const sub = eq.stats.subs[idx];
+                  const roll = generateSubStat([]).value; // Get a roll value
+                  sub.value += roll;
+                  upgradeMsg = `${sub.type.toUpperCase()} aumentou +${roll}!`;
+              }
+          }
           
           // Success flash
           if (container) {
@@ -2136,7 +2186,7 @@ const renderStory = () => {
             animOverlay.classList.add("flex");
           }
           
-          showToast("Upgrade Sucesso! +" + eq.lvl, "success");
+          showToast(`Upgrade Sucesso! +${eq.lvl}` + (upgradeMsg ? `<br><span class='text-yellow-300 text-xs'>${upgradeMsg}</span>` : ""), "success");
           
           await sleep(1200);
           
@@ -2557,52 +2607,106 @@ const renderStory = () => {
         let spd = 100; // Base speed
         
         // Equipment Stats (NEW SYSTEM)
+        // Equipment Stats (NEW SYSTEM)
         if (mon.equipped) {
-            // NEW SYSTEM: 4 slots
+            // Helper to apply stat
+            const addStat = (type, val) => {
+                if (!val) return;
+                switch(type) {
+                    case 'atk': atk += val; break; // Flat
+                    case 'def': def += val; break; // Flat
+                    case 'hp':  hp += val; break;  // Flat
+                    case 'spd': spd += val; break; // Flat
+                    case 'crit': crit += val; break;
+                    case 'cdmg': cdmg += val; break;
+                    case 'res': break; // not used yet
+                    case 'acc': break; // not used yet
+                }
+            };
+            
+            // Helper for % stats (if we had them as distinct types, e.g. "atk%")
+            // For now, our generateSubStat uses "atk" but the value is small (5-8), implying %?
+            // "val = Math.floor(Math.random() * 4) + 5; // 5-8%" in createEquipment comment.
+            // But here we add to 'atk' (flat).
+            // Users wanted "functional" stats. 
+            // If base ATK is 100, +5 ATK is +5%. 
+            // But if base ATK is 1000, +5 ATK is nothing.
+            // Summoners War uses % stats heavily.
+            // Let's assume the generated substats ARE percentages for Atk/Def/Hp if the value is small?
+            // No, that's ambiguous.
+            // Let's stick to adding them as-is to the total for now, or treat them as % if we change logic layer.
+            // For this iteration/prompt "manter a mesma aleatoriedade... capaz de ficar muito bom",
+            // if we treat them as %, we need to calculate base * pct.
+            
+            // REVISED LOGIC: Treat ALL secondary Atk/Def/Hp as PERCENTAGE of base?
+            // Or just keep them as flat for simplicity but boost the numbers?
+            // The prompt says "igual o modo de upgrade de summoners war".
+            // In SW: Slot 2/4/6 can be %. Substats can be %.
+            // Current code `atk += eq.stats.atk` implies flat addition.
+            // Let's implement % logic for substats to make them "Good"
+            let bonusPct = { atk: 0, hp: 0, def: 0 };
+            
             ['slot1', 'slot2', 'slot3', 'slot4'].forEach(slotKey => {
               if (mon.equipped[slotKey]) {
                 const eq = state.equipment.find(e => e.id === mon.equipped[slotKey]);
                 if (eq && eq.stats) {
-                  atk += eq.stats.atk || 0;
-                  hp += eq.stats.hp || 0;
-                  def += eq.stats.def || 0;
-                  crit += eq.stats.crit || 0;
-                  cdmg += eq.stats.cdmg || 0;
+                  // 1. Handle NEW Structure
+                  if (eq.stats.main) {
+                      // Main Stat
+                      const m = eq.stats.main;
+                      // Determine if it's % or flat.
+                      // Slot 1/2/3 Main stats are usually flat in our createEquipment
+                      // Slot 4 was "atk", "hp", etc with value 10 -> likely %.
+                      if (eq.slot === 4 || m.type === 'crit' || m.type === 'cdmg') {
+                           if (['atk','def','hp'].includes(m.type)) bonusPct[m.type] += m.value;
+                           else addStat(m.type, m.value);
+                      } else {
+                           // Flat
+                           addStat(m.type, m.value);
+                      }
+                  }
+                  
+                  if (eq.stats.subs) {
+                      eq.stats.subs.forEach(sub => {
+                          if (['atk','def','hp'].includes(sub.type)) {
+                              bonusPct[sub.type] += sub.value;
+                          } else {
+                              addStat(sub.type, sub.value);
+                          }
+                      });
+                  }
+
+                  // 2. Handle LEGACY Structure
+                  if (!eq.stats.main && !eq.stats.subs) {
+                       if (eq.stats.atk) atk += eq.stats.atk;
+                       if (eq.stats.hp) hp += eq.stats.hp;
+                       if (eq.stats.def) def += eq.stats.def;
+                       if (eq.stats.crit) crit += eq.stats.crit;
+                       if (eq.stats.cdmg) cdmg += eq.stats.cdmg;
+                  }
                 }
               }
             });
             
-            // OLD SYSTEM COMPATIBILITY (weapon, armor, acc)
-            if (mon.equipped.weapon) {
-                const eq = state.equipment.find(e => e.id === mon.equipped.weapon);
-                if (eq && eq.stats) {
-                  atk += eq.stats.atk || 0;
-                  hp += eq.stats.hp || 0;
-                  def += eq.stats.def || 0;
-                  crit += eq.stats.crit || 0;
-                  cdmg += eq.stats.cdmg || 0;
-                }
-            }
-            if (mon.equipped.armor) {
-                const eq = state.equipment.find(e => e.id === mon.equipped.armor);
-                if (eq && eq.stats) {
-                  atk += eq.stats.atk || 0;
-                  hp += eq.stats.hp || 0;
-                  def += eq.stats.def || 0;
-                  crit += eq.stats.crit || 0;
-                  cdmg += eq.stats.cdmg || 0;
-                }
-            }
-            if (mon.equipped.acc) {
-                const eq = state.equipment.find(e => e.id === mon.equipped.acc);
-                if (eq && eq.stats) {
-                  atk += eq.stats.atk || 0;
-                  hp += eq.stats.hp || 0;
-                  def += eq.stats.def || 0;
-                  crit += eq.stats.crit || 0;
-                  cdmg += eq.stats.cdmg || 0;
-                }
-            }
+            // Compatibility: Legacy items had "atk: 15" which was flat.
+            // New items have "subs: [{type: atk, value: 5}]".
+            // If we treat new subs as %, +5% is better than +5 flat for high level mons.
+            
+            // Apply Percentages to Base (before flat additions? No, base stats are `mon.atk * m`)
+            // Let's apply % to the calculated base using `m` (lvl/star multiplier)
+            const baseAtk = Math.floor(mon.atk * m * rAtk);
+            const baseHp = Math.floor(mon.hp * m * rHp);
+            const baseDef = Math.floor(mon.def * m * rDef);
+            
+            atk += Math.floor(baseAtk * (bonusPct.atk / 100));
+            hp += Math.floor(baseHp * (bonusPct.hp / 100));
+            def += Math.floor(baseDef * (bonusPct.def / 100));
+            
+            // Legacy/Main Flat stats were added to `atk` already.
+            // Ideally: Total = Base * (1 + Pct) + Flat.
+            // Current code above adds Flat to `atk`.
+            // Then we add % of Base.
+            // Result: Base + Flat + (Base * Pct) = Base(1+Pct) + Flat. Correct.
         }
 
         // Apply Set Bonuses
