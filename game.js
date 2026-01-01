@@ -1898,168 +1898,228 @@ const renderStory = () => {
       };
 
       const renderUpgradeModal = () => {
+        // Use global currentEqId set by handleEqClick
         const eq = state.equipment.find((e) => e.id === currentEqId);
-        if (!eq) return;
+        if (!eq) return; 
 
         const modal = document.getElementById("eq-modal");
+        
+        // --- PREPARAÇÃO DE DADOS ---
+        const rarityInfo = EQ_RARITY[eq.rarity];
+        const colorClass = rarityInfo.color;
+        
+        // Info do Conjunto
+        let setInfo = "Sem Conjunto";
+        let setDesc = "";
+        let setIcon = "⚪";
+        
+        const setKey = Object.keys(EQUIPMENT_SETS).find(k => k === eq.set);
+        if (setKey) {
+            const s = EQUIPMENT_SETS[setKey];
+            setInfo = s.name;
+            setDesc = s.desc;
+            setIcon = s.icon || "💠";
+        }
+        
+        const isMax = eq.lvl >= 15;
+        const upgradeCost = 100 * (eq.lvl + 1);
+        const chance = Math.max(5, 100 - eq.lvl * 5); 
+
+        // HTML do Status Principal
+        let mainStatHtml = "";
+        if (eq.stats.main) {
+             const m = eq.stats.main;
+             mainStatHtml = `
+                <div class="flex flex-col items-center justify-center p-3 bg-gradient-to-b from-black/60 to-transparent rounded-lg border border-white/5 w-full mb-4 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-${rarityInfo.color.replace('text-', '')}-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span class="uppercase text-[10px] tracking-[0.2em] text-slate-400 font-bold mb-1">Atributo Principal</span>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-white drop-shadow-md">+${m.value}</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase">${m.type}</span>
+                    </div>
+                </div>
+             `;
+        } else {
+             mainStatHtml = `<div class="text-xs text-slate-500 italic mb-4">Status Legado</div>`;
+        }
+
+        // HTML dos Substatus
+        let subsHtml = "";
+        if (eq.stats.subs && eq.stats.subs.length > 0) {
+            subsHtml = eq.stats.subs.map(sub => `
+                <div class="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0 hover:bg-white/5 px-2 rounded transition-colors">
+                    <span class="text-xs font-bold text-slate-400 uppercase">${sub.type}</span>
+                    <span class="text-sm font-bold text-slate-200">+${sub.value}</span>
+                </div>
+            `).join("");
+        } else if (!eq.stats.main) {
+             // Fallback Legado
+             const legacyMap = {atk: "ATK", def: "DEF", hp: "HP", crit: "CRIT", cdmg: "DANO CRIT", spd: "VEL"};
+             Object.keys(legacyMap).forEach(key => {
+                 if(eq.stats[key]) {
+                      subsHtml += `
+                        <div class="flex justify-between items-center py-1 border-b border-white/5">
+                            <span class="text-xs text-slate-500">${legacyMap[key]}</span>
+                            <span class="text-sm text-slate-300 font-bold">+${eq.stats[key]}</span>
+                        </div>`;
+                 }
+             });
+        }
+        if (!subsHtml) subsHtml = "<div class='text-center text-[10px] text-slate-600 py-4'>Nenhum substatus</div>";
+        
+        // Info do Equipador
+        const equippedBy = getEquipperName(eq.id);
+        let equipActionHtml = "";
+        
+        if (equippedBy) {
+            // Se equipado pelo monstro ATUAL (na tela de detalhes), botão para DESEQUIPAR
+            const currentMon = state.inventory[selectedDetailIdx];
+            const isOwnedByCurrent = currentMon && isEquippedByMon(currentMon, eq.id);
+            
+            if (isOwnedByCurrent) {
+                 equipActionHtml = `
+                    <button onclick="unequipItem(${eq.id}, 500)" class="py-2.5 bg-[#1a1c24] text-red-400 font-bold text-xs rounded-lg border border-[#3e4252] hover:bg-red-900/20 hover:border-red-900/50 transition-all uppercase tracking-wide w-full">
+                        Desequipar (500 💰)
+                    </button>
+                 `;
+            } else {
+                 equipActionHtml = `
+                    <button disabled class="py-2.5 bg-[#1a1c24] text-slate-500 font-bold text-xs rounded-lg border border-[#3e4252] cursor-not-allowed uppercase tracking-wide w-full flex flex-col items-center">
+                        <span>Equipado em</span>
+                        <span class="text-[9px] text-white">${equippedBy}</span>
+                    </button>
+                 `;
+            }
+        } else {
+            // Se não equipado e estamos em detalhes, botão EQUIPAR
+             if (typeof selectedDetailIdx !== 'undefined' && selectedDetailIdx !== -1) {
+                 equipActionHtml = `
+                    <button onclick="equipFromDetail(${eq.id}); document.getElementById('eq-modal').classList.add('hidden');" class="py-2.5 bg-indigo-600 text-white font-bold text-xs rounded-lg border border-indigo-500 hover:bg-indigo-500 transition-all uppercase tracking-wide w-full shadow-lg hover:shadow-indigo-500/30">
+                        Equipar
+                    </button>
+                 `;
+             }
+        }
+
+
+        // --- RENDERIZAR HTML COMPLETO ---
+        // Substitui todo o conteúdo interno do modal para garantir o novo layout
+        
+        modal.innerHTML = `
+            <div class="relative w-full max-w-4xl bg-[#1a1c24] rounded-xl shadow-2xl border border-[#3e4252] overflow-hidden flex flex-col md:flex-row h-[85vh] md:h-auto animate-fade-in-up">
+                
+                <!-- CLOSE BTN -->
+                <button onclick="document.getElementById('eq-modal').classList.add('hidden')" class="absolute top-4 right-4 z-50 text-slate-400 hover:text-white transition-colors bg-black/50 hover:bg-red-500/80 rounded-full w-8 h-8 flex items-center justify-center">✕</button>
+
+                <!-- COLUNA ESQUERDA: VISUAL -->
+                <div class="md:w-5/12 bg-gradient-to-br from-[#12141a] to-[#1e2029] p-8 flex flex-col items-center justify-center relative border-r border-[#2d303b]">
+                     
+                     <!-- Título da Runa -->
+                     <h2 class="text-2xl font-black ${colorClass} uppercase tracking-wider mb-2 text-center drop-shadow-md">
+                        ${rarityInfo.name}
+                     </h2>
+                     <div class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-8">Runa Lv.${eq.lvl}</div>
+
+                     <!-- ÍCONE GRANDE DA RUNA -->
+                     <div id="eq-main-visual" class="relative w-48 h-48 mb-8 group select-none">
+                          <div class="absolute inset-0 bg-${rarityInfo.color.replace('text-', '')}-500/20 rounded-full blur-3xl animate-pulse group-hover:bg-${rarityInfo.color.replace('text-', '')}-500/30 transition-all"></div>
+                          
+                          <!-- Container Visual -->
+                          <div id="eq-icon-container" class="w-full h-full relative z-10 flex items-center justify-center transition-transform group-hover:scale-105 duration-300">
+                               <!-- Formas de Fundo -->
+                               <div id="eq-energy-ring-1" class="absolute inset-0 border-[6px] border-${rarityInfo.color.replace('text-', '')}-500/40 rounded-full rotate-45 shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all"></div>
+                               <div id="eq-energy-ring-2" class="absolute inset-2 border-[2px] border-dashed border-white/10 rounded-full animate-[spin_10s_linear_infinite] transition-all"></div>
+                               <div id="eq-upgrade-glow" class="absolute inset-0 rounded-full opacity-0 transition-all pointer-events-none"></div>
+                               
+                               <!-- Ícone -->
+                               <span class="text-8xl drop-shadow-2xl filter brightness-110 relative z-20">
+                                   ${eq.type === 'weapon' ? '⚔️' : eq.type === 'armor' ? '🛡️' : '💍'}
+                               </span>
+                               
+                               <!-- Badge de Nível -->
+                               <div class="absolute -bottom-2 bg-black/80 text-white text-sm font-black px-3 py-1 rounded-full border border-white/20 shadow-lg z-30">
+                                  +${eq.lvl}
+                               </div>
+                               
+                               <!-- Overlay de Animação (Sucesso/Falha) -->
+                               <div id="eq-anim-overlay" class="absolute inset-0 hidden items-center justify-center z-50 bg-black/40 backdrop-blur-[2px] rounded-full">
+                                    <span id="eq-anim-icon" class="text-6xl animate-bounce"></span>
+                               </div>
+                          </div>
+                     </div>
+
+                     <!-- Info do Conjunto -->
+                     <div class="flex items-center gap-3 bg-black/30 px-4 py-2 rounded-lg border border-white/5 shadow-inner">
+                        <span class="text-2xl filter grayscale opacity-70">${setIcon}</span>
+                        <div class="text-left">
+                            <div class="text-xs font-bold text-slate-300 uppercase">${setInfo}</div>
+                            <div class="text-[10px] text-slate-500 break-words max-w-[120px] leading-tight">${setDesc}</div>
+                        </div>
+                     </div>
+                </div>
+
+                <!-- COLUNA DIREITA: STATUS & AÇÕES -->
+                <div class="md:w-7/12 p-8 bg-[#232631] flex flex-col relative text-left">
+                     
+                     <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar text-left h-full max-h-[400px]">
+                        
+                        <!-- Status Principal -->
+                        ${mainStatHtml}
+
+                        <!-- Bloco de Substatus -->
+                        <div class="bg-black/20 rounded-lg p-4 border border-white/5 mb-6 text-left shadow-inner">
+                             <h3 class="text-[10px] text-slate-500 uppercase font-bold mb-3 tracking-wider text-left pl-2">Propriedades Mágicas</h3>
+                             <div class="space-y-1 text-left">
+                                ${subsHtml}
+                             </div>
+                        </div>
+                        
+                        <!-- Separador -->
+                        <div class="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6"></div>
+
+                     </div>
+
+                     <!-- ÁREA DE AÇÃO (Rodapé) -->
+                     <div class="mt-auto pt-4 text-left border-t border-white/5">
+                        
+                        ${!isMax ? `
+                            <div class="flex items-center justify-between mb-3 text-xs text-slate-400 px-1">
+                                <span>Custo: <span class="text-yellow-400 font-bold">${upgradeCost}</span> 🪙</span>
+                                <span>Chance: <span class="text-${chance > 50 ? 'green' : chance > 20 ? 'yellow' : 'red'}-400 font-bold">${chance}%</span></span>
+                            </div>
+                            
+                            <button id="btn-upgrade-action" onclick="performUpgrade(${eq.id})" class="w-full relative group overflow-hidden bg-gradient-to-r from-orange-600 to-red-600 text-white font-black py-4 rounded-xl shadow-lg border-t border-white/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:grayscale">
+                                <span class="relative z-10 flex items-center justify-center gap-2 text-lg uppercase tracking-wider">
+                                    Power-up
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </span>
+                                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                            </button>
+                        ` : `
+                            <div class="w-full bg-slate-700/50 border border-slate-600 text-slate-400 font-bold py-4 rounded-xl text-center uppercase tracking-widest text-sm select-none">
+                                Nível Máximo Atingido
+                            </div>
+                        `}
+
+                        <div class="grid grid-cols-2 gap-3 mt-3">
+                            <button onclick="sellEquipment(${eq.id})" ${equippedBy ? 'disabled' : ''} class="py-2.5 bg-[#1a1c24] text-slate-400 font-bold text-xs rounded-lg border border-[#3e4252] hover:bg-red-900/20 hover:text-red-400 hover:border-red-900/50 transition-all uppercase tracking-wide disabled:opacity-30 disabled:cursor-not-allowed">
+                                Vender (${Math.floor(upgradeCost * 2.5)})
+                            </button>
+                            ${equipActionHtml}
+                        </div>
+
+                     </div>
+                </div>
+            </div>
+        `;
+        
         modal.classList.remove("hidden");
         modal.classList.add("flex");
-
-        const conf = EQ_RARITY[eq.rarity];
-        
-        // Definir ícone do equipamento
-        // Ajuda para obter tipo se estiver faltando (itens legados)
-        let eqType = eq.type;
-        if (!eqType) {
-            if (eq.slot === 1) eqType = "weapon";
-            else if (eq.slot === 2) eqType = "armor";
-            else if (eq.slot === 3) eqType = "helmet";
-            else if (eq.slot === 4) eqType = "acc";
-            else eqType = "unknown";
-        }
-
-        const iconMap = {
-          weapon: "⚔️",
-          armor: "🛡️",
-          helmet: "⛑️",
-          acc: "💍"
-        };
-        const iconEl = document.getElementById("eq-modal-icon");
-        if (iconEl) iconEl.innerText = iconMap[eqType] || "⚔️";
-        
-        document.getElementById("eq-modal-title").innerText = `${
-          conf.name
-        } ${eqType.toUpperCase()}`;
-        document.getElementById(
-          "eq-modal-title"
-        ).className = `text-xl font-bold mb-2 ${conf.color.replace(
-          "border-color:",
-          "text-"
-        )}`;
-        document.getElementById("eq-modal-level").innerText = `+${eq.lvl}`;
-
-        // LIMPAR TUDO ANTES
-        const statContainer = document.getElementById("eq-stat-container");
-        if (statContainer) {
-             statContainer.innerHTML = ""; // Limpar status antigos hardcoded
-             
-             // 1. STATUS PRINCIPAL (Destaque)
-             if (eq.stats.main) {
-                 const m = eq.stats.main;
-                 const mainDiv = document.createElement("div");
-                 mainDiv.className = "flex justify-between items-center text-white font-bold text-lg border-b border-white/10 pb-2 mb-2";
-                 mainDiv.innerHTML = `
-                    <span class="uppercase text-sm text-slate-400">${m.type.toUpperCase()}</span>
-                    <span class="text-xl text-yellow-400">+${m.value}</span>
-                 `;
-                 statContainer.appendChild(mainDiv);
-             } else {
-                 // Fallback Legado
-                 const mainDiv = document.createElement("div");
-                 mainDiv.className = "text-center text-slate-500 italic text-xs mb-2";
-                 mainDiv.innerText = "Item Antigo (Status Legado)";
-                 statContainer.appendChild(mainDiv);
-             }
-
-             // 2. SUBSTATUS
-             if (eq.stats.subs && eq.stats.subs.length > 0) {
-                 eq.stats.subs.forEach(sub => {
-                     const subDiv = document.createElement("div");
-                     subDiv.className = "flex justify-between items-center text-sm text-slate-300";
-                     subDiv.innerHTML = `
-                        <span>${sub.type.toUpperCase()}</span>
-                        <span class="font-bold">+${sub.value}</span>
-                     `;
-                     statContainer.appendChild(subDiv);
-                 });
-             } else if (!eq.stats.main) {
-                 // Mostrar status legados se não houver estrutura nova
-                 const legacyStats = ['atk', 'def', 'hp', 'crit', 'cdmg', 'spd'];
-                 legacyStats.forEach(k => {
-                     if (eq.stats[k]) {
-                         const subDiv = document.createElement("div");
-                         subDiv.className = "flex justify-between items-center text-sm text-slate-300";
-                         subDiv.innerHTML = `<span>${k.toUpperCase()}</span><span class="font-bold">+${eq.stats[k]}</span>`;
-                         statContainer.appendChild(subDiv);
-                     }
-                 });
-             }
-        }
-
-        const cost = 100 * (eq.lvl + 1);
-        const chance = Math.max(5, 100 - eq.lvl * 5);
-        const sellPrice = 50 * (eq.lvl + 1) * conf.mult;
-
-        const btn = document.getElementById("btn-upgrade");
-        document.getElementById("upg-cost").innerText = cost;
-        document.getElementById("sell-price").innerText = Math.floor(sellPrice);
-        document.getElementById("upg-chance").innerText = `Sucesso: ${chance}%`;
-
-        btn.onclick = () => performUpgrade(eq, cost, chance);
-        
-        // --- GERENCIAR LÓGICA DO BOTÃO ---
-        const manageBtn = document.getElementById("btn-equip-manage");
-        const equippedBy = getEquipperName(eq.id);
-        const ownerTxt = document.getElementById("eq-equipped-by");
-        const container = document.getElementById("eq-icon-container"); // Missing declaration fixed
-        
-        // Feedback Visual de Raridade no Ícone do Modal
-        if (container) {
-            const borderColor = conf.color.includes("yellow") ? "#fbbf24" : 
-                                conf.color.includes("purple") ? "#a855f7" : 
-                                conf.color.includes("blue") ? "#3b82f6" : "#475569";
-            container.style.borderColor = borderColor;
-            container.style.boxShadow = `0 0 15px ${borderColor}40`;
-        }
-
-        if (equippedBy) {
-          // ITEM ESTÁ EQUIPADO
-          ownerTxt.innerText = `Equipado em: ${equippedBy}`;
-          ownerTxt.classList.remove("hidden");
-          
-          document.getElementById("btn-sell").disabled = true;
-          document.getElementById("btn-sell").classList.add("opacity-50", "grayscale");
-          
-          // Mostrar opção de DESEQUIPAR se estiver equipado pelo monstro ATUAL (sensível ao contexto)
-          const currentMon = state.inventory[selectedDetailIdx];
-          const isOwnedByCurrent = currentMon && isEquippedByMon(currentMon, eq.id);
-          
-          if (isOwnedByCurrent) {
-              manageBtn.textContent = "Desequipar (500 💰)";
-              manageBtn.classList.remove("hidden", "bg-indigo-600");
-              manageBtn.classList.add("bg-red-600", "hover:bg-red-500");
-              manageBtn.onclick = () => unequipItem(eq.id, 500);
-          } else {
-              // Equipado por outro -> Desabilitar ou Mostrar Info
-              manageBtn.textContent = `Equipado em ${equippedBy}`;
-              manageBtn.classList.remove("hidden", "bg-indigo-600", "bg-red-600");
-              manageBtn.classList.add("bg-slate-700", "cursor-not-allowed");
-              manageBtn.onclick = null;
-          }
-          
-        } else {
-          // ITEM NÃO ESTÁ EQUIPADO
-          ownerTxt.classList.add("hidden");
-          document.getElementById("btn-sell").disabled = false;
-          document.getElementById("btn-sell").classList.remove("opacity-50", "grayscale");
-          
-          // Mostrar opção de EQUIPAR se estivermos na visualização de detalhes
-          if (typeof selectedDetailIdx !== 'undefined' && selectedDetailIdx !== -1) {
-             manageBtn.textContent = "Equipar";
-             manageBtn.classList.remove("hidden", "bg-red-600", "bg-slate-700", "cursor-not-allowed");
-             manageBtn.classList.add("bg-indigo-600", "hover:bg-indigo-500");
-             manageBtn.onclick = () => {
-                 equipFromDetail(eq.id);
-                 document.getElementById("eq-modal").classList.add("hidden");
-             };
-          } else {
-             manageBtn.classList.add("hidden");
-          }
-        }
       };
 
-      const sellEquipment = () => {
-        const eq = state.equipment.find((e) => e.id === currentEqId);
+      const sellEquipment = (eqId) => {
+        const id = eqId || currentEqId;
+        const eq = state.equipment.find((e) => e.id === id);
         if (!eq) return;
         if (getEquipperName(eq.id))
           return showToast("Desequipe antes de vender!", "error");
@@ -2068,7 +2128,7 @@ const renderStory = () => {
         const price = Math.floor(50 * (eq.lvl + 1) * conf.mult);
 
         state.user.gold += price;
-        state.equipment = state.equipment.filter((e) => e.id !== currentEqId);
+        state.equipment = state.equipment.filter((e) => e.id !== id);
         save();
 
         document.getElementById("eq-modal").classList.add("hidden");
@@ -2090,15 +2150,22 @@ const renderStory = () => {
           openDetail(selectedDetailIdx);
       };
 
-      const performUpgrade = async (eq, cost, chance) => {
+      const performUpgrade = async (eqId) => {
+        const eq = state.equipment.find((e) => e.id === eqId);
+        if (!eq) return;
+        
+        const cost = 100 * (eq.lvl + 1);
+        const chance = Math.max(5, 100 - eq.lvl * 5);
+
         if (state.user.gold < cost)
           return showToast("Ouro insuficiente!", "error");
         
         // Desabilitar botão durante animação
-        const upgradeBtn = document.getElementById("btn-upgrade");
-        const sellBtn = document.getElementById("btn-sell");
-        if (upgradeBtn) upgradeBtn.disabled = true;
-        if (sellBtn) sellBtn.disabled = true;
+        const upgradeBtn = document.getElementById("btn-upgrade-action");
+        if (upgradeBtn) {
+            upgradeBtn.disabled = true;
+            upgradeBtn.innerHTML = "<span class='animate-pulse'>Aprimorando...</span>";
+        }
         
         state.user.gold -= cost;
         updateHeader();
@@ -2113,7 +2180,6 @@ const renderStory = () => {
         const ring2 = document.getElementById("eq-energy-ring-2");
         const animOverlay = document.getElementById("eq-anim-overlay");
         const animIcon = document.getElementById("eq-anim-icon");
-        const modal = document.getElementById("eq-modal");
         
         // Função auxiliar para delays
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -2129,7 +2195,7 @@ const renderStory = () => {
           ring2.style.animation = "spin 1.5s linear infinite reverse";
         }
         
-        await sleep(1000);
+        await sleep(800);
         
         // === FASE 2: PROCESSAMENTO (1s) ===
         // Intensificar brilho
@@ -2167,8 +2233,6 @@ const renderStory = () => {
                  eq.stats.main.value = Math.ceil(val * 1.1); // +10% base increase per level
              } else {
                  // Status % ou SPD
-                 // SPD geralmente não aumenta no status principal no SW a menos que seja slot 2, mas aqui simplificamos
-                 // Status % geralmente +2% ou +3% por nível
                  if (type === "spd") eq.stats.main.value += 1; // +1 spd
                  else if (val < 20) eq.stats.main.value += 1;
                  else eq.stats.main.value += 2;
@@ -2220,7 +2284,7 @@ const renderStory = () => {
           
           showToast(`Upgrade Sucesso! +${eq.lvl}` + (upgradeMsg ? `<br><span class='text-yellow-300 text-xs'>${upgradeMsg}</span>` : ""), "success");
           
-          await sleep(1200);
+          await sleep(1500);
           
         } else {
           // Flash de Falha
@@ -2238,41 +2302,18 @@ const renderStory = () => {
             animOverlay.classList.add("flex");
           }
           
-          // Tremer modal
-          const panel = modal?.querySelector(".glass-panel");
-          if (panel) {
-            panel.classList.add("animate-shake");
-            setTimeout(() => panel.classList.remove("animate-shake"), 500);
-          }
-          
           showToast("Falha no Upgrade...", "error");
           
           await sleep(1200);
         }
         
-        // === LIMPEZA ===
-        // Resetar animações
-        if (ring1) ring1.style.animation = "";
-        if (ring2) ring2.style.animation = "";
-        if (glow) glow.style.animation = "";
-        if (animOverlay) {
-          animOverlay.classList.add("hidden");
-          animOverlay.classList.remove("flex");
-        }
-        if (container) {
-          container.style.borderColor = "";
-          container.style.boxShadow = "";
-        }
-        
+        // === LIMPEZA (feita automaticamente pelo re-render, mas bom garantir estado) ===
         save();
         
-        // Re-habilitar botões e atualizar
-        if (upgradeBtn) upgradeBtn.disabled = false;
-        if (sellBtn) sellBtn.disabled = false;
-        
+        // Re-renderizar o modal para mostrar novos stats e resetar a UI para o próximo upgrade
         renderUpgradeModal();
         
-        // Atualizar visualizações abaixo
+        // Atualizar visualizações de fundo
         if (!document.getElementById("view-inventory")?.classList.contains("hidden-view"))
           renderInventory();
         if (!document.getElementById("mon-detail-overlay")?.classList.contains("hidden"))
