@@ -93,8 +93,8 @@
           skills: ["melee", "tornado", "sup_forest_fury"],
         },
         {
-          id: "gaia",
-          name: "Gaia",
+          id: "Nyssae",
+          name: "Nyssae",
           type: "Earth Mother",
           role: "hp",
           element: "earth",
@@ -301,8 +301,8 @@
           skills: ["melee", "leaf_cutter", "poison_cloud"], 
         },
         {
-          id: "brann",
-          name: "Brann",
+          id: "Tcat",
+          name: "Tcat",
           type: "Fire Warrior",
           role: "attacker",
           element: "fire",
@@ -311,7 +311,7 @@
           atk: 200,
           def: 120,
           emoji: "🛡️",
-          img: "src/Brann.png",
+          img: "",
           skills: ["melee", "fire", "flame_burst"],
         },
         {
