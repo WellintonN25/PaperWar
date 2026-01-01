@@ -1,4 +1,4 @@
-﻿      // --- DATABASE ---
+      // --- DATABASE ---
       const MONSTERS_DB = [
         {
           id: "vermithrax",
@@ -10,14 +10,14 @@
           hp: 4200,
           atk: 350,
           def: 250,
-          emoji: "🐲",
+          emoji: "??",
           img: "src/Vermithrax.png",
           imgAtk: "src/Vermithrax_atk.webp",
           skills: ["melee", "fire", "sup_fire"],
         },
         {
           id: "thyron",
-          name: "Thyron",
+          name: "Temp",
           type: "Storm Bringer",
           role: "attacker",
           element: "lightning",
@@ -25,11 +25,11 @@
           hp: 3800,
           atk: 400,
           def: 200,
-          emoji: "⚡",
-          img: "src/Thyron.png",
-          imgBack: "src/backThyron.png",
-          imgAtk: "",
-          skills: ["melee", "bolt", "sup_lightning"],
+          emoji: "?",
+          img: "src/temp.webp",
+          imgBack: "",
+          imgAtk: "src/tempSpec.webp",
+          skills: ["melee", "bolt", "sup_cosmic_storm"],
         },
         {
           id: "neriah",
@@ -41,7 +41,7 @@
           hp: 4000,
           atk: 280,
           def: 300,
-          emoji: "🧜‍♀️",
+          emoji: "??",
           img: "src/Neriah.png",
           imgAtk: "src/Neriah_atk.webp",
           skills: ["melee", "water", "sup_water"],
@@ -56,7 +56,7 @@
           hp: 3600,
           atk: 420,
           def: 180,
-          emoji: "🧙‍♀️",
+          emoji: "??",
           img: "src/Aelyra.png",
           imgAtk: "src/Aelyra_atk.webp",
           skills: ["melee", "fire", "sup_fire"],
@@ -71,7 +71,7 @@
           hp: 3200,
           atk: 320,
           def: 220,
-          emoji: "🥷",
+          emoji: "??",
           img: "src/Kaelthar.png",
           imgBack: "src/backKaelthar.png",
           imgAtk: "src/atkKaelthar.webp",
@@ -87,7 +87,7 @@
           hp: 4000,
           atk: 180,
           def: 400,
-          emoji: "🗿",
+          emoji: "??",
           img: "src/Dhorak.png",
           imgBack: "src/backDhorak.png",
           imgAtk: "src/atkDhorak.webp",
@@ -103,7 +103,7 @@
           hp: 2000,
           atk: 180,
           def: 140,
-          emoji: "🧚‍♀️",
+          emoji: "??",
           img: "src/Vireya.png",
           skills: ["melee", "leaf_cutter"],
         },
@@ -117,7 +117,7 @@
           hp: 1900,
           atk: 200,
           def: 120,
-          emoji: "🛡️",
+          emoji: "??",
           img: "src/Brann.png",
           skills: ["melee", "fire"],
         },
@@ -131,7 +131,7 @@
           hp: 1850,
           atk: 210,
           def: 110,
-          emoji: "❄️",
+          emoji: "??",
           img: "src/Lysara.png",
           skills: ["melee", "water"],
         },
@@ -145,7 +145,7 @@
           hp: 1500,
           atk: 120,
           def: 80,
-          emoji: "🧚",
+          emoji: "?",
           img: "src/Lumem.png",
           skills: ["melee", "bolt"],
         },
@@ -159,7 +159,7 @@
           hp: 1600,
           atk: 110,
           def: 90,
-          emoji: "👹",
+          emoji: "??",
           img: "src/Ravok.png",
           skills: ["melee", "rock_throw"],
         },
@@ -173,7 +173,7 @@
           hp: 1000,
           atk: 80,
           def: 50,
-          emoji: "💧",
+          emoji: "??",
           img: "",
           skills: ["melee"],
         },
@@ -187,7 +187,7 @@
           hp: 800,
           atk: 90,
           def: 30,
-          emoji: "🦇",
+          emoji: "??",
           img: "",
         },
         // SKILL UP UNIT
@@ -201,10 +201,10 @@
           hp: 1,
           atk: 0,
           def: 0,
-          emoji: "👿",
+          emoji: "?",
           img: "src/devilmon.png",
           skills: ["melee"],
-          description: "Use para aumentar o nível de habilidade de qualquer monstro."
+          description: "Use para aumentar o n�vel de habilidade de qualquer monstro."
         },
         // --- NEW CHARACTERS (WAVE 2) ---
         // 5 STARS (LEGENDARY)
@@ -218,7 +218,7 @@
           hp: 4300,
           atk: 380,
           def: 220,
-          emoji: "🔥",
+          emoji: "??",
           img: "src/ignis.png",
           imgAtk: "src/ignis_atk.webp",
           skills: ["melee", "fire", "meteor_strike"],
@@ -233,7 +233,7 @@
           hp: 3900,
           atk: 370,
           def: 210,
-          emoji: "🧚‍♀️",
+          emoji: "?????",
           img: "src/sylphid.png",
           imgAtk: "src/sylphid_atk.webp",
           skills: ["melee", "wind_blade", "tornado"],
@@ -248,7 +248,7 @@
           hp: 4800,
           atk: 250,
           def: 350,
-          emoji: "🌍",
+          emoji: "??",
           img: "src/gaia.png",
           imgAtk: "src/gaia_atk.webp",
           skills: ["melee", "earth_shatter", "earthquake"],
@@ -263,7 +263,7 @@
           hp: 4100,
           atk: 400,
           def: 180,
-          emoji: "🌪️",
+          emoji: "?",
           img: "src/zephyr.png",
           imgAtk: "src/zephyr_atk.webp",
           skills: ["melee", "bolt", "thunder_storm"],
@@ -278,7 +278,7 @@
           hp: 3500,
           atk: 500,
           def: 150,
-          emoji: "🌙",
+          emoji: "??",
           img: "src/nyx.png",
           imgAtk: "src/nyx_atk.webp",
           skills: ["melee", "shadow_strike", "void_slash"],
@@ -293,7 +293,7 @@
           hp: 4500,
           atk: 320,
           def: 300,
-          emoji: "🧊",
+          emoji: "??",
           img: "src/glacius.png",
           imgAtk: "src/glacius_atk.webp",
           skills: ["melee", "ice_shards", "blizzard"],
@@ -308,7 +308,7 @@
           hp: 6000,
           atk: 250,
           def: 200,
-          emoji: "🦠",
+          emoji: "??",
           img: "src/metamorph.png", 
           skills: ["melee", "sup_void"],
         },
@@ -324,7 +324,7 @@
           hp: 3400,
           atk: 300,
           def: 250,
-          emoji: "🔨",
+          emoji: "??",
           img: "src/vulcan.png",
           skills: ["melee", "fire"],
         },
@@ -338,7 +338,7 @@
           hp: 3200,
           atk: 290,
           def: 210,
-          emoji: "🧜",
+          emoji: "?????",
           img: "src/nereid.png",
           skills: ["melee", "ice_shards"],
         },
@@ -352,7 +352,7 @@
           hp: 3500,
           atk: 260,
           def: 260,
-          emoji: "🐻",
+          emoji: "??",
           img: "src/druid.png",
           skills: ["melee", "poison_cloud"],
         },
@@ -366,7 +366,7 @@
           hp: 3800,
           atk: 240,
           def: 300,
-          emoji: "⚔️",
+          emoji: "???",
           img: "src/paladin.png",
           skills: ["melee", "holy_beam"],
         },
@@ -380,7 +380,7 @@
           hp: 2800,
           atk: 350,
           def: 150,
-          emoji: "💀",
+          emoji: "??",
           img: "src/necro.png",
           skills: ["melee", "blood_drain"],
         },
@@ -394,7 +394,7 @@
           hp: 2900,
           atk: 360,
           def: 180,
-          emoji: "🗡️",
+          emoji: "??",
           img: "src/ronin.png",
           skills: ["melee", "wind_blade"],
         },
@@ -410,7 +410,7 @@
           hp: 2200,
           atk: 180,
           def: 150,
-          emoji: "👺",
+          emoji: "??",
           img: "src/goblin.png",
           skills: ["melee"],
         },
@@ -423,7 +423,7 @@
           hp: 2000,
           atk: 220,
           def: 110,
-          emoji: "🦅",
+          emoji: "??",
           img: "src/harpy.png",
           skills: ["melee"],
         },
@@ -437,7 +437,7 @@
           hp: 2500,
           atk: 150,
           def: 220,
-          emoji: "🪨",
+          emoji: "??",
           img: "src/golem.png",
           skills: ["melee"],
         },
@@ -450,7 +450,7 @@
           hp: 2300,
           atk: 190,
           def: 160,
-          emoji: "🦎",
+          emoji: "??",
           img: "src/lizard.png",
           skills: ["melee"],
         },
@@ -464,7 +464,7 @@
           hp: 1800,
           atk: 240,
           def: 80,
-          emoji: "🦴",
+          emoji: "??",
           img: "src/skel.png",
           skills: ["melee"],
         },
@@ -478,7 +478,7 @@
           hp: 1600,
           atk: 150,
           def: 120,
-          emoji: "🦋",
+          emoji: "??",
           img: "src/fairy.png",
           skills: ["melee"],
         },
@@ -492,7 +492,7 @@
           hp: 1700,
           atk: 180,
           def: 100,
-          emoji: "😈",
+          emoji: "??",
           img: "src/imp.png",
           skills: ["melee"],
         },
@@ -505,264 +505,264 @@
           hp: 2100,
           atk: 170,
           def: 140,
-          emoji: "🐺",
+          emoji: "??",
           img: "src/wolf.png",
           skills: ["melee"],
         },
       ];
 
       const SKILLS = {
-        melee: { n: "Ataque", p: 1.0, icon: "🗡️", type: "phys", mp: 0 },
-        bolt: { n: "Raio", p: 1.5, icon: "⚡", type: "lightning", mp: 20 },
-        water: { n: "Jato", p: 1.4, icon: "💧", type: "water", mp: 20 },
-        fire: { n: "Brasa", p: 1.6, icon: "🔥", type: "fire", mp: 20 },
+        melee: { n: "Ataque", p: 1.0, icon: "??", type: "phys", mp: 0 },
+        bolt: { n: "Raio", p: 1.5, icon: "?", type: "lightning", mp: 20 },
+        water: { n: "Jato", p: 1.4, icon: "??", type: "water", mp: 20 },
+        fire: { n: "Brasa", p: 1.6, icon: "??", type: "fire", mp: 20 },
         void_slash: {
           n: "Corte Vazio",
           p: 1.8,
-          icon: "🟣",
+          icon: "??",
           type: "void",
           mp: 25,
         },
-        rock_throw: { n: "Rocha", p: 1.5, icon: "🪨", type: "earth", mp: 20 },
-        leaf_cutter: { n: "Folha", p: 1.4, icon: "🍃", type: "nature", mp: 20 },
+        rock_throw: { n: "Rocha", p: 1.5, icon: "??", type: "earth", mp: 20 },
+        leaf_cutter: { n: "Folha", p: 1.4, icon: "??", type: "nature", mp: 20 },
         sup_lightning: {
           n: "Tempestade",
           p: 3.0,
-          icon: "🌩️",
+          icon: "???",
           type: "lightning_sup",
           mp: 50,
         },
         sup_water: {
           n: "Tsunami",
           p: 2.8,
-          icon: "🌊",
+          icon: "??",
           type: "water_sup",
           mp: 50,
         },
         sup_fire: {
           n: "Chuva Meteoros",
           p: 3.2,
-          icon: "☄️",
+          icon: "??",
           type: "fire_sup",
           mp: 50,
         },
         sup_earth: {
           n: "Avalanche",
           p: 3.0,
-          icon: "🌋",
+          icon: "???",
           type: "earth_sup",
           mp: 50,
         },
         sup_void: {
-          n: "Devastação",
+          n: "Devasta��o",
           p: 3.5,
-          icon: "⚫",
+          icon: "?",
           type: "void_sup",
           mp: 60,
         },
         // NEW PREMIUM SKILLS
         ice_shards: {
-          n: "Estilhaços",
+          n: "Estilha�os",
           p: 1.8,
-          icon: "🧊",
+          icon: "??",
           type: "ice_shards",
           mp: 25,
         },
         poison_cloud: {
-          n: "Nuvem Tóxica",
+          n: "Nuvem T�xica",
           p: 1.5,
-          icon: "☠️",
+          icon: "??",
           type: "poison_cloud",
           mp: 30,
         },
         holy_beam: {
           n: "Luz Divina",
           p: 3.0,
-          icon: "✨",
+          icon: "?",
           type: "holy_beam",
           mp: 45,
         },
         blood_drain: {
           n: "Drenar Vida",
           p: 1.6,
-          icon: "🩸",
+          icon: "??",
           type: "blood_drain",
           mp: 35,
         },
         shadow_strike: {
           n: "Golpe Sombrio",
           p: 2.2,
-          icon: "🧛",
+          icon: "??",
           type: "shadow_strike",
           mp: 30,
         },
         thunder_storm: {
           n: "Tempestade",
           p: 2.5,
-          icon: "⛈️",
+          icon: "?",
           type: "thunder_storm",
           mp: 50,
         },
         wind_blade: {
-          n: "Lâmina de Vento",
+          n: "L�mina de Vento",
           p: 1.7,
-          icon: "🌪️",
+          icon: "???",
           type: "wind_blade",
           mp: 25,
         },
         meteor_strike: {
           n: "Meteoro",
           p: 3.2,
-          icon: "☄️",
+          icon: "??",
           type: "meteor_strike",
           mp: 55,
         },
         arcane_barrage: {
-          n: "Mísseis Arcanos",
+          n: "M�sseis Arcanos",
           p: 2.0,
-          icon: "🔮",
+          icon: "??",
           type: "arcane_barrage",
           mp: 35,
         },
         earth_shatter: {
           n: "Tremor",
           p: 2.1,
-          icon: "🧱",
+          icon: "??",
           type: "earth_shatter",
           mp: 40,
         },
         sup_silver_rain: {
           n: "Chuva de Prata",
           p: 3.5,
-          icon: "🌧️",
+          icon: "?",
           type: "sup_silver_rain",
           mp: 60,
         },
         sup_black_lotus: {
-          n: "Lótus Negra",
+          n: "L�tus Negra",
           p: 3.8,
-          icon: "🪷",
+          icon: "??",
           type: "sup_black_lotus",
           mp: 70,
         },
         sup_dragon_breath: {
-          n: "Hálito Dragão",
+          n: "H�lito Drag�o",
           p: 4.0,
-          icon: "🐲",
+          icon: "??",
           type: "sup_dragon_breath",
           mp: 80,
         },
         sup_ether_chains: {
-          n: "Cadeias Éter",
+          n: "Cadeias �ter",
           p: 3.2,
-          icon: "⛓️",
+          icon: "??",
           type: "sup_ether_chains",
           mp: 55,
         },
         sup_gravity_pulse: {
           n: "Pulso Gravitacional",
           p: 3.6,
-          icon: "🪐",
+          icon: "??",
           type: "sup_gravity_pulse",
           mp: 65,
         },
         sup_ice_butterflies: {
           n: "Butterflies Ice",
           p: 3.4,
-          icon: "🦋",
+          icon: "??",
           type: "sup_ice_butterflies",
           mp: 60,
         },
         sup_forest_fury: {
-          n: "Fúria Florestal",
+          n: "F�ria Florestal",
           p: 3.7,
-          icon: "🌲",
+          icon: "??",
           type: "sup_forest_fury",
           mp: 65,
         },
         sup_celestial_judgement: {
           n: "Julgamento",
           p: 4.5,
-          icon: "⚖️",
+          icon: "??",
           type: "sup_celestial_judgement",
           mp: 90,
         },
         sup_plasma_vortex: {
-          n: "Vórtice Plasma",
+          n: "V�rtice Plasma",
           p: 3.9,
-          icon: "🌀",
+          icon: "??",
           type: "sup_plasma_vortex",
           mp: 75,
         },
         sup_dark_comet: {
           n: "Cometa Sombrio",
           p: 4.2,
-          icon: "🌠",
+          icon: "??",
           type: "sup_dark_comet",
           mp: 85,
         },
         // NEW ELEMENTAL SKILLS (4)
         crystal_spear: {
-          n: "Lança de Cristal",
+          n: "Lan�a de Cristal",
           p: 1.9,
-          icon: "💎",
+          icon: "??",
           type: "crystal_spear",
           mp: 30,
         },
         lava_burst: {
-          n: "Erupção de Lava",
+          n: "Erup��o de Lava",
           p: 2.0,
-          icon: "🌋",
+          icon: "??",
           type: "lava_burst",
           mp: 35,
         },
         chain_lightning: {
           n: "Raio em Cadeia",
           p: 1.75,
-          icon: "🔗",
+          icon: "?",
           type: "chain_lightning",
           mp: 28,
         },
         spectral_blade: {
-          n: "Lâmina Espectral",
+          n: "L�mina Espectral",
           p: 1.95,
-          icon: "👻",
+          icon: "??",
           type: "spectral_blade",
           mp: 32,
         },
         // NEW SUPREME SKILLS (5)
         sup_cosmic_storm: {
-          n: "Tempestade Cósmica",
+          n: "Tempestade C�smica",
           p: 3.9,
-          icon: "🌌",
+          icon: "??",
           type: "sup_cosmic_storm",
           mp: 70,
         },
         sup_infernal_apocalypse: {
           n: "Apocalipse Infernal",
           p: 4.3,
-          icon: "👺",
+          icon: "??",
           type: "sup_infernal_apocalypse",
           mp: 85,
         },
         sup_frozen_eternity: {
           n: "Eternidade Congelada",
           p: 4.0,
-          icon: "🥶",
+          icon: "??",
           type: "sup_frozen_eternity",
           mp: 75,
         },
         sup_natures_wrath: {
           n: "Ira da Natureza",
           p: 3.8,
-          icon: "🥀",
+          icon: "??",
           type: "sup_natures_wrath",
           mp: 68,
         },
         sup_void_collapse: {
           n: "Colapso do Vazio",
           p: 4.6,
-          icon: "🕳️",
+          icon: "?",
           type: "sup_void_collapse",
           mp: 95,
         },
@@ -779,22 +779,22 @@
       
       const MAP_DATA = [
         { name: "Floresta do Alvorecer", img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800" },
-        { name: "Pântano Sombrio", img: "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?auto=format&fit=crop&q=80&w=800" },
-        { name: "Deserto de Oblívio", img: "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?auto=format&fit=crop&q=80&w=800" },
+        { name: "P�ntano Sombrio", img: "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?auto=format&fit=crop&q=80&w=800" },
+        { name: "Deserto de Obl�vio", img: "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?auto=format&fit=crop&q=80&w=800" },
         { name: "Picos de Gelo", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800" },
-        { name: "Vulcão de Enfra", img: "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?auto=format&fit=crop&q=80&w=800" },
+        { name: "Vulc�o de Enfra", img: "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?auto=format&fit=crop&q=80&w=800" },
         { name: "Vale dos Ventos", img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=800" },
-        { name: "Ruínas de Aether", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800" },
+        { name: "Ru�nas de Aether", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800" },
         { name: "Caverna Abissal", img: "https://images.unsplash.com/photo-1524334220913-91136e0d9b43?auto=format&fit=crop&q=80&w=800" },
-        { name: "Santuário Celeste", img: "https://images.unsplash.com/photo-1444491741275-3747c33cc99b?auto=format&fit=crop&q=80&w=800" },
-        { name: "Domínio do Chaos", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=1000" }
+        { name: "Santu�rio Celeste", img: "https://images.unsplash.com/photo-1444491741275-3747c33cc99b?auto=format&fit=crop&q=80&w=800" },
+        { name: "Dom�nio do Chaos", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=1000" }
       ];
 
       const EQ_RARITY = {
         common: { name: "Comum", mult: 1, color: "rarity-common" },
         rare: { name: "Raro", mult: 1.5, color: "rarity-rare" },
-        epic: { name: "Épico", mult: 2.2, color: "rarity-epic" },
-        legendary: { name: "Lendário", mult: 3.5, color: "rarity-legendary" },
+        epic: { name: "�pico", mult: 2.2, color: "rarity-epic" },
+        legendary: { name: "Lend�rio", mult: 3.5, color: "rarity-legendary" },
       };
 
       let state = {
@@ -926,14 +926,14 @@
       // --- LOGIN ICONS ---
       let selectedLoginIcon = "??";
       const LOGIN_ICONS = [
-        "🦸", // Superhero
-        "🧙", // Wizard
-        "🧝", // Elf
-        "🧛", // Vampire
-        "🤖", // Robot
-        "👽", // Alien
-        "🐲", // Dragon
-        "🦄", // Unicorn
+        "??", // Superhero
+        "??", // Wizard
+        "??", // Elf
+        "??", // Vampire
+        "??", // Robot
+        "??", // Alien
+        "??", // Dragon
+        "??", // Unicorn
       ];
 
       const renderLoginIcons = () => {
@@ -1074,7 +1074,7 @@ const renderStory = () => {
         <img src="${mapInfo.img}" class="map-bg-img" />
         <div class="map-overlay"></div>
         <div class="map-content">
-          <p class="map-chapter">Capítulo ${mapNum}</p>
+          <p class="map-chapter">Cap�tulo ${mapNum}</p>
           <h3 class="map-title">${mapInfo.name}</h3>
         </div>
       </div>
@@ -1236,7 +1236,7 @@ const renderStory = () => {
             } else {
                 state.user.xpBoostEndTime = now + boostTime;
             }
-            showToast("Bônus XP Ativado! (3x por 7m)", "success");
+            showToast("B�nus XP Ativado! (3x por 7m)", "success");
         }
 
         save();
@@ -1466,7 +1466,7 @@ const renderStory = () => {
     if (count === 1) {
       card.className = "relative w-48 h-64 perspective-1000 opacity-0";
     } else {
-      // 10x: Larger cards (w-32 ˜ 128px, h-44 ˜ 176px)
+      // 10x: Larger cards (w-32 � 128px, h-44 � 176px)
       card.className = "relative w-32 h-44 perspective-1000 opacity-0";
     }
 
@@ -1642,7 +1642,7 @@ const renderStory = () => {
             openDetail(selectedDetailIdx);
             showToast("Equipado!");
           } else {
-            showToast("Nenhum item disponível no Baú!", "info");
+            showToast("Nenhum item dispon�vel no Ba�!", "info");
           }
         }
       };
@@ -1892,7 +1892,7 @@ const renderStory = () => {
     imgSrc = "src/golenArt.jpg"; // Stony/Cave
     grad = "from-stone-900";
   } else if (selectedDungeonType === "dragon") {
-    title = "Masmorra do Dragão";
+    title = "Masmorra do Drag�o";
     imgSrc = "src/dragaoArt.jpg"; // Lava/Fire
     grad = "from-red-900";
   } else if (selectedDungeonType === "xp") {
@@ -1914,7 +1914,7 @@ const renderStory = () => {
      <div class="flex items-center gap-3 mb-4 px-2">
         <div class="text-2xl animate-bounce">??</div>
          <p class="text-[10px] text-slate-300 leading-tight">
-          Ultrapasse andares para aumentar chances de <span class="text-purple-400 font-bold">Épicos</span> e <span class="text-yellow-400 font-bold">Lendários</span>.
+          Ultrapasse andares para aumentar chances de <span class="text-purple-400 font-bold">�picos</span> e <span class="text-yellow-400 font-bold">Lend�rios</span>.
         </p>
      </div>
   `;
@@ -1946,9 +1946,9 @@ const renderStory = () => {
       selectedDungeonType === "golem"
         ? "Golem"
         : selectedDungeonType === "dragon"
-        ? "Dragão"
+        ? "Drag�o"
         : "Fenda XP"
-    } B${i}</h4><p class="text-xs text-purple-400">Lv. ${i * 5} • ${
+    } B${i}</h4><p class="text-xs text-purple-400">Lv. ${i * 5} � ${
       5 + Math.floor(i / 2)
     } ?</p></div><div class="text-white">?</div>`;
     btn.onclick = () => openPrep("dungeon_" + selectedDungeonType, i);
@@ -1961,7 +1961,7 @@ const renderStory = () => {
         changeView("view-prep");
         const titles = {
           dungeon_golem: `Golem B${lvl}`,
-          dungeon_dragon: `Dragão B${lvl}`,
+          dungeon_dragon: `Drag�o B${lvl}`,
           dungeon_xp: `Fenda XP B${lvl}`,
           tower: `Torre Andar ${lvl}`,
           story: `Campanha Fase ${lvl}`,
@@ -1983,14 +1983,13 @@ const renderStory = () => {
         document.getElementById("prep-img").src = mon.img;
         document.getElementById("prep-name").innerText = mon.name;
         document.getElementById("prep-el").innerText = {
-          fire: "🔥",
-          water: "🌊",
-          lightning: "⚡",
-          earth: "🗿",
-          nature: "🍃",
-          void: "🌑",
-          neutral: "⚪"
-        }[mon.element] || "❓";
+          fire: "??",
+          water: "??",
+          lightning: "?",
+          earth: "??",
+          nature: "??",
+          void: "??",
+        }[mon.element];
         document.getElementById(
           "prep-stats"
         ).innerText = `Atk: ${stats.atk} | HP: ${stats.hp}`;
@@ -2339,14 +2338,14 @@ const renderStory = () => {
 
       const toggleAuto = () => {
         if (state.user.lvl < 2)
-          return showToast("Auto libera no Nível 2!", "info");
+          return showToast("Auto libera no N�vel 2!", "info");
         battleState.auto = !battleState.auto;
         updateBattleControls();
         if (battleState.auto && !battleState.busy) triggerAuto();
       };
       const toggleSpeed = () => {
         if (state.user.lvl < 5)
-          return showToast("3x libera no Nível 5!", "info");
+          return showToast("3x libera no N�vel 5!", "info");
         battleState.speed = battleState.speed === 1 ? 3 : 1;
         updateBattleControls();
       };
@@ -3676,7 +3675,7 @@ const renderStory = () => {
         void ov.offsetWidth;
         ov.style.opacity = "1";
         document.getElementById("outcome-title").innerText = win
-          ? "VITÓRIA"
+          ? "VIT�RIA"
           : "DERROTA";
 
         let repeatCancelled = false;
@@ -3716,8 +3715,26 @@ const renderStory = () => {
                rewards += `<div class='text-emerald-400 font-bold text-xs mt-1 animate-pulse'>XP BOOST ATIVO (3x)!</div>`;
           }
           
-           // Apply XP
-           addXP(hero, xpAmount);
+          // Apply XP
+          const maxLvl = MAX_LEVELS[hero.stars] || 40;
+          if (hero.lvl < maxLvl) {
+               // Ensure curXp exists
+               hero.curXp = hero.curXp || 0;
+               hero.curXp += xpAmount;
+               
+               // XP Needed for next level: 500 * CurrentLevel ^ 1.1 (Exponential curve)
+               let xpReq = Math.floor(500 * Math.pow(hero.lvl, 1.1));
+               
+               let didLevel = false;
+               while (hero.curXp >= xpReq && hero.lvl < maxLvl) {
+                   hero.curXp -= xpReq;
+                   hero.lvl++;
+                   didLevel = true;
+                   xpReq = Math.floor(500 * Math.pow(hero.lvl, 1.1)); // Recalc for next lvl
+               }
+               
+               if (didLevel) showToast(`${hero.name} subiu para o N�vel ${hero.lvl}!`, "success");
+          }
 
           // Account XP (Minor)
           const accXp = 50;
@@ -3728,7 +3745,7 @@ const renderStory = () => {
             state.user.xp = state.user.xp - accXpReq;
             state.user.lvl++;
             state.user.crystals += 25;
-            showToast(`LEVEL UP! Nível ${state.user.lvl} (+25 ??)`);
+            showToast(`LEVEL UP! N�vel ${state.user.lvl} (+25 ??)`);
           }
 
           let crystalsGained = 0;
@@ -3765,7 +3782,7 @@ const renderStory = () => {
               state.equipment.push(droppedEq);
               const rName = EQ_RARITY[droppedEq.rarity].name;
               rewards = `<div class='text-sm text-yellow-300 font-bold mb-1'>DROP RARO!</div>
-                         <div class='text-xs text-white'>${rName} ${droppedEq.type === 'weapon' ? 'Arma' : droppedEq.type === 'armor' ? 'Armadura' : 'Acessório'}</div>`;
+                         <div class='text-xs text-white'>${rName} ${droppedEq.type === 'weapon' ? 'Arma' : droppedEq.type === 'armor' ? 'Armadura' : 'Acess�rio'}</div>`;
             } else {
               rewards = rewards || `<div class='flex gap-4 justify-center'>
                                       <div class='text-yellow-400 font-bold text-sm'>+${goldGained} Ouro</div>
@@ -3812,7 +3829,7 @@ const renderStory = () => {
           const xpHTML = xpAmount 
              ? `<div class='mt-3 pt-3 border-t border-white/10 flex justify-between items-center'>
                     <div class='text-left'>
-                        <div class='text-[10px] text-slate-400 uppercase font-bold tracking-wider'>HERÓI XP</div>
+                        <div class='text-[10px] text-slate-400 uppercase font-bold tracking-wider'>HER�I XP</div>
                         <div class='text-green-400 font-black text-xl'>+${xpAmount} XP</div>
                     </div>
                     <div class='text-right'>
@@ -3833,14 +3850,14 @@ const renderStory = () => {
           if (battleState.repeatCount > 0) {
               battleState.repeatCount--;
               if (battleState.repeatCount > 0) {
-                  showToast(`Próxima batalha em 2s... (${battleState.repeatCount} restantes)`);
+                  showToast(`Pr�xima batalha em 2s... (${battleState.repeatCount} restantes)`);
                   setTimeout(() => {
                       if (document.getElementById("battle-overlay").style.opacity === "1") { // Check if not closed manually
                         startBattle(true); // Restart
                       }
                   }, 2000);
               } else {
-                  showToast("Ciclo de Farm Concluído!");
+                  showToast("Ciclo de Farm Conclu�do!");
               }
           }
           
@@ -3853,24 +3870,21 @@ const renderStory = () => {
 
 
 
-      const addXP = (mon, xpAmount) => {
+      const useXpPotion = () => {
+        const mon = state.inventory[selectedDetailIdx];
         const maxLvl = MAX_LEVELS[mon.stars] || 40;
-        if (mon.lvl >= maxLvl) return;
+        
+        if (mon.lvl >= maxLvl)
+          return showToast(`N�vel M�ximo para ${mon.stars}? atingido! Evolua-o!`, "error");
 
-        mon.curXp = mon.curXp || 0;
-        mon.curXp += xpAmount;
-
-        let xpReq = Math.floor(500 * Math.pow(mon.lvl, 1.1));
-        let didLevel = false;
-
-        while (mon.curXp >= xpReq && mon.lvl < maxLvl) {
-          mon.curXp -= xpReq;
-          mon.lvl++;
-          didLevel = true;
-          xpReq = Math.floor(500 * Math.pow(mon.lvl, 1.1));
-        }
-
-        if (didLevel) showToast(`${mon.name} subiu para o Nível ${mon.lvl}!`, "success");
+        if (state.user.potions < 1)
+          return showToast("Sem po��es de XP!", "error");
+          
+        state.user.potions--;
+        mon.lvl++;
+        save();
+        showToast(`${mon.name} subiu para o n�vel ${mon.lvl}!`);
+        openDetail(selectedDetailIdx);
       };
 
       const renderMonsterBox = () => {
@@ -3932,8 +3946,8 @@ const renderStory = () => {
       <div class="star-row">
         ${
            mon.stars === 6 
-           ? '<span class="star-icon text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">★</span>'.repeat(6)
-           : '<span class="star-icon">★</span>'.repeat(mon.stars)
+           ? '<span class="star-icon text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">?</span>'.repeat(6)
+           : '<span class="star-icon">?</span>'.repeat(mon.stars)
         }
       </div>
     `;
@@ -3946,122 +3960,105 @@ const renderStory = () => {
       let selectedDetailIdx = 0;
 
       const openDetail = (idx) => {
-  selectedDetailIdx = idx;
-  const mon = state.inventory[idx];
-  if (!mon) return;
+        selectedDetailIdx = idx;
+        const mon = state.inventory[idx];
+        
+        // Merge with DB to ensure latest static data (name, img, etc.)
+        const tpl = MONSTERS_DB.find(m => m.id === mon.id) || {};
+        const safeMon = { ...tpl, ...mon }; // mon properties (lvl, stars, equipped) override tpl, but tpl provides missing static data
+        
+        // Safety check for undefined name
+        if(!safeMon.name) safeMon.name = mon.id.toUpperCase();
 
-  const tpl = MONSTERS_DB.find(m => m.id === mon.id) || {};
-  const safeMon = { 
-      name: "Unknown", 
-      role: "fighter", 
-      type: "Normal", 
-      element: "neutral", 
-      stars: 1, 
-      img: "", 
-      emoji: "❓",
-      skills: [],
-      ...tpl, 
-      ...mon 
-  };
-  
-  if(!safeMon.name && mon.id) safeMon.name = mon.id.toUpperCase();
+        // SWITCH TO THE NEW VIEW
+        changeView("view-character-detail");
 
-  changeView("view-character-detail");
+        // Removed old overlay toggle code
+        // document.getElementById("mon-detail-overlay").classList.remove("hidden");
+        // document.getElementById("mon-detail-overlay").classList.add("flex");
+        document.getElementById("det-name").innerText = safeMon.name;
+        document.getElementById("det-type").innerText = (safeMon.role ? `[${safeMon.role.toUpperCase()}] ` : "") + (safeMon.type || "Unknown Type");
+        document.getElementById("det-lvl").innerText = `Lv. ${safeMon.lvl}`;
+        document.getElementById("det-stars").innerHTML = "?".repeat(safeMon.stars);
+        document.getElementById("det-nat-grade").innerText = `NAT ${safeMon.stars}`;
+        document.getElementById("det-element-badge").innerText = {
+          fire: "??",
+          water: "??",
+          lightning: "?",
+          earth: "??",
+          nature: "??",
+          void: "??",
+        }[safeMon.element] || "?";
+        document.getElementById("det-emoji").innerText = safeMon.emoji;
+        const img = document.getElementById("det-img");
+        img.style.display = "block";
+        document.getElementById("det-emoji").style.display = "none";
+        img.src = safeMon.img;
+        
+        // Recalculate stats with safeMon
+        const stats = calculateStats(safeMon);
+        // Values
+        document.getElementById("val-hp").innerText = stats.hp;
+        document.getElementById("val-atk").innerText = stats.atk;
+        document.getElementById("val-def").innerText = stats.def;
+        document.getElementById("val-spd").innerText = 100;
+        document.getElementById("val-crit").innerText = stats.crit + "%";
+        document.getElementById("val-cdmg").innerText = stats.cdmg + "%";
 
-  document.getElementById("det-name").innerText = safeMon.name || "Unknown";
-  document.getElementById("det-type").innerText = (safeMon.role ? `[${safeMon.role.toUpperCase()}] ` : "") + (safeMon.type || "Unknown Type");
-  
-  const maxLvl = MAX_LEVELS[safeMon.stars] || 40;
-  
-  const starContainer = document.getElementById("det-stars");
-  if(starContainer) {
-      if(safeMon.stars === 6) {
-          starContainer.innerHTML = '<span class="text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">★</span>'.repeat(6);
-      } else {
-          starContainer.innerHTML = "★".repeat(Math.max(1, safeMon.stars || 1));
-      }
-  }
+        // Bars (Soft caps: HP 30k, ATK 4k, DEF 2k)
+        document.getElementById("bar-hp").style.width = Math.min(100, (stats.hp / 30000) * 100) + "%";
+        document.getElementById("bar-atk").style.width = Math.min(100, (stats.atk / 4000) * 100) + "%";
+        document.getElementById("bar-def").style.width = Math.min(100, (stats.def / 2000) * 100) + "%";
 
-  document.getElementById("det-nat-grade").innerText = `NAT ${safeMon.stars || 1}`;
-  
-  const elMap = {
-    fire: "🔥",
-    water: "🌊",
-    lightning: "⚡",
-    earth: "🗿",
-    nature: "🍃",
-    void: "🌑",
-    neutral: "⚪"
-  };
-  document.getElementById("det-element-badge").innerText = elMap[safeMon.element] || "❓";
-  
-  const imgEL = document.getElementById("det-img");
-  const emojiEL = document.getElementById("det-emoji");
-  if (safeMon.img && safeMon.img !== "") {
-     imgEL.style.display = "block";
-     emojiEL.style.display = "none";
-     imgEL.src = safeMon.img;
-  } else {
-     imgEL.style.display = "none";
-     emojiEL.style.display = "block";
-     emojiEL.innerText = safeMon.emoji || "❓";
-  }
+        renderEqSlot("weapon", safeMon.equipped.weapon);
+        renderEqSlot("armor", safeMon.equipped.armor);
+        renderEqSlot("acc", safeMon.equipped.acc);
 
-  const stats = calculateStats(safeMon);
-  document.getElementById("val-hp").innerText = Math.floor(stats.hp);
-  document.getElementById("val-atk").innerText = Math.floor(stats.atk);
-  document.getElementById("val-def").innerText = Math.floor(stats.def);
-  document.getElementById("val-spd").innerText = 100;
-  document.getElementById("val-crit").innerText = (stats.crit||0) + "%";
-  document.getElementById("val-cdmg").innerText = (stats.cdmg||0) + "%";
+        const btn = document.getElementById("btn-equip");
+        if (state.leaderIdx === idx) {
+          btn.innerText = "L�der Atual";
+          btn.className =
+            "w-full py-2 mt-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold uppercase rounded-lg opacity-90 cursor-default shadow-md";
+        } else {
+          btn.innerText = "Definir L�der";
+          btn.className =
+            "w-full py-2 mt-2 bg-white text-slate-900 text-sm font-bold uppercase rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 active:scale-95 transition-all";
+          btn.onclick = equipLeader;
+        }
+        
+        // XP BAR UPDATE
+        const maxLvl = MAX_LEVELS[safeMon.stars] || 40;
+        // Update Level Display with Max
+        const lvlEl = document.getElementById("det-lvl");
+        if (lvlEl) {
+             // Rebuild the level text to include max
+             lvlEl.parentNode.innerHTML = `
+                <span id="det-lvl" class="text-3xl font-black text-white leading-none">${safeMon.lvl}</span>
+                <span class="text-xs text-slate-500">/ ${maxLvl}</span>
+             `;
+        }
 
-  document.getElementById("bar-hp").style.width = Math.min(100, (stats.hp / 30000) * 100) + "%";
-  document.getElementById("bar-atk").style.width = Math.min(100, (stats.atk / 4000) * 100) + "%";
-  document.getElementById("bar-def").style.width = Math.min(100, (stats.def / 2000) * 100) + "%";
+        const xpReq = Math.floor(500 * Math.pow(safeMon.lvl, 1.1));
+        const curXp = safeMon.curXp || 0;
+        const xpPct = Math.min(100, (curXp / xpReq) * 100);
+        
+        const bar = document.getElementById("det-xp-bar");
+        if(bar) bar.style.width = `${xpPct}%`;
+        
+        const txt = document.getElementById("det-xp-text");
+        if(txt) txt.innerText = `${Math.floor(curXp)} / ${xpReq} XP`;
 
-  if(safeMon.equipped) {
-      renderEqSlot("weapon", safeMon.equipped.weapon);
-      renderEqSlot("armor", safeMon.equipped.armor);
-      renderEqSlot("acc", safeMon.equipped.acc);
-  }
 
-  const btn = document.getElementById("btn-equip");
-  if (state.leaderIdx === idx) {
-    btn.innerText = "Líder Atual";
-    btn.className = "w-full py-2 mt-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold uppercase rounded-lg opacity-90 cursor-default shadow-md";
-    btn.onclick = null;
-  } else {
-    btn.innerText = "Definir Líder";
-    btn.className = "w-full py-2 mt-2 bg-white text-slate-900 text-sm font-bold uppercase rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 active:scale-95 transition-all";
-    btn.onclick = () => { equipLeader(idx); };
-  }
-  
-  const lvlEl = document.getElementById("det-lvl");
-  if (lvlEl && lvlEl.parentNode) {
-       lvlEl.parentNode.innerHTML = `
-          <span id="det-lvl" class="text-3xl font-black text-white leading-none">${safeMon.lvl}</span>
-          <span class="text-xs text-slate-500">/ ${maxLvl}</span>
-       `;
-  }
-
-  const xpReq = Math.floor(500 * Math.pow(safeMon.lvl, 1.1));
-  const curXp = safeMon.curXp || 0;
-  const xpPct = Math.min(100, (curXp / xpReq) * 100);
-  
-  const bar = document.getElementById("det-xp-bar");
-  if(bar) bar.style.width = `${xpPct}%`;
-  
-  const txt = document.getElementById("det-xp-text");
-  if(txt) txt.innerText = `${Math.floor(curXp)} / ${xpReq} XP`;
-
+        // --- SKILLS SECTION (Clean Injection) ---
+        // --- RENDER XP POTION BUTTON (FIXED) ---
   const potBtnContainer = document.getElementById("detail-pot-btn-container");
   if(potBtnContainer) {
      potBtnContainer.innerHTML = `
        <button onclick="usePotion()" class="w-full bg-slate-800 border border-purple-500/30 rounded-xl px-4 py-3 flex items-center justify-between group active:scale-95 transition-all">
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-lg text-purple-400">🧪</div>
+            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-lg text-purple-400">??</div>
             <div class="text-left">
-              <div class="text-white font-bold text-xs uppercase">Usar Poção</div>
+              <div class="text-white font-bold text-xs uppercase">Usar Po��o</div>
               <div class="text-purple-300 text-[10px]">+500 XP</div>
             </div>
           </div>
@@ -4073,35 +4070,34 @@ const renderStory = () => {
   }
 
   const skillCont = document.getElementById("det-skills-container");
-  if (skillCont) {
-      skillCont.innerHTML = "";
-      const header = document.createElement("div");
-      header.className = "text-[10px] uppercase font-bold text-slate-400 mb-2";
-      header.innerText = `Habilidades (Bônus: +${(safeMon.skillUps||0)*5}%)`;
-      skillCont.appendChild(header);
+        if (skillCont) {
+            skillCont.innerHTML = "";
+            
+            const header = document.createElement("div");
+            header.className = "text-[10px] uppercase font-bold text-slate-400 mb-2";
+            header.innerText = `Habilidades (B�nus: +${(safeMon.skillUps||0)*5}%)`;
+            skillCont.appendChild(header);
 
-      if(safeMon.skills) {
-          const sGrid = document.createElement("div");
-          sGrid.className = "flex flex-col gap-2";
-          safeMon.skills.forEach(sid => {
-              const s = SKILLS[sid];
-              if(!s) return;
-              const row = document.createElement("div");
-              row.className = "flex items-center gap-2 bg-slate-800 p-2 rounded-lg relative overflow-hidden border border-white/5";
-              row.innerHTML = `
-                  <div class="text-2xl">${s.icon}</div>
-                  <div class="flex-1">
-                      <div class="text-xs font-bold text-white">${s.n}</div>
-                      <div class="text-[9px] text-slate-400">Poder: ${Math.floor(s.p*100)}% | MP: ${s.mp}</div>
-                  </div>
-                  <div class="text-[9px] text-slate-500 absolute right-2 top-2 opacity-50 capitalize">${s.type ? s.type.replace("_", " ") : ""}</div>
-              `;
-              sGrid.appendChild(row);
-          });
-          skillCont.appendChild(sGrid);
-      }
-  }
-
+            const sGrid = document.createElement("div");
+            sGrid.className = "flex flex-col gap-2";
+            
+            safeMon.skills.forEach(sid => {
+                const s = SKILLS[sid];
+                if(!s) return;
+                const row = document.createElement("div");
+                row.className = "flex items-center gap-2 bg-slate-800 p-2 rounded-lg relative overflow-hidden border border-white/5";
+                row.innerHTML = `
+                    <div class="text-2xl">${s.icon}</div>
+                    <div class="flex-1">
+                        <div class="text-xs font-bold text-white">${s.n}</div>
+                        <div class="text-[9px] text-slate-400">Poder: ${Math.floor(s.p*100)}% | MP: ${s.mp}</div>
+                    </div>
+                    <div class="text-[9px] text-slate-500 absolute right-2 top-2 opacity-50 capitalize">${s.type.replace('_', ' ')}</div>
+                `;
+                sGrid.appendChild(row);
+            });
+            skillCont.appendChild(sGrid);
+        }
 
         // EVOLUTION & SKILL UP BUTTONS
         // Fix: Use btn-equip parent as anchor since btn-xp is gone
@@ -4151,7 +4147,7 @@ const renderStory = () => {
              document.body.insertAdjacentHTML('beforeend', `
                 <div id="evo-modal" class="fixed inset-0 bg-black/90 z-[60] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
                     <div class="glass-panel p-6 w-full max-w-lg rounded-2xl border border-white/10 relative">
-                        <h2 class="text-xl font-black text-white text-center mb-1">EVOLUÇÃO</h2>
+                        <h2 class="text-xl font-black text-white text-center mb-1">EVOLU��O</h2>
                         <p id="evo-desc" class="text-center text-slate-400 text-xs mb-6"></p>
                         
                         <div class="flex justify-center items-center gap-4 mb-6">
@@ -4189,8 +4185,8 @@ const renderStory = () => {
              const s = nextStars ? mon.stars + 1 : mon.stars;
              const isAwakened = s === 6;
              const starsHtml = isAwakened 
-                ? '<span class="text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">★</span>'.repeat(6)
-                : "★".repeat(s);
+                ? '<span class="text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">?</span>'.repeat(6)
+                : "?".repeat(s);
              
              el.innerHTML = `
                  <img src="${mon.img}" class="w-full h-full object-contain p-1">
@@ -4223,7 +4219,7 @@ const renderStory = () => {
              el.className = `aspect-square bg-slate-800 rounded border cursor-pointer relative transition-all ${isSel ? 'border-green-500 bg-green-900/20 scale-95' : 'border-slate-600 hover:border-slate-400'}`;
              el.innerHTML = `
                  <img src="${f.img}" class="w-full h-full object-contain opacity-80">
-                 <div class="absolute bottom-0 w-full text-center text-[8px] text-yellow-400">★${f.stars}</div>
+                 <div class="absolute bottom-0 w-full text-center text-[8px] text-yellow-400">?${f.stars}</div>
                  ${isSel ? '<div class="absolute inset-0 flex items-center justify-center text-green-400 font-bold text-xl drop-shadow-md">?</div>' : ''}
              `;
              el.onclick = () => toggleFood(f.idx);
@@ -4294,7 +4290,7 @@ const renderStory = () => {
            selectedDetailIdx = evolveTargetIdx; // Sync selection
            
            // FX
-           showToast(`EVOLUÇÃO SUCESSO! ${target.name} agora é ${target.stars}?`, "success");
+           showToast(`EVOLU��O SUCESSO! ${target.name} agora � ${target.stars}?`, "success");
            
            renderMonsterBox(); // Update background list
            openDetail(selectedDetailIdx); // Refresh current view
@@ -4323,7 +4319,7 @@ const renderStory = () => {
                 <div id="skill-modal" class="fixed inset-0 bg-black/95 z-[60] hidden flex-col items-center justify-center p-4 backdrop-blur-md">
                     <div class="bg-slate-900 border border-orange-500/30 p-6 w-full max-w-lg rounded-2xl relative shadow-[0_0_50px_rgba(249,115,22,0.2)]">
                         <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 text-center mb-4 uppercase italic">Skill Power Up</h2>
-                        <p class="text-center text-slate-400 text-xs mb-8">Sacrifique um monstro idêntico ou um <span class="text-white font-bold">Skillupper</span>.</p>
+                        <p class="text-center text-slate-400 text-xs mb-8">Sacrifique um monstro id�ntico ou um <span class="text-white font-bold">Skillupper</span>.</p>
                         
                         <div class="flex justify-center items-center gap-6 mb-8">
                              <!-- Target -->
@@ -4386,7 +4382,7 @@ const renderStory = () => {
          );
          
          if (candidates.length === 0) {
-             grid.innerHTML = `<div class="col-span-5 text-center text-slate-500 text-xs py-4">Nenhum monstro compatível encontrado.</div>`;
+             grid.innerHTML = `<div class="col-span-5 text-center text-slate-500 text-xs py-4">Nenhum monstro compat�vel encontrado.</div>`;
          }
 
          candidates.forEach(c => {
@@ -4396,7 +4392,7 @@ const renderStory = () => {
              el.innerHTML = `
                  <img src="${c.img}" class="w-full h-full object-contain">
                  <div class="absolute top-0 right-0 p-1 bg-black/50 backdrop-blur rounded-bl-lg">
-                     <div class="text-[8px] font-bold text-white">${c.id === "skillupper" ? "SKILL" : "★"+c.stars}</div>
+                     <div class="text-[8px] font-bold text-white">${c.id === "skillupper" ? "SKILL" : "?"+c.stars}</div>
                  </div>
                  ${isSel ? '<div class="absolute inset-0 bg-orange-500/20 animate-pulse"></div>' : ''}
              `;
@@ -4452,14 +4448,14 @@ const renderStory = () => {
             el.innerHTML = `<span class="text-xs font-bold absolute bottom-0 right-1">+${
               eq.lvl
             }</span>${
-              type === "weapon" ? "⚔️" : type === "armor" ? "🛡️" : "💍"
+              type === "weapon" ? "??" : type === "armor" ? "???" : "??"
             }`;
             return;
           }
         }
         el.className = "eq-slot";
         el.innerHTML = `<span class="opacity-20">${
-          type === "weapon" ? "⚔️" : type === "armor" ? "🛡️" : "💍"
+          type === "weapon" ? "??" : type === "armor" ? "???" : "??"
         }</span>`;
       };
 
@@ -4468,11 +4464,8 @@ const renderStory = () => {
       const equipLeader = () => {
         state.leaderIdx = selectedDetailIdx;
         save();
-        
-        // UI Feedback
-        showToast("Líder definido com sucesso!", "success");
-        renderMonsterBox(); // Update grid badges
-        openDetail(selectedDetailIdx); // Refresh button state
+        closeDetail();
+        renderMonsterBox();
       };
 
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -4545,7 +4538,7 @@ const renderStory = () => {
         if (evolvedCount > 0) {
           save();
           renderMonsterBox();
-          const msg = `Auto Evolução: ${evolvedCount} monstros evoluídos!`;
+          const msg = `Auto Evolu��o: ${evolvedCount} monstros evolu�dos!`;
           showToast(msg, "success");
         } else {
           showToast("Nenhum par (Max Lv + Material) encontrado.", "info");
@@ -4559,12 +4552,12 @@ const usePotion = () => {
   if (!mon) return;
 
   if ((state.user.potions || 0) <= 0) {
-      return showToast("Você não tem poções de XP!", "error");
+      return showToast("Voc� n�o tem po��es de XP!", "error");
   }
 
   const maxLvl = MAX_LEVELS[mon.stars] || 40;
   if (mon.lvl >= maxLvl) {
-      return showToast("Este monstro já está no nível máximo!", "info");
+      return showToast("Este monstro j� est� no n�vel m�ximo!", "info");
   }
 
   // Consume
@@ -4582,7 +4575,5 @@ const usePotion = () => {
   // Update header if needed (potions usually not in header)
   if(typeof updateShopUI !== "undefined") updateShopUI();
 };
-
-
 
 
