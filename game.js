@@ -951,7 +951,6 @@
       }
 
       // --- CORE ---
-      // --- CORE ---
       const init = () => {
         const lastUser = localStorage.getItem("paperwar_last_user");
 
@@ -5517,32 +5516,7 @@ window.openEvolutionModal = openEvolutionModal; // Ensure global
 window.openSkillUpModal = openSkillUpModal; // Ensure global
 
 // === GLOBAL HELPERS (MOVED FOR STABILITY) ===
-window.getXPNeeded = function(lvl, stars) {
-    return Math.floor(500 * Math.pow(lvl, 1.1));
-};
 
-window.getMonsterVisuals = function(mon) {
-    if (!mon) return "";
-    
-    // Find template
-    const tpl = MONSTERS_DB.find(m => m.id.toLowerCase() === mon.id?.toLowerCase()) || 
-                MONSTERS_DB.find(m => m.name.toLowerCase() === (mon.name || mon.id)?.toLowerCase()) || 
-                {};
-    
-    const imgSrc = mon.img || tpl.img || "";
-    // If no emoji, fallback to Question Mark
-    const emojiSrc = mon.emoji || tpl.emoji || "❓";
-
-    if (imgSrc && imgSrc !== "") {
-        return `
-            <img src="${imgSrc}" class="monster-image-el w-full h-full object-contain" 
-                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <span class="monster-emoji-el hidden items-center justify-center w-full h-full">${emojiSrc}</span>
-        `;
-    } else {
-        return `<span class="monster-emoji-el flex items-center justify-center w-full h-full">${emojiSrc}</span>`;
-    }
-};
 
 // === EQUIPMENT HELPERS ===
 function isEquippedByMon(mon, eqId) {
@@ -5551,11 +5525,8 @@ function isEquippedByMon(mon, eqId) {
         mon.equipped.slot1 === eqId ||
         mon.equipped.slot2 === eqId ||
         mon.equipped.slot3 === eqId ||
-        mon.equipped.slot4 === eqId ||
-        /* Legacy compat */
-        mon.equipped.weapon === eqId ||
-        mon.equipped.armor === eqId ||
-        mon.equipped.acc === eqId
+        mon.equipped.slot4 === eqId
+
     );
 }
 
@@ -5574,10 +5545,7 @@ function unequipItem(eqId, cost) {
     if (mon.equipped.slot2 === eqId) mon.equipped.slot2 = null;
     if (mon.equipped.slot3 === eqId) mon.equipped.slot3 = null;
     if (mon.equipped.slot4 === eqId) mon.equipped.slot4 = null;
-    // Legacy
-    if (mon.equipped.weapon === eqId) mon.equipped.weapon = null;
-    if (mon.equipped.armor === eqId) mon.equipped.armor = null;
-    if (mon.equipped.acc === eqId) mon.equipped.acc = null;
+
     
     save();
     showToast(`Item desequipado! (-${cost} Ouro)`, "success");
@@ -5615,13 +5583,13 @@ window.getMonsterVisuals = (mon) => {
                  class="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-transform"
                  onerror="${fallback}" 
             />
-            <span class="hidden select-none" style="font-size: 8rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">
+            <span class="hidden select-none" style="font-size: 3rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">
                 ${mon.emoji || '❓'}
             </span>
         `;
     }
     // Default to Emoji
-    return `<span class="select-none" style="font-size: 8rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">${mon.emoji || '❓'}</span>`;
+    return `<span class="select-none" style="font-size: 3rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));">${mon.emoji || '❓'}</span>`;
 };
 
 // XP Mechanics Helpers (Global)
