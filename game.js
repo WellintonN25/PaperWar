@@ -1816,7 +1816,7 @@ const renderStory = () => {
         // Substitui todo o conteúdo interno do modal para garantir o novo layout
         
         modal.innerHTML = `
-            <div class="relative w-full max-w-4xl bg-[#1a1c24] rounded-xl shadow-2xl border border-[#3e4252] overflow-hidden flex flex-col md:flex-row h-[85vh] md:h-auto animate-fade-in-up">
+            <div class="relative w-full max-w-4xl bg-[#1a1c24] rounded-xl shadow-2xl border border-[#3e4252] overflow-y-auto md:overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-auto animate-fade-in-up">
                 
                 <!-- CLOSE BTN -->
                 <button onclick="document.getElementById('eq-modal').classList.add('hidden')" class="absolute top-4 right-4 z-50 text-slate-400 hover:text-white transition-colors bg-black/50 hover:bg-red-500/80 rounded-full w-8 h-8 flex items-center justify-center">✕</button>
@@ -2664,7 +2664,16 @@ const renderStory = () => {
           busy: false,
           auto: false,
           speed: 1,
-          repeatCount: isRestart ? battleState.repeatCount : startRepeat
+          repeatCount: isRestart ? battleState.repeatCount : startRepeat,
+          sessionLog: isRestart ? battleState.sessionLog : (startRepeat > 0 ? {
+              gold: 0,
+              crystals: 0,
+              xp: 0,
+              drops: [],
+              wins: 0,
+              battles: 0,
+              startTime: Date.now()
+          } : null)
         };
 
         // Forçar Auto se Repetir estiver ativo (Modo Farm)
@@ -3043,11 +3052,12 @@ const renderStory = () => {
         }
 
         defenderEl.classList.add("anim-hit-recoil");
-        defenderEl.querySelector("img").classList.add("anim-hit-spin");
+        const defImg = defenderEl.querySelector("img");
+        if (defImg) defImg.classList.add("anim-hit-spin");
 
         setTimeout(() => {
           defenderEl.classList.remove("anim-hit-recoil");
-          defenderEl.querySelector("img").classList.remove("anim-hit-spin");
+          if (defImg) defImg.classList.remove("anim-hit-spin");
         }, 600 / spd);
 
         // QUADROS DE IMPACTO E TREMOR DE TELA
@@ -4296,38 +4306,83 @@ const renderStory = () => {
       const loseBattle = () => endScreen(false);
 
       const endScreen = (win) => {
+        // --- LÓGICA DE SESSÃO DE FARM (ACUMULADOR) ---
+        let session = battleState.sessionLog;
+        if (session) {
+            session.battles++;
+            if (win) session.wins++;
+        }
+
+        // Se estiver em modo Farm (repeatCount > 0) e ganhou, NÃO mostra modal ainda, apenas acumula
+        // Mas se perdeu, interrompe? Usuário não especificou. Geralmente farm para se perder.
+        // Vamos assumir: Se perder, interrompe farm e mostra o acumulado até agora.
+        
+        if (win && battleState.repeatCount > 0) {
+             let nextCost = 5;
+             if (battleState.mode.startsWith("dungeon")) {
+                 nextCost = 5 + Math.floor(prepState.level / 2);
+             }
+             
+             if (state.user.energy < nextCost) {
+                 battleState.repeatCount = 0;
+                 showToast("Ciclo interrompido: Energia Insuficiente!", "error");
+             }
+        }
+
+        let shouldShowModal = true;
+        
+        if (win && battleState.repeatCount > 1) {
+            shouldShowModal = false;
+        }
+
         const ov = document.getElementById("battle-overlay");
-        ov.classList.remove("hidden");
-        ov.classList.add("flex");
-        void ov.offsetWidth;
-        ov.style.opacity = "1";
-        document.getElementById("outcome-title").innerText = win
-          ? "VITÓRIA"
-          : "DERROTA";
+        
+        // Se for mostrar modal, prepara UI
+        if (shouldShowModal) {
+            ov.classList.remove("hidden");
+            ov.classList.add("flex");
+            void ov.offsetWidth;
+            ov.style.opacity = "1";
+            
+            // Título Dinâmico
+            if (session && session.battles > 1) {
+                document.getElementById("outcome-title").innerText = "RESULTADO DO FARM";
+            } else {
+                document.getElementById("outcome-title").innerText = win ? "VITÓRIA" : "DERROTA";
+            }
+        }
 
         let repeatCancelled = false;
         
         
-        // LÓGICA DE UI DE REPETIÇÃO AUTOMÁTICA
-        // Fix: Use > 1 because if it's 1, it will decrement to 0 and stop, so we want "Continuar"
-        if (battleState.repeatCount > 1) {
-             const btn = document.querySelector("#battle-overlay button");
-             if (btn) btn.innerText = `Parar Auto (${battleState.repeatCount})`;
-             btn.onclick = () => {
-                 battleState.repeatCount = 0;
-                 btn.innerText = "Continuar";
-                 btn.onclick = closeBattle;
-             };
-        } else {
-             const btn = document.querySelector("#battle-overlay button");
-             if (btn) {
-                 btn.innerText = "Continuar";
-                 btn.onclick = closeBattle;
+        // LÓGICA DE UI DE REPETIÇÃO AUTOMÁTICA (APENAS SE MODAL ESTIVER VISÍVEL E FOR PAUSA/FIM ANORMAL)
+        // Se estamos suprimindo o modal, não precisamos configurar botões agora.
+        
+        if (shouldShowModal) {
+             if (battleState.repeatCount > 1) {
+                 const btn = document.querySelector("#battle-overlay button");
+                 if (btn) btn.innerText = `Parar Auto (${battleState.repeatCount})`;
+                 btn.onclick = () => {
+                     battleState.repeatCount = 0;
+                     btn.innerText = "Continuar";
+                     btn.onclick = closeBattle;
+                 };
+             } else {
+                 const btn = document.querySelector("#battle-overlay button");
+                 if (btn) {
+                     btn.innerText = "Continuar";
+                     btn.onclick = closeBattle;
+                 }
              }
         }
 
+        let rewards = "";
+        let xpAmount = 0; // Escopo externo para log
+        let goldGained = 0;
+        let crystalsGained = 0;
+        let droppedItems = [];
+
         if (win) {
-          let rewards = "";
           
           // --- LÓGICA DE XP DE MONSTRO ---
           const hero = state.inventory[prepState.selectedMonIdx]; // FIXED: selectedIdx -> selectedMonIdx
@@ -4336,12 +4391,12 @@ const renderStory = () => {
           if (battleState.mode.startsWith("dungeon")) xpBase = 300;
           if (battleState.mode === "dungeon_xp") xpBase = 2000; // Massive XP in XP Dungeon
           
-          let xpAmount = Math.floor(xpBase * (1 + prepState.level * 0.2));
+          xpAmount = Math.floor(xpBase * (1 + prepState.level * 0.2));
 
           // VERIFICAÇÃO DE BOOST DE XP
           if (state.user.xpBoostEndTime && Date.now() < state.user.xpBoostEndTime) {
                xpAmount *= 3;
-               rewards += `<div class='text-emerald-400 font-bold text-xs mt-1 animate-pulse'>XP BOOST ATIVO (3x)!</div>`;
+               // O aviso visual só faz sentido se o modal for exibido agora, ou no final.
           }
           
            // Aplicar XP
@@ -4356,11 +4411,8 @@ const renderStory = () => {
             state.user.xp = state.user.xp - accXpReq;
             state.user.lvl++;
             state.user.crystals += 25;
-            showToast(`LEVEL UP! Nível ${state.user.lvl} (+25 💎)`);
+            if (shouldShowModal) showToast(`LEVEL UP! Nível ${state.user.lvl} (+25 💎)`);
           }
-
-          let crystalsGained = 0;
-          let goldGained = 0;
 
           if (battleState.mode.startsWith("dungeon")) {
             const floor = prepState.level;
@@ -4375,14 +4427,14 @@ const renderStory = () => {
             if (currentProg < floor) {
                 state.user.dungeonProgress[type] = floor;
                 // Toast para desbloqueio?
-                if (floor < 12) showToast(`Andar B${floor + 1} Liberado!`, "success");
+                if (floor < 12 && shouldShowModal) showToast(`Andar B${floor + 1} Liberado!`, "success");
             }
             
             // Masmorra Concluída? Marcar para desbloqueio Auto/Speed
             state.user.dungeonClear = state.user.dungeonClear || {};
             if (!state.user.dungeonClear[battleState.mode]) {
                 state.user.dungeonClear[battleState.mode] = true;
-                showToast("Auto & 3x Liberados para esta masmorra!", "success");
+                if (shouldShowModal) showToast("Auto & 3x Liberados para esta masmorra!", "success");
             }
 
             goldGained = 4000 + floor * 500; 
@@ -4395,7 +4447,6 @@ const renderStory = () => {
             if (battleState.mode === "dungeon_xp") {
                 goldGained = 1000 + floor * 100; // Less gold in XP dungeon
                 dropRate = 0.05; // Very low drop rate
-                rewards = `XP: ${xpAmount} | Ouro: ${goldGained}`;
             }
 
             if (Math.random() < dropRate && battleState.mode !== "dungeon_xp") {
@@ -4404,24 +4455,12 @@ const renderStory = () => {
                 : "golem";
               const droppedEq = createEquipment(floor, dungeonType);
               state.equipment.push(droppedEq);
-              const rName = EQ_RARITY[droppedEq.rarity].name;
-              rewards = `<div class='text-sm text-yellow-300 font-bold mb-1'>DROP RARO!</div>
-                         <div class='text-xs text-white'>${rName} ${droppedEq.type === 'weapon' ? 'Arma' : droppedEq.type === 'armor' ? 'Armadura' : 'Acessório'}</div>`;
-            } else {
-              rewards = rewards || `<div class='flex gap-4 justify-center'>
-                                      <div class='text-yellow-400 font-bold text-sm'>+${goldGained} Ouro</div>
-                                      <div class='text-cyan-400 font-bold text-sm'>+${crystalsGained} 💎</div>
-                                    </div>`;
+              droppedItems.push(droppedEq);
             }
           } else if (battleState.mode === "tower") {
             state.towerFloor++;
             crystalsGained = 50 + state.towerFloor * 10;
             goldGained = 3000 * state.towerFloor; 
-            rewards = `<div class='text-green-400 font-bold text-lg'>Andar ${state.towerFloor - 1} Completo!</div>
-                       <div class='flex gap-4 justify-center mt-2'>
-                          <span class='text-yellow-400'>+${goldGained} Ouro</span>
-                          <span class='text-cyan-400'>+${crystalsGained} 💎</span>
-                       </div>`;
           } else {
             const stage = prepState.level;
             const stageKey = `stage_${stage}`;
@@ -4430,18 +4469,9 @@ const renderStory = () => {
               goldGained = 5000 * stage; 
               state.user.firstClear[stageKey] = true;
               if (stage === state.storyProgress) state.storyProgress++;
-              rewards = `<div class='text-purple-400 font-black text-lg animate-pulse'>PRIMEIRA VEZ!</div>
-                         <div class='flex gap-4 justify-center mt-2'>
-                            <span class='text-yellow-400 font-bold'>+${goldGained} 🪙</span>
-                            <span class='text-cyan-400 font-bold'>+${crystalsGained} 💎</span>
-                         </div>`;
             } else {
               crystalsGained = 5;
               goldGained = 1000 + stage * 300; 
-              rewards = `<div class='flex gap-4 justify-center'>
-                            <span class='text-yellow-400 font-bold'>+${goldGained} 🪙</span>
-                            <span class='text-cyan-400 font-bold'>+${crystalsGained} 💎</span>
-                         </div>`;
             }
           }
 
@@ -4450,77 +4480,121 @@ const renderStory = () => {
           save();
           updateHeader();
           
-          const xpHTML = xpAmount 
-             ? `<div class='mt-3 pt-3 border-t border-white/10 flex justify-between items-center'>
+          // --- ACUMULAR NO SESSION LOG ---
+          if (session) {
+              session.gold += goldGained;
+              session.crystals += crystalsGained;
+              session.xp += xpAmount;
+              if (droppedItems.length > 0) session.drops.push(...droppedItems);
+          }
+
+          // === GERAÇÃO DE HTML DE RECOMPENSAS (APENAS SE FOR MOSTRAR MODAL) ===
+          if (shouldShowModal) {
+              // Se estamos mostrando o modal E temos uma sessão, usamos os totais da sessão
+              let displayGold = session ? session.gold : goldGained;
+              let displayCrystals = session ? session.crystals : crystalsGained;
+              let displayXP = session ? session.xp : xpAmount;
+              let displayDrops = session ? session.drops : droppedItems;
+              
+              // Título de Vitória (Com contagem se for sessão)
+              if (session) {
+                  rewards += `<div class="text-center font-bold text-green-400 mb-2">${session.wins}/${session.battles} Vitórias</div>`;
+              }
+              
+              // Drops HTML
+              let dropsHtml = "";
+              if (displayDrops.length > 0) {
+                  displayDrops.forEach(eq => {
+                       const rName = EQ_RARITY[eq.rarity].name;
+                       const typeName = eq.type === 'weapon' ? 'Arma' : eq.type === 'armor' ? 'Armadura' : 'Acessório';
+                       // Usar cor correta
+                       const colorClass = eq.rarity === 'legendary' ? 'text-yellow-400' : eq.rarity === 'epic' ? 'text-purple-400' : 'text-blue-400';
+                       
+                       dropsHtml += `<div class='text-xs ${colorClass} font-bold border border-white/10 bg-black/20 p-1 rounded mb-1'>${rName} ${typeName} (+${eq.lvl})</div>`;
+                  });
+              }
+
+              rewards += `<div class='flex gap-4 justify-center items-center mb-3'>
+                              <div class="flex flex-col items-center">
+                                <span class='text-yellow-400 font-bold text-lg'>+${displayGold}</span>
+                                <span class="text-[10px] text-slate-500 uppercase">Ouro</span>
+                              </div>
+                              <div class="flex flex-col items-center">
+                                <span class='text-cyan-400 font-bold text-lg'>+${displayCrystals}</span>
+                                <span class="text-[10px] text-slate-500 uppercase">Cristais</span>
+                              </div>
+                          </div>`;
+                          
+              if (dropsHtml) {
+                  rewards += `<div class="max-h-32 overflow-y-auto w-full mb-2 px-2">${dropsHtml}</div>`;
+              }
+              
+              const xpBoostActive = state.user.xpBoostEndTime && Date.now() < state.user.xpBoostEndTime;
+              
+              const xpHTML = displayXP 
+             ? `<div class='mt-3 pt-3 border-t border-white/10 flex justify-between items-center w-full'>
                     <div class='text-left'>
-                        <div class='text-[10px] text-slate-400 uppercase font-bold tracking-wider'>HERÓI XP</div>
-                        <div class='text-green-400 font-black text-xl'>+${xpAmount} XP</div>
-                    </div>
-                    <div class='text-right'>
-                         <div class='text-[10px] text-slate-400 uppercase font-bold tracking-wider'>RANK XP</div>
-                         <div class='text-blue-400 font-black text-xl'>+50</div>
+                        <div class='text-[10px] text-slate-400 uppercase font-bold tracking-wider'>HERÓI XP TOTAL</div>
+                        <div class='text-green-400 font-black text-xl'>+${displayXP} XP</div>
+                        ${xpBoostActive ? "<div class='text-[9px] text-emerald-400 animate-pulse'>BOOST ATIVO</div>" : ""}
                     </div>
                 </div>`
              : "";
-
-          document.getElementById("outcome-rewards").innerHTML = `
-              <div class="bg-slate-900/90 p-6 rounded-2xl border border-white/10 shadow-xl backdrop-blur-md">
-                 ${rewards}
-                 ${xpHTML}
-              </div>
-              ${
-                  win && battleState.mode.startsWith("dungeon") && battleState.repeatCount === 0
+             
+             document.getElementById("outcome-rewards").innerHTML = `
+               <div class="bg-slate-900/90 p-6 rounded-2xl border border-white/10 shadow-xl backdrop-blur-md flex flex-col items-center w-full max-w-sm">
+                  ${rewards}
+                  ${xpHTML}
+               </div>
+               ${
+                  // Botão de Farm 5x resetado (aparece se for dungeon e acabou o farm)
+                  (win && battleState.mode.startsWith("dungeon"))
                   ? `<button onclick="startFarm5x()" class="w-full mt-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl text-white font-black uppercase shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
-                        <span>🔄</span> Farm 5x
+                        <span>🔄</span> Farm 5x Novamente
                      </button>`
                   : ""
-              }
-          `;
-          
-          // Expor auxiliar para o botão
-          window.startFarm5x = () => {
-             battleState.repeatCount = 5;
-             startBattle(true);
-          };
+               }
+             `; // Corrected closing of the HTML string and the if (shouldShowModal) block
+          }
           
           // HANDLER DE REPETIÇÃO AUTOMÁTICA
-          if (battleState.repeatCount > 0) {
+          if (battleState.repeatCount > 0) { // Removed redundant '&& win' as it's inside 'if (win)'
               
-              // Verificação de Energia para Próxima Rodada
-              let nextCost = 5;
-              if (battleState.mode.startsWith("dungeon")) {
-                  // lvl está em prepState ou battleState? battleState.enemy.lvl é escalonado. prepState.level é andar.
-                  nextCost = 5 + Math.floor(prepState.level / 2);
-              }
-              
-              if (state.user.energy < nextCost) {
-                  battleState.repeatCount = 0;
-                  showToast("Ciclo interrompido: Energia Insuficiente!", "error");
-                  const btn = document.querySelector("#battle-overlay button");
-                  if (btn) {
-                       btn.innerText = "Continuar";
-                       btn.onclick = closeBattle;
-                  }
-                  return;
-              }
-
               battleState.repeatCount--;
               if (battleState.repeatCount > 0) {
-                  showToast(`Próxima batalha em 2s... (${battleState.repeatCount} restantes)`);
+                  showToast(`Próxima batalha em 1s... (${battleState.repeatCount} restantes)`);
                   setTimeout(() => {
-                      if (!document.getElementById("battle-overlay").classList.contains("hidden")) { // Check if not closed manually
-                        startBattle(true); // Restart
+                      // Se repeatCount ainda > 0, continua
+                      if (battleState.repeatCount > 0) {
+                         startBattle(true); 
                       }
-                  }, 2000);
+                  }, 1000);
               } else {
                   showToast("Ciclo de Farm Concluído!");
               }
           }
-          
-        } else {
+        } else { // This is the 'else' block for 'if (win)'
           battleState.repeatCount = 0; // Parar se perder
-          document.getElementById("outcome-rewards").innerText =
-            "Tente melhorar seu time";
+          
+          // Mostrar modal de derrota (com resumo se houve vitórias antes?)
+          // Se session existir, mostrar resumo do que ganhou antes de perder.
+           document.getElementById("outcome-rewards").innerHTML = `
+               <div class="bg-slate-900/90 p-6 rounded-2xl border border-white/10 shadow-xl backdrop-blur-md flex flex-col items-center">
+                  <div class="text-red-500 font-bold text-xl mb-2">DERROTA</div>
+                  <p class="text-slate-400 text-xs mb-4">A sequência foi interrompida.</p>
+                  ${
+                      (session && session.gold > 0) 
+                      ? `<div class="text-green-400 font-bold">Acumulado: ${session.gold} Ouro, ${session.crystals} Cristais</div>` 
+                      : "Tente melhorar seu time"
+                  }
+               </div>
+           `;
+           
+           // Garantir que modal aparece na derrota
+           const ov = document.getElementById("battle-overlay");
+           ov.classList.remove("hidden");
+           ov.classList.add("flex");
+           ov.style.opacity = "1";
         }
       };
 
