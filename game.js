@@ -301,8 +301,8 @@
           skills: ["melee", "leaf_cutter", "poison_cloud"], 
         },
         {
-          id: "Tcat",
-          name: "Tcat",
+          id: "WarriorF",
+          name: "WarriorF",
           type: "Fire Warrior",
           role: "attacker",
           element: "fire",
