@@ -1853,9 +1853,9 @@ const renderStory = () => {
         }
 
         // --- RESPONSIVE LAYOUT HTML ---
-        // Increased max-w for desktop (750px), removed sm:overflow-hidden to prevent cutting off
+        // COMPACT MODE: Reduced sizes for all elements
         modal.innerHTML = `
-            <div class="relative w-[95%] max-w-[500px] sm:max-w-[750px] max-h-[90vh] overflow-y-auto bg-[#1a120b] border-[2px] sm:border-[3px] border-[#d4a017] rounded-lg shadow-2xl flex flex-col sm:flex-row font-sans select-none animate-fade-in custom-scrollbar">
+            <div class="relative w-[95%] max-w-[400px] sm:max-w-[700px] max-h-[85vh] bg-[#1a120b] border-[2px] sm:border-[3px] border-[#d4a017] rounded-lg shadow-2xl flex flex-col sm:flex-row font-sans select-none animate-fade-in custom-scrollbar overflow-hidden">
                 
                 <!-- HEADER -->
                 <div class="absolute top-0 left-0 right-0 h-8 sm:h-auto sm:static sm:bg-transparent sm:border-0 bg-gradient-to-b from-[#2e2012] to-[#1a120b] border-b border-[#3d2a16] flex sm:hidden items-center px-4 justify-between z-20">
@@ -1866,19 +1866,19 @@ const renderStory = () => {
                 </div>
                 
                 <!-- DESKTOP CLOSE BTN -->
-                <button onclick="document.getElementById('eq-modal-v2').classList.add('hidden')" class="hidden sm:flex absolute top-2 right-2 z-50 text-[#8a7a5a] hover:text-white font-bold text-xl leading-none w-8 h-8 items-center justify-center bg-black/20 rounded-full">✕</button>
+                <button onclick="document.getElementById('eq-modal-v2').classList.add('hidden')" class="hidden sm:flex absolute top-2 right-2 z-50 text-[#8a7a5a] hover:text-white font-bold text-xl leading-none w-6 h-6 items-center justify-center bg-black/20 rounded-full">✕</button>
 
                 <!-- LEFT COLUMN (Visuals) -->
-                <div class="w-full sm:w-[220px] flex sm:flex-col items-center justify-start pt-12 sm:pt-8 pb-4 px-4 bg-[#140e08] sm:bg-transparent border-b sm:border-b-0 sm:border-r border-[#3d2a16]">
+                <div class="w-full sm:w-[200px] flex sm:flex-col items-center justify-start pt-10 sm:pt-6 pb-2 px-3 bg-[#140e08] sm:bg-transparent border-b sm:border-b-0 sm:border-r border-[#3d2a16]">
                     
                     <!-- Header Text Desktop -->
-                    <div class="hidden sm:flex flex-col items-center mb-4 text-center">
-                        <h2 class="text-[#facb5a] font-bold text-lg leading-tight mb-1 drop-shadow-md">${setInfo} Rune</h2>
-                        <span class="text-[#8a7a5a] text-xs font-bold uppercase tracking-widest">Slot ${eq.slot || "?"} • +${eq.lvl}</span>
+                    <div class="hidden sm:flex flex-col items-center mb-2 text-center">
+                        <h2 class="text-[#facb5a] font-bold text-base leading-tight mb-0.5 drop-shadow-md">${setInfo} Rune</h2>
+                        <span class="text-[#8a7a5a] text-[10px] font-bold uppercase tracking-widest">Slot ${eq.slot || "?"} • +${eq.lvl}</span>
                     </div>
 
-                    <!-- Icon Container -->
-                    <div class="relative w-20 h-20 sm:w-32 sm:h-32 bg-[#0d0905] rounded-lg border border-[#3d2a16] shadow-inner flex-shrink-0 mr-4 sm:mr-0 sm:mb-6 group">
+                    <!-- Icon Container (Smaller) -->
+                    <div class="relative w-16 h-16 sm:w-28 sm:h-28 bg-[#0d0905] rounded-lg border border-[#3d2a16] shadow-inner flex-shrink-0 mr-3 sm:mr-0 sm:mb-4 group">
                          <div class="absolute inset-0 bg-contain bg-center opacity-30" style="background-image: url('src/rune_bg.png');"></div>
                          
                          <div id="eq-icon-container" class="relative z-10 w-full h-full flex items-center justify-center">
@@ -1887,70 +1887,70 @@ const renderStory = () => {
                              <div id="eq-energy-ring-1" class="absolute inset-1 border-2 border-[#facb5a]/30 rounded-full"></div>
                              <div id="eq-energy-ring-2" class="absolute inset-2 border border-dashed border-white/10 rounded-full animate-[spin_10s_linear_infinite] opacity-50"></div>
                              
-                             <span class="text-4xl sm:text-6xl drop-shadow-lg filter brightness-125 relative z-20 transform group-hover:scale-110 transition-transform duration-300">
+                             <span class="text-3xl sm:text-5xl drop-shadow-lg filter brightness-125 relative z-20 transform group-hover:scale-110 transition-transform duration-300">
                                  ${eq.type === 'weapon' ? '⚔️' : eq.type === 'armor' ? '🛡️' : '💍'}
                              </span>
-                             <div class="absolute -bottom-1 -right-1 bg-black text-white text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded border border-white/20 shadow z-30">+${eq.lvl}</div>
+                             <div class="absolute -bottom-1 -right-1 bg-black text-white text-[9px] sm:text-[10px] font-bold px-1 py-0.5 rounded border border-white/20 shadow z-30">+${eq.lvl}</div>
                          </div>
                          
                          <div id="eq-anim-overlay" class="absolute inset-0 hidden items-center justify-center z-50 bg-black/60 rounded-lg">
-                             <span id="eq-anim-icon" class="text-4xl animate-bounce"></span>
+                             <span id="eq-anim-icon" class="text-3xl animate-bounce"></span>
                          </div>
                     </div>
 
                     <!-- Rarity/Set Info -->
                     <div class="flex flex-col items-start sm:items-center text-left sm:text-center">
-                        <span class="bg-[#3e1a1a] text-[#ffaaaa] text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded border border-[#6b2a2a] uppercase tracking-widest mb-1 sm:mb-2">
+                        <span class="bg-[#3e1a1a] text-[#ffaaaa] text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded border border-[#6b2a2a] uppercase tracking-widest mb-1">
                              ${rarityInfo.name}
                         </span>
-                         <div class="text-[#facb5a] text-[9px] sm:text-[10px] leading-tight opacity-80 max-w-[150px]">
+                         <div class="text-[#facb5a] text-[9px] leading-tight opacity-80 max-w-[140px]">
                             ${setDesc}
                         </div>
                     </div>
                 </div>
 
                 <!-- MIDDLE & RIGHT COMBINED -->
-                <div class="flex-1 flex flex-col sm:flex-row p-4 pt-4 sm:pt-8 gap-4 bg-[#1a120b]">
+                <div class="flex-1 flex flex-col sm:flex-row p-3 pt-3 sm:pt-6 gap-3 bg-[#1a120b]">
                     
                     <!-- STATS -->
-                    <div class="flex-1 border-b sm:border-b-0 sm:border-r border-[#3d2a16] pb-4 sm:pb-0 sm:pr-6 flex flex-col justify-start">
+                    <div class="flex-1 border-b sm:border-b-0 sm:border-r border-[#3d2a16] pb-3 sm:pb-0 sm:pr-4 flex flex-col justify-start">
                         ${mainStatHtml}
-                        <div class="bg-[#120c07] p-3 sm:p-4 rounded border border-[#3d2a16] flex-1">
-                             <h4 class="text-[#5c3a1a] text-[10px] font-bold uppercase mb-2">Sub Properties</h4>
-                             <div class="space-y-1">
+                        <div class="bg-[#120c07] p-2 sm:p-3 rounded border border-[#3d2a16] flex-1">
+                             <h4 class="text-[#5c3a1a] text-[9px] font-bold uppercase mb-1">Sub Properties</h4>
+                             <div class="space-y-0.5">
                                 ${subsHtml}
                              </div>
                         </div>
                     </div>
 
                     <!-- ACTIONS Panel -->
-                    <div class="w-full sm:w-[160px] flex flex-col justify-end sm:justify-start flex-shrink-0">
+                    <div class="w-full sm:w-[140px] flex flex-col justify-end sm:justify-start flex-shrink-0">
                         <!-- Sell Price -->
-                        <div class="flex justify-between items-center bg-[#2b2218] px-3 py-2 rounded border border-[#3d2a16] mb-4 shadow-sm">
-                            <span class="text-[10px] text-[#8a7a5a] uppercase font-bold">Sell Value</span>
-                            <span class="text-xs font-bold text-[#facb5a]">${Math.floor(upgradeCost * 2.5)} G</span>
+                        <div class="flex justify-between items-center bg-[#2b2218] px-2 py-1.5 rounded border border-[#3d2a16] mb-3 shadow-sm">
+                            <span class="text-[9px] text-[#8a7a5a] uppercase font-bold">Sell</span>
+                            <span class="text-[10px] font-bold text-[#facb5a]">${Math.floor(upgradeCost * 2.5)} G</span>
                         </div>
 
                         ${equipBtn}
 
                         ${!isMax ? `
                             <!-- FIXED: Added quotes around ID -->
-                            <button id="btn-upgrade-action" onclick="performUpgrade('${eq.id}')" class="w-full py-3 sm:py-4 bg-gradient-to-b from-[#fcd34d] to-[#d97706] border border-[#78350f] rounded text-[#451a03] font-black text-sm uppercase shadow-[0_3px_0_#451a03] active:translate-y-[2px] active:shadow-none hover:brightness-110 mb-3 relative overflow-hidden group transition-all">
+                            <button id="btn-upgrade-action" onclick="performUpgrade('${eq.id}')" class="w-full py-2.5 sm:py-3 bg-gradient-to-b from-[#fcd34d] to-[#d97706] border border-[#78350f] rounded text-[#451a03] font-black text-xs uppercase shadow-[0_2px_0_#451a03] active:translate-y-[2px] active:shadow-none hover:brightness-110 mb-2 relative overflow-hidden group transition-all">
                                 <span class="relative z-10 flex flex-col items-center">
                                     <span class="tracking-wider">Power-up</span>
-                                    <span class="text-[9px] font-bold opacity-80 mt-0.5">${upgradeCost} GOLD</span>
+                                    <span class="text-[8px] font-bold opacity-80 mt-0.5">${upgradeCost} G</span>
                                 </span>
                                 <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                             </button>
                         ` : `
-                             <div class="w-full py-3 bg-[#2b2218] text-[#facb5a] text-center text-xs font-bold border border-[#3d2a16] rounded mt-2 uppercase opacity-80">
-                                Max Level
+                             <div class="w-full py-2 bg-[#2b2218] text-[#facb5a] text-center text-[10px] font-bold border border-[#3d2a16] rounded mt-2 uppercase opacity-80">
+                                Max Lvl
                              </div>
                         `}
                         
                         <!-- FIXED: Added quotes around ID -->
-                        <button onclick="sellEquipment('${eq.id}')" class="text-[#e57575] hover:text-[#ffaaaa] text-[11px] font-bold mt-auto text-center hover:underline decoration-dashed underline-offset-4 py-2 opacity-80 hover:opacity-100">
-                            Sell Item
+                        <button onclick="sellEquipment('${eq.id}')" class="text-[#e57575] hover:text-[#ffaaaa] text-[10px] font-bold mt-auto text-center hover:underline decoration-dashed underline-offset-4 py-1 opacity-80 hover:opacity-100">
+                            Sell
                         </button>
                     </div>
                 </div>
@@ -2089,22 +2089,23 @@ const renderStory = () => {
                      }
                 }
                 
+                
                 if (animOverlay && animIcon) {
                     animOverlay.classList.remove("hidden");
                     animOverlay.classList.add("flex");
-                    animIcon.innerText = "SUCESSO!";
-                    animIcon.className = "text-4xl font-black text-yellow-400 drop-shadow-[0_0_10px_rgba(234,179,8,0.8)] animate-bounce";
+                    animIcon.innerText = "✅ SUCESSO";
+                    animIcon.className = "text-xl font-black text-green-400 drop-shadow-[0_0_20px_rgba(34,197,94,0.8)] animate-bounce text-center";
                 }
-                showToast(`+${eq.lvl} Aprimorado com Sucesso!`);
+                // showToast(`+${eq.lvl} Aprimorado com Sucesso!`);
     
             } else {
                 if (animOverlay && animIcon) {
                     animOverlay.classList.remove("hidden");
                     animOverlay.classList.add("flex");
-                    animIcon.innerText = "FALHA";
-                    animIcon.className = "text-4xl font-black text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-shake";
+                    animIcon.innerText = "❌ FALHA";
+                    animIcon.className = "text-xl font-black text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] animate-pulse text-center";
                 }
-                showToast("Falha no aprimoramento...", "error");
+                // showToast("Falha no aprimoramento...", "error");
             }
             
             await sleep(1000); // Show result
@@ -2255,6 +2256,14 @@ const renderStory = () => {
       const openDungeonSelect = (type) => {
         selectedDungeonType = type;
         changeView("view-dungeon");
+        renderDungeonFloors(); // FIX: Ensure floors are rendered
+
+        // FIX: Background removed in favor of banner
+        const view = document.getElementById("view-dungeon");
+        if (view) {
+            view.style.backgroundImage = "";
+            view.style.boxShadow = "";
+        }
       };
 
 
@@ -5890,43 +5899,78 @@ window.addXP = (mon, amount) => {
 
       // --- DUNGEON LOGIC (RESTORED) ---
       const renderDungeonFloors = () => {
+        try {
           const title = document.getElementById("dungeon-title");
           if(title) title.innerText = selectedDungeonType === 'xp' ? 'XP RIFT' : `MASMORRA ${selectedDungeonType === 'golem' ? 'DO GOLEM' : 'DO DRAGÃO'}`;
           
-          const container = document.getElementById("dungeon-floors-list");
-          if(!container) return;
+          const container = document.getElementById("dungeon-list");
+          if(!container) {
+              console.error("Dungeon List Container NOT FOUND!");
+              return;
+          }
+          
+          // NUCLEAR FIX: Force Visibility
+          container.style.display = "block";
+          container.style.visibility = "visible";
+          container.style.opacity = "1";
+          container.style.minHeight = "200px";
           container.innerHTML = "";
           
+          // --- BANNER VISUAL ---
+          const bgMap = {
+              golem: "src/golenArt.jpg",
+              dragon: "src/dragaoArt.jpg",
+              xp: "src/metamorfoArt.avif"
+          };
+          
+          const bgSrc = bgMap[selectedDungeonType];
+          
+          const banner = document.createElement("div");
+          banner.className = "relative w-full h-32 rounded-2xl overflow-hidden mb-4 shadow-lg shrink-0 group";
+          banner.innerHTML = `
+              ${bgSrc ? `<img src="${bgSrc}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.style.display='none'">` : ''}
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-90"></div>
+              <div class="absolute bottom-3 left-4">
+                   <h2 class="text-xl sm:text-2xl font-black text-white italic uppercase drop-shadow-md leading-none">
+                      ${selectedDungeonType === 'xp' ? 'Fenda Temporal' : selectedDungeonType === 'golem' ? 'Gigante de Pedra' : 'Covil do Dragão'}
+                   </h2>
+                   <p class="text-[9px] sm:text-[10px] text-slate-300 font-bold tracking-widest uppercase mt-1">
+                      ${selectedDungeonType === 'xp' ? 'Bônus de XP' : selectedDungeonType === 'golem' ? 'Farm de Runas (Def/Atk)' : 'Farm de Runas (Crit/Dmg)'}
+                   </p>
+              </div>
+          `;
+          container.appendChild(banner);
+
           const maxFloor = 10;
-          const currentProg = (state.user.dungeonProgress && state.user.dungeonProgress[selectedDungeonType]) || 0;
+          const currentProg = (state.user && state.user.dungeonProgress && state.user.dungeonProgress[selectedDungeonType]) || 0;
           
           for(let i=1; i<=maxFloor; i++) {
               const isLocked = i > currentProg + 1;
               const btn = document.createElement("button");
-              btn.className = `w-full p-4 rounded-xl flex items-center justify-between transition-all ${isLocked ? 'bg-slate-900 opacity-50 cursor-not-allowed' : 'glass-panel active:scale-95'}`;
+              btn.className = `w-full p-4 rounded-xl flex items-center justify-between transition-all mb-3 ${isLocked ? 'bg-slate-900/50 opacity-60 cursor-not-allowed border border-white/5' : 'glass-panel active:scale-95 group hover:border-indigo-500/30'}`;
               
               if(!isLocked) {
                   btn.onclick = () => {
-                      // Open Prep for this dungeon floor
-                      // Construct mode string: "dungeon_golem", "dungeon_dragon", "dungeon_xp"
-                      // Level is i
                       openPrep(`dungeon_${selectedDungeonType}`, i);
                   };
               }
               
               btn.innerHTML = `
-                  <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center font-bold text-white text-sm border border-white/10 input-param">B${i}</div>
+                  <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center font-black text-white text-sm border border-white/10 shadow-inner group-hover:bg-indigo-600 transition-colors">B${i}</div>
                       <div class="text-left">
-                          <h4 class="${isLocked ? 'text-slate-500' : 'text-white'} font-bold text-sm uppercase">Andar ${i}</h4>
-                          <p class="text-[10px] text-slate-500">Nível recomendado: ${i * 5}</p>
+                          <h4 class="${isLocked ? 'text-slate-500' : 'text-white'} font-bold text-sm uppercase tracking-wide">Andar ${i}</h4>
+                          <p class="text-[10px] text-slate-500 group-hover:text-slate-300">Nível recomendado: ${i * 5}</p>
                       </div>
                   </div>
-                  <div class="text-xl">${isLocked ? '🔒' : '▶️'}</div>
+                  <div class="text-xl opacity-50 group-hover:opacity-100 transition-opacity">${isLocked ? '🔒' : '▶️'}</div>
               `;
               
               container.appendChild(btn);
           }
+        } catch (e) {
+            console.error(e);
+        }
       };
 
       // --- GLOBAL EXPORTS (FIX SCOPING) ---

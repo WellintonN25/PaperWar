@@ -444,30 +444,6 @@
       </main>
 
       <!-- DUNGEON SELECT -->
-      <main
-        id="view-dungeon"
-        class="flex-1 hidden-view bg-slate-950 flex flex-col p-6 space-y-4"
-      >
-        <button
-          onclick="changeView('view-home')"
-          class="text-white font-bold text-xs bg-slate-800 px-3 py-2 rounded-lg w-max"
-        >
-          ← Voltar
-        </button>
-        <h2
-          id="dungeon-title"
-          class="text-2xl font-black text-white italic uppercase mb-4"
-        >
-          MASMORRA
-        </h2>
-
-        <div
-          id="dungeon-floors-list"
-          class="flex-1 overflow-y-auto space-y-2 pr-2"
-        >
-          <!-- Injetado via JS -->
-        </div>
-      </main>
 
       <!-- MISSIONS VIEW -->
       <main
@@ -652,7 +628,10 @@
         >
           ← Voltar
         </button>
-        <h2 class="text-3xl font-black text-white uppercase italic mb-6">
+        <h2
+          id="dungeon-title"
+          class="text-3xl font-black text-white uppercase italic mb-6"
+        >
           Masmorra
         </h2>
         <div
@@ -665,10 +644,7 @@
             <span class="text-yellow-400 font-bold">Lendários</span>.
           </p>
         </div>
-        <div
-          class="scroll-container flex-1 min-h-0 overflow-y-auto space-y-3 pr-2"
-          id="dungeon-list"
-        ></div>
+        <div class="space-y-3 pb-8" id="dungeon-list"></div>
       </main>
 
       <!-- STORY/CAMPAIGN MODE -->
