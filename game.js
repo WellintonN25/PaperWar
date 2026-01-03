@@ -1,693 +1,4 @@
-﻿// --- MISSÕES DIÁRIAS ---
-const DAILY_MISSIONS = [
-    { id: 'login', desc: "Check-in Diário", type: "login", target: 1, reward: { type: "crystals", amount: 10 } },
-    { id: 'battle_1', desc: "Vença 1 Batalha", type: "battle_win", target: 1, reward: { type: "gold", amount: 500 } },
-    { id: 'battle_5', desc: "Vença 5 Batalhas", type: "battle_win", target: 5, reward: { type: "gold", amount: 2000 } },
-    { id: 'battle_15', desc: "Vença 15 Batalhas", type: "battle_win", target: 15, reward: { type: "crystals", amount: 20 } },
-    { id: 'energy_10', desc: "Gaste 10 Energia", type: "energy", target: 10, reward: { type: "xp", amount: 100 } },
-    { id: 'energy_50', desc: "Gaste 50 Energia", type: "energy", target: 50, reward: { type: "energy", amount: 20 } },
-    { id: 'summon_1', desc: "Realize 1 Invocação", type: "summon", target: 1, reward: { type: "gold", amount: 1000 } },
-    { id: 'upgrade_1', desc: "Melhore 1 Equipamento", type: "upgrade", target: 1, reward: { type: "gold", amount: 500 } },
-    { id: 'dungeon_1', desc: "Complete 1 Masmorra", type: "dungeon_clear", target: 1, reward: { type: "crystals", amount: 5 } },
-    { id: 'dungeon_5', desc: "Complete 5 Masmorras", type: "dungeon_clear", target: 5, reward: { type: "items", id: "lootbox_common", amount: 1 } },
-    { id: 'campaign_1', desc: "Jogue a Campanha", type: "campaign_play", target: 1, reward: { type: "gold", amount: 300 } },
-    { id: 'levelup_1', desc: "Upe 1 Monstro", type: "levelup_mon", target: 1, reward: { type: "gold", amount: 500 } },
-    { id: 'sell_1', desc: "Venda 1 Equipamento", type: "sell_eq", target: 1, reward: { type: "gold", amount: 200 } },
-    { id: 'skillup_1', desc: "Melhore 1 Habilidade", type: "skillup", target: 1, reward: { type: "crystals", amount: 10 } },
-    { id: 'complete_all', desc: "Complete 14 Missões", type: "meta_mission", target: 14, reward: { type: "crystals", amount: 100 } }
-];
-
-// --- FIM DOS DADOS ---
-      // --- BANCO DE DADOS ---
-      const MONSTERS_DB = [
-        // --- 5 STARS (LEGENDARY) ---
-        {
-          id: "vermithrax",
-          name: "Vermithrax",
-          type: "Ancient Dragon",
-          role: "attacker",
-          element: "fire",
-          stars: 5,
-          hp: 4200,
-          atk: 350,
-          def: 250,
-          emoji: "🐲",
-          img: "src/dragon.png",
-          imgAtk: "",
-          skills: ["melee", "flame_burst", "sup_dragon_breath"],
-        },
-        {
-          id: "thyron",
-          name: "Thyron",
-          type: "Storm Bringer",
-          role: "attacker",
-          element: "lightning",
-          stars: 5,
-          hp: 3800,
-          atk: 400,
-          def: 200,
-          emoji: "⚡",
-          img: "src/Thyron.png",
-          imgBack: "src/backThyron.png",
-          imgAtk: "",
-          skills: ["melee", "chain_lightning", "sup_lightning"],
-        },
-        {
-          id: "neriah",
-          name: "Neriah",
-          type: "Ocean Guardian",
-          role: "hp",
-          element: "water",
-          stars: 5,
-          hp: 4000,
-          atk: 280,
-          def: 300,
-          emoji: "🧜‍♀️",
-          img: "src/Neriah.png",
-          imgAtk: "",
-          skills: ["melee", "ice_shards", "sup_water"],
-        },
-        {
-          id: "aelyra",
-          name: "Aelyra",
-          type: "Flame Witch",
-          role: "attacker",
-          element: "fire",
-          stars: 5,
-          hp: 3600,
-          atk: 420,
-          def: 180,
-          emoji: "🧙‍♀️",
-          img: "src/Aelyra.png",
-          imgAtk: "",
-          skills: ["melee", "meteor_strike", "sup_plasma_vortex"],
-        },
-        {
-          id: "ignis",
-          name: "Ignis",
-          type: "Fire Warlord",
-          role: "attacker",
-          element: "fire",
-          stars: 5,
-          hp: 4300,
-          atk: 380,
-          def: 220,
-          emoji: "🔥",
-          img: "src/ignis.png",
-          imgAtk: "",
-          skills: ["melee", "lava_burst", "sup_infernal_apocalypse"],
-        },
-        {
-          id: "sylphid",
-          name: "Sylphid",
-          type: "Wind Queen",
-          role: "attacker",
-          element: "wind",
-          stars: 5,
-          hp: 3900,
-          atk: 370,
-          def: 210,
-          emoji: "🧚‍♀️",
-          img: "src/sylphid.png",
-          imgAtk: "src/sylphid_atk.webp",
-          skills: ["melee", "tornado", "sup_forest_fury"],
-        },
-        {
-          id: "Nyssae",
-          name: "Nyssae",
-          type: "Earth Mother",
-          role: "hp",
-          element: "earth",
-          stars: 5,
-          hp: 4800,
-          atk: 250,
-          def: 350,
-          emoji: "🌍",
-          img: "src/Nyssae.png", // USER CHANGED
-          imgAtk: "",
-          skills: ["melee", "earth_shatter", "sup_earth"],
-        },
-        {
-          id: "lumem",
-          name: "Lumem",
-          type: "Storm God",
-          role: "attacker",
-          element: "lightning",
-          stars: 5,
-          hp: 4100,
-          atk: 400,
-          def: 180,
-          emoji: "🌪️",
-          img: "src/Lumem.png",
-          imgAtk: "",
-          skills: ["melee", "thunder_storm", "sup_celestial_judgement"],
-        },
-        {
-          id: "teryn",
-          name: "Teryn",
-          type: "Void Assassin",
-          role: "attacker",
-          element: "void",
-          stars: 5,
-          hp: 3500,
-          atk: 500,
-          def: 150,
-          emoji: "🌙",
-          img: "src/Teryn.png",
-          imgAtk: "",
-          skills: ["melee", "shadow_strike", "sup_void_collapse"],
-        },
-        {
-          id: "valeor",
-          name: "Valeor",
-          type: "Ice Titan",
-          role: "defender",
-          element: "water",
-          stars: 5,
-          hp: 4500,
-          atk: 320,
-          def: 300,
-          emoji: "🧊",
-          img: "src/Valeor.png",
-          imgAtk: "",
-          skills: ["melee", "ice_shards", "sup_frozen_eternity"],
-        },
-        {
-          id: "metamorfo",
-          name: "Metamorfo",
-          type: "Shapeshifter",
-          role: "hp",
-          element: "void",
-          stars: 5,
-          hp: 6000,
-          atk: 250,
-          def: 200,
-          emoji: "🦠",
-          img: "src/metamorfo.png", 
-          skills: ["melee", "sup_void", "sup_black_lotus"],
-        },
-
-        // --- 4 STARS (EPIC) ---
-        {
-          id: "kaelthar",
-          name: "Kaelthar",
-          type: "Shadow Knight",
-          role: "attacker",
-          element: "void",
-          stars: 4,
-          hp: 3200,
-          atk: 320,
-          def: 220,
-          emoji: "🥷",
-          img: "src/Kaelthar.png",
-          imgBack: "src/backKaelthar.png",
-          imgAtk: "src/atkKaelthar.webp",
-          skills: ["melee", "void_slash", "shadow_strike"], // T2, T3
-        },
-        {
-          id: "dhorak",
-          name: "Dhorak",
-          type: "Earth Golem",
-          role: "defender",
-          element: "earth",
-          stars: 4,
-          hp: 4000,
-          atk: 180,
-          def: 400,
-          emoji: "🗿",
-          img: "src/golen.png", // USER CHANGED
-          imgBack: "",
-          imgAtk: "",
-          skills: ["melee", "rock_throw", "earth_shatter"], // T2, T3
-        },
-        {
-          id: "brann",
-          name: "Brann",
-          type: "Smith",
-          role: "attacker",
-          element: "fire",
-          stars: 4,
-          hp: 3400,
-          atk: 300,
-          def: 250,
-          emoji: "🔨",
-          img: "src/Brann.png",
-          skills: ["melee", "fire", "lava_burst"], // T2, T3
-        },
-        {
-          id: "nereid",
-          name: "Nereid",
-          type: "Mermaid",
-          role: "support",
-          element: "water",
-          stars: 4,
-          hp: 3200,
-          atk: 290,
-          def: 210,
-          emoji: "🧜",
-          img: "src/nereid.png",
-          skills: ["melee", "water", "tidal_wave"], // T2, T4
-        },
-        {
-          id: "druid",
-          name: "Druid",
-          type: "Keeper",
-          role: "support",
-          element: "nature",
-          stars: 4,
-          hp: 3500,
-          atk: 260,
-          def: 260,
-          emoji: "🐻",
-          img: "src/druid.png",
-          skills: ["melee", "leaf_cutter", "poison_cloud"], // T2, T3
-        },
-        {
-          id: "paladin",
-          name: "Paladin",
-          type: "Knight",
-          role: "defender",
-          element: "lightning",
-          stars: 4,
-          hp: 3800,
-          atk: 240,
-          def: 300,
-          emoji: "⚔️",
-          img: "src/paladin.png",
-          skills: ["melee", "bolt", "holy_beam"], // T2, T3
-        },
-        {
-          id: "necro",
-          name: "Necro",
-          type: "Mage",
-          role: "attacker",
-          element: "void",
-          stars: 4,
-          hp: 2800,
-          atk: 350,
-          def: 150,
-          emoji: "💀",
-          img: "src/necro.png",
-          skills: ["melee", "void_slash", "blood_drain"], // T2, T3
-        },
-        {
-          id: "ronin",
-          name: "Ronin",
-          type: "Samurai",
-          role: "attacker",
-          element: "wind",
-          stars: 4,
-          hp: 2900,
-          atk: 360,
-          def: 180,
-          emoji: "🗡️",
-          img: "src/ronin.png",
-          skills: ["melee", "wind_blade", "spectral_blade"], // T2, T3
-        },
-
-        // --- 3 STARS (RARE) ---
-        {
-          id: "vireya",
-          name: "Vireya",
-          type: "Nature Spirit",
-          role: "support",
-          element: "nature",
-          stars: 3,
-          hp: 2000,
-          atk: 180,
-          def: 140,
-          emoji: "🧚‍♀️",
-          img: "src/Vireya.png",
-          skills: ["melee", "leaf_cutter", "poison_cloud"], 
-        },
-        {
-          id: "WarriorF",
-          name: "WarriorF",
-          type: "Fire Warrior",
-          role: "attacker",
-          element: "fire",
-          stars: 3,
-          hp: 1900,
-          atk: 200,
-          def: 120,
-          emoji: "🛡️",
-          img: "",
-          skills: ["melee", "fire", "flame_burst"],
-        },
-        {
-          id: "lysara",
-          name: "Lysara",
-          type: "Frost Mage",
-          role: "attacker",
-          element: "water",
-          stars: 3,
-          hp: 1850,
-          atk: 210,
-          def: 110,
-          emoji: "❄️",
-          img: "src/Lysara.png",
-          skills: ["melee", "water", "ice_shards"],
-        },
-        {
-          id: "goblin_king",
-          name: "Goblin King",
-          type: "Goblin",
-          role: "attacker",
-          element: "earth",
-          stars: 3,
-          hp: 2200,
-          atk: 180,
-          def: 150,
-          emoji: "👺",
-          img: "src/goblin.png",
-          skills: ["melee", "rock_throw", "boulder_crash"],
-        },
-        {
-          id: "harpy",
-          name: "Harpy",
-          type: "Beast",
-          element: "wind",
-          stars: 3,
-          hp: 2000,
-          atk: 220,
-          def: 110,
-          emoji: "🦅",
-          img: "src/harpy.png",
-          skills: ["melee", "wind_blade"],
-        },
-        {
-          id: "stone_giant",
-          name: "Stone Giant",
-          type: "Construct",
-          role: "defender",
-          element: "earth",
-          stars: 3,
-          hp: 2500,
-          atk: 150,
-          def: 220,
-          emoji: "🪨",
-          img: "src/golem.png",
-          skills: ["melee", "rock_throw"],
-        },
-        {
-          id: "lizardman",
-          name: "Lizardman",
-          type: "Beast",
-          element: "water",
-          stars: 3,
-          hp: 2300,
-          atk: 190,
-          def: 160,
-          emoji: "🦎",
-          img: "src/lizard.png",
-          skills: ["melee", "water"],
-        },
-        {
-          id: "skeleton_archer",
-          name: "Skeleton",
-          type: "Undead",
-          role: "attacker",
-          element: "void",
-          stars: 3,
-          hp: 1800,
-          atk: 240,
-          def: 80,
-          emoji: "🦴",
-          img: "src/skel.png",
-          skills: ["melee", "void_slash"],
-        },
-        {
-          id: "fairy",
-          name: "Fairy",
-          type: "Fey",
-          role: "support",
-          element: "lightning",
-          stars: 3,
-          hp: 1600,
-          atk: 150,
-          def: 120,
-          emoji: "🦋",
-          img: "src/fairy.png",
-          skills: ["melee", "bolt"],
-        },
-        {
-          id: "imp",
-          name: "Imp",
-          type: "Demon",
-          role: "attacker",
-          element: "fire",
-          stars: 3,
-          hp: 1700,
-          atk: 180,
-          def: 100,
-          emoji: "😈",
-          img: "src/imp.png",
-          skills: ["melee", "fire"],
-        },
-        {
-          id: "wolf",
-          name: "Wolf",
-          type: "Beast",
-          element: "nature",
-          stars: 3,
-          hp: 2100,
-          atk: 170,
-          def: 140,
-          emoji: "🐺",
-          img: "src/wolf.png",
-          skills: ["melee", "leaf_cutter"],
-        },
-
-        // --- 1-2 STARS (COMMON) ---
-        {
-          id: "lumem",
-          name: "Lumem",
-          type: "Light Fairy",
-          role: "support",
-          element: "lightning",
-          stars: 2,
-          hp: 1500,
-          atk: 120,
-          def: 80,
-          emoji: "🧚",
-          img: "src/Lumem.png",
-          skills: ["melee", "bolt"],
-        },
-        {
-          id: "ravok",
-          name: "Ravok",
-          type: "Orc Grunt",
-          role: "hp",
-          element: "earth",
-          stars: 2,
-          hp: 1600,
-          atk: 110,
-          def: 90,
-          emoji: "👹",
-          img: "src/Ravok.png",
-          skills: ["melee", "rock_throw"],
-        },
-        {
-          id: "slime",
-          name: "Slime",
-          type: "Blob",
-          role: "hp",
-          element: "water",
-          stars: 1,
-          hp: 1000,
-          atk: 80,
-          def: 50,
-          emoji: "💧",
-          img: "",
-          skills: ["melee"],
-        },
-        {
-          id: "bat",
-          name: "Bat",
-          type: "Cave Bat",
-          role: "attacker",
-          element: "void",
-          stars: 1,
-          hp: 800,
-          atk: 90,
-          def: 30,
-          emoji: "🦇",
-          img: "",
-          skills: ["melee"],
-        },
-        
-        // --- UTIL ---
-        {
-          id: "skillupper",
-          name: "Skillupper",
-          type: "Skill Master",
-          role: "support",
-          element: "void",
-          stars: 5,
-          hp: 1,
-          atk: 0,
-          def: 0,
-          emoji: "👿",
-          img: "src/devilmon.png",
-          skills: ["melee"],
-          description: "Use para aumentar o nível de habilidade de qualquer monstro."
-        },
-      ];
-
-      const SKILLS = {
-        melee: { n: "Ataque", p: 1.0, icon: "🗡️", type: "phys", mp: 0 },
-        // TIER 2 (LOW) - 20 MP
-        bolt: { n: "Raio", p: 1.5, icon: "⚡", type: "lightning", mp: 20 },
-        water: { n: "Jato", p: 1.4, icon: "💧", type: "water", mp: 20 },
-        fire: { n: "Brasa", p: 1.6, icon: "🔥", type: "fire", mp: 20 },
-        void_slash: { n: "Corte Vazio", p: 1.8, icon: "🟣", type: "void", mp: 25 },
-        rock_throw: { n: "Rocha", p: 1.5, icon: "🪨", type: "earth", mp: 20 },
-        leaf_cutter: { n: "Folha", p: 1.4, icon: "🍃", type: "nature", mp: 20 },
-        wind_blade: { n: "Lâmina de Vento", p: 1.7, icon: "🌪️", type: "wind_blade", mp: 25 },
-        
-        // TIER 3 (MID) - 30-40 MP
-        flame_burst: { n: "Explosão", p: 2.1, icon: "💥", type: "fire", mp: 35 },
-        ice_shards: { n: "Estilhaços", p: 1.8, icon: "🧊", type: "ice_shards", mp: 25 }, // Premium
-        poison_cloud: { n: "Nuvem Tóxica", p: 1.5, icon: "☠️", type: "poison_cloud", mp: 30 }, // Premium
-        shadow_strike: { n: "Golpe Sombrio", p: 2.2, icon: "🧛", type: "shadow_strike", mp: 30 }, // Premium
-        blood_drain: { n: "Drenar Vida", p: 1.6, icon: "🩸", type: "blood_drain", mp: 35 }, // Premium
-        earth_shatter: { n: "Tremor", p: 2.1, icon: "🧱", type: "earth_shatter", mp: 40 }, // Premium
-        chain_lightning: { n: "Raio em Cadeia", p: 1.75, icon: "🔗", type: "chain_lightning", mp: 30 }, // New
-        lava_burst: { n: "Tsunami de Lava", p: 2.2, icon: "🌋", type: "lava_burst", mp: 35 }, // New
-        spectral_blade: { n: "Lâmina Espectral", p: 1.95, icon: "👻", type: "spectral_blade", mp: 32 }, // New
-        crystal_spear: { n: "Lança de Cristal", p: 1.9, icon: "💎", type: "crystal_spear", mp: 30 }, // New
-
-        // TIER 4 (HIGH) - 45-55 MP
-        tornado: { n: "Tornado", p: 2.5, icon: "🌪️", type: "wind_blade", mp: 45 },
-        tidal_wave: { n: "Maremoto", p: 2.4, icon: "🌊", type: "water", mp: 45 },
-        boulder_crash: { n: "Desmoronamento", p: 2.6, icon: "🪨", type: "earth", mp: 50 },
-        thunder_storm: { n: "Tempestade", p: 2.5, icon: "⛈️", type: "thunder_storm", mp: 50 }, // Premium
-        holy_beam: { n: "Luz Divina", p: 3.0, icon: "✨", type: "holy_beam", mp: 45 }, // Premium
-        meteor_strike: { n: "Meteoro", p: 3.2, icon: "☄️", type: "meteor_strike", mp: 55 }, // Premium
-        arcane_barrage: { n: "Mísseis Arcanos", p: 2.0, icon: "🔮", type: "arcane_barrage", mp: 35 }, // Premium
-
-        // TIER 5 (ULTIMATE/SUPREME) - 60+ MP - 5 STAR EXCLUSIVE VISUALS
-        sup_lightning: { n: "Julgamento", p: 3.0, icon: "🌩️", type: "lightning_sup", mp: 50 }, // Original 5*
-        sup_water: { n: "Tsunami", p: 2.8, icon: "🌊", type: "water_sup", mp: 50 }, // Original 5*
-        sup_fire: { n: "Chuva Meteoros", p: 3.2, icon: "☄️", type: "fire_sup", mp: 50 }, // Original 5*
-        sup_earth: { n: "Avalanche", p: 3.0, icon: "🌋", type: "earth_sup", mp: 50 }, // Original 5*
-        sup_void: { n: "Devastação", p: 3.5, icon: "⚫", type: "void_sup", mp: 60 }, // Original 5*
-        
-        sup_dragon_breath: { n: "Hálito Dragão", p: 4.0, icon: "🐲", type: "sup_dragon_breath", mp: 80 },
-        sup_celestial_judgement: { n: "Espada Celestial", p: 4.5, icon: "⚖️", type: "sup_celestial_judgement", mp: 90 },
-        sup_forest_fury: { n: "Fúria Florestal", p: 3.7, icon: "🌲", type: "sup_forest_fury", mp: 65 },
-        sup_frozen_eternity: { n: "Eternidade Congelada", p: 4.0, icon: "🥶", type: "sup_frozen_eternity", mp: 75 },
-        sup_infernal_apocalypse: { n: "Apocalipse Infernal", p: 4.3, icon: "👺", type: "sup_infernal_apocalypse", mp: 85 },
-        sup_void_collapse: { n: "Colapso do Vazio", p: 4.6, icon: "🕳️", type: "sup_void_collapse", mp: 95 },
-        sup_plasma_vortex: { n: "Vórtice Plasma", p: 3.9, icon: "🌀", type: "sup_plasma_vortex", mp: 75 }, 
-        sup_black_lotus: { n: "Lótus Negra", p: 3.8, icon: "🪷", type: "sup_black_lotus", mp: 70 },
-        
-        sup_silver_rain: { n: "Chuva de Prata", p: 3.5, icon: "🌧️", type: "sup_silver_rain", mp: 60 },
-        sup_ether_chains: { n: "Cadeias Éter", p: 3.2, icon: "⛓️", type: "sup_ether_chains", mp: 55 },
-        sup_gravity_pulse: { n: "Pulso Gravitacional", p: 3.6, icon: "🪐", type: "sup_gravity_pulse", mp: 65 },
-        sup_ice_butterflies: { n: "Butterflies Ice", p: 3.4, icon: "🦋", type: "sup_ice_butterflies", mp: 60 },
-        sup_dark_comet: { n: "Cometa Sombrio", p: 4.2, icon: "🌠", type: "sup_dark_comet", mp: 85 },
-        sup_cosmic_storm: { n: "Tempestade Cósmica", p: 3.9, icon: "🌌", type: "sup_cosmic_storm", mp: 70 },
-        sup_natures_wrath: { n: "Ira da Natureza", p: 3.8, icon: "🥀", type: "sup_natures_wrath", mp: 68 },
-      };
-
-      const MAX_LEVELS = {
-        1: 5,
-        2: 10,
-        3: 20,
-        4: 30,
-        5: 40,
-        6: 50,
-      };
-      
-      const MAP_DATA = [
-        { name: "Floresta do Alvorecer", img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800" },
-        { name: "Pântano Sombrio", img: "https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?auto=format&fit=crop&q=80&w=800" },
-        { name: "Deserto de Oblívio", img: "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?auto=format&fit=crop&q=80&w=800" },
-        { name: "Picos de Gelo", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800" },
-        { name: "Vulcão de Enfra", img: "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?auto=format&fit=crop&q=80&w=800" },
-        { name: "Vale dos Ventos", img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=800" },
-        { name: "Ruínas de Aether", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800" },
-        { name: "Caverna Abissal", img: "https://images.unsplash.com/photo-1524334220913-91136e0d9b43?auto=format&fit=crop&q=80&w=800" },
-        { name: "Santuário Celeste", img: "https://images.unsplash.com/photo-1444491741275-3747c33cc99b?auto=format&fit=crop&q=80&w=800" },
-        { name: "Domínio do Chaos", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=1000" }
-      ];
-
-      const EQ_RARITY = {
-        common: { name: "Comum", mult: 1, color: "rarity-common" },
-        rare: { name: "Raro", mult: 1.5, color: "rarity-rare" },
-        epic: { name: "Épico", mult: 2.2, color: "rarity-epic" },
-        legendary: { name: "Lendário", mult: 3.5, color: "rarity-legendary" },
-      };
-
-      // Conjuntos de Equipamento (2 peças = bônus)
-      const EQUIPMENT_SETS = {
-        energy: {
-          name: "Energy",
-          icon: "💚",
-          color: "#22c55e",
-          pieces: 2,
-          bonus: { type: "hp", value: 15, display: "+15% HP" },
-          display: "HP +15%"
-        },
-        guard: {
-          name: "Guard",
-          icon: "🛡️",
-          color: "#3b82f6",
-          pieces: 2,
-          bonus: { type: "def", value: 15, display: "+15% DEF" },
-          display: "DEF +15%"
-        },
-        blade: {
-          name: "Blade",
-          icon: "⚔️",
-          color: "#ef4444",
-          pieces: 2,
-          bonus: { type: "crit", value: 12, display: "+12% CRIT" },
-          display: "CRIT +12%"
-        },
-        rage: {
-          name: "Rage",
-          icon: "💢",
-          color: "#dc2626",
-          pieces: 2,
-          bonus: { type: "cdmg", value: 40, display: "+40% CDMG" },
-          display: "CDMG +40%"
-        },
-        swift: {
-          name: "Swift",
-          icon: "💨",
-          color: "#06b6d4",
-          pieces: 2,
-          bonus: { type: "spd", value: 25, display: "+25% SPD" },
-          display: "SPD +25%"
-        },
-        fatal: {
-          name: "Fatal",
-          icon: "🔥",
-          color: "#f97316",
-          pieces: 2,
-          bonus: { type: "atk", value: 35, display: "+35% ATK" },
-          display: "ATK +35%"
-        },
-        vampire: {
-          name: "Vampire",
-          icon: "🧛",
-          color: "#7c3aed",
-          pieces: 2,
-          bonus: { type: "lifesteal", value: 35, display: "Recupera 35% do dano" },
-          display: "Life Steal +35%"
-        },
-        violent: {
-          name: "Violent",
-          icon: "⚡",
-          color: "#a855f7",
-          pieces: 2,
-          bonus: { type: "extra_turn", value: 22, display: "22% turno extra" },
-          display: "Turno Extra 22%"
-        }
-      };
-
+﻿
       let state = {
         user: {
           name: "",
@@ -1788,27 +1099,24 @@ const renderStory = () => {
         if (!eq) return; 
         
         const rarityInfo = EQ_RARITY[eq.rarity];
-        const rarityColor = rarityInfo.color; 
         
-        let setInfo = "No Set", setDesc = "", setIcon = "";
+        let setInfo = "No Set", setDesc = "";
         const setKey = eq.set;
         if(setKey && EQUIPMENT_SETS[setKey]) {
             const s = EQUIPMENT_SETS[setKey];
             setInfo = s.name;
-            setDesc = s.desc || ""; 
-            setIcon = s.icon || "💠";
+            setDesc = s.display || ""; 
         }
         
         const isMax = eq.lvl >= 15;
         const upgradeCost = 100 * (eq.lvl + 1);
-        const chance = Math.max(5, 100 - eq.lvl * 5); 
 
         // --- STATS ---
         let mainStatHtml = "";
         if (eq.stats.main) {
              const m = eq.stats.main;
              mainStatHtml = `
-                <div class="flex flex-col items-center sm:items-start mb-2 sm:mb-4 bg-black/20 p-2 rounded w-full">
+                <div class="flex flex-col items-center sm:items-start mb-2 bg-black/20 p-2 rounded w-full shrink-0">
                     <span class="text-xl sm:text-2xl font-black text-white drop-shadow-md whitespace-nowrap">
                         ${m.type.toUpperCase()} +${m.value}
                     </span>
@@ -1820,8 +1128,8 @@ const renderStory = () => {
         let subsHtml = "";
         if (eq.stats.subs && eq.stats.subs.length > 0) {
             subsHtml = eq.stats.subs.map(sub => `
-                <div class="flex justify-between items-center text-xs sm:text-base font-semibold text-[#c7af8b] border-b border-[#3d2a16] py-1.5 last:border-0">
-                    <span>${sub.type}</span>
+                <div class="flex justify-between items-center text-xs font-semibold text-[#c7af8b] border-b border-[#3d2a16] py-1 last:border-0">
+                    <span class="uppercase text-[10px] sm:text-xs opacity-80">${sub.type}</span>
                     <span class="text-white">+${sub.value}</span>
                 </div>
             `).join("");
@@ -1831,7 +1139,7 @@ const renderStory = () => {
 
         // --- BUTTONS ---
         const equippedBy = getEquipperName(eq.id);
-        const btnStyleBase = "w-full py-3 sm:py-2.5 border rounded font-bold text-[10px] sm:text-xs uppercase shadow-md active:translate-y-[1px] mb-2 flex items-center justify-center";
+        const btnStyleBase = "w-full py-3 sm:py-2.5 border rounded font-bold text-[10px] sm:text-xs uppercase shadow-md active:translate-y-[1px] mb-2 flex items-center justify-center shrink-0";
         const btnGold = `bg-gradient-to-b from-[#e5c575] to-[#b08b3e] border-[#5c3a1a] text-[#3d240e] ${btnStyleBase}`;
         const btnRed = `bg-gradient-to-b from-[#e57575] to-[#b03e3e] border-[#5c1a1a] text-[#3d0e0e] ${btnStyleBase}`;
 
@@ -1840,119 +1148,113 @@ const renderStory = () => {
             const currentMon = state.inventory[selectedDetailIdx];
             const isOwnedByCurrent = currentMon && isEquippedByMon(currentMon, eq.id);
             if (isOwnedByCurrent) {
-                // FIXED: Added quotes around ID
                 equipBtn = `<button onclick="unequipItem('${eq.id}', 500)" class="${btnRed}">Unequip</button>`;
             } else {
                  equipBtn = `<button disabled class="${btnGold} opacity-50 cursor-not-allowed grayscale">Equipped: ${equippedBy}</button>`;
             }
         } else {
              if (typeof selectedDetailIdx !== 'undefined' && selectedDetailIdx !== -1) {
-                 // FIXED: Added quotes around ID
                  equipBtn = `<button onclick="equipFromDetail('${eq.id}'); document.getElementById('eq-modal-v2').classList.add('hidden');" class="${btnGold}">Engrave</button>`;
              }
         }
 
-        // --- RESPONSIVE LAYOUT HTML ---
-        // COMPACT MODE: Reduced sizes for all elements
+        // --- STRUCTURE ---
+        // Compact Mobile Layout:
+        // [Header (Fixed)]
+        // [Content (Scrollable)] -> Icon + Set Info (Row), Main Stat, Sub Stats
+        // [Footer (Fixed)] -> Actions
+        
         modal.innerHTML = `
-            <div class="relative w-[95%] max-w-[400px] sm:max-w-[700px] max-h-[85vh] bg-[#1a120b] border-[2px] sm:border-[3px] border-[#d4a017] rounded-lg shadow-2xl flex flex-col sm:flex-row font-sans select-none animate-fade-in custom-scrollbar overflow-hidden">
+            <div class="relative w-[90%] max-w-[360px] sm:max-w-[700px] h-auto max-h-[90vh] bg-[#1a120b] border-[2px] sm:border-[3px] border-[#d4a017] rounded-xl shadow-2xl flex flex-col font-sans select-none animate-fade-in overflow-hidden">
                 
-                <!-- HEADER -->
-                <div class="absolute top-0 left-0 right-0 h-8 sm:h-auto sm:static sm:bg-transparent sm:border-0 bg-gradient-to-b from-[#2e2012] to-[#1a120b] border-b border-[#3d2a16] flex sm:hidden items-center px-4 justify-between z-20">
-                    <span class="text-[#facb5a] font-bold tracking-wide text-xs drop-shadow-md truncate max-w-[80%]">
-                        +${eq.lvl} ${setInfo}
+                <!-- HEADER (Mobile) -->
+                <div class="bg-gradient-to-b from-[#2e2012] to-[#1a120b] border-b border-[#3d2a16] flex items-center px-4 py-2 justify-between z-20 shrink-0">
+                    <span class="text-[#facb5a] font-bold tracking-wide text-xs drop-shadow-md truncate">
+                        +${eq.lvl} ${setInfo} ${eq.type === 'weapon' ? 'Weapon' : eq.type === 'armor' ? 'Armor' : eq.slot === 4 ? 'Acc' : 'Helm'}
                     </span>
                     <button onclick="document.getElementById('eq-modal-v2').classList.add('hidden')" class="text-[#8a7a5a] hover:text-white font-bold text-lg leading-none p-2 -mr-2">✕</button>
                 </div>
                 
-                <!-- DESKTOP CLOSE BTN -->
-                <button onclick="document.getElementById('eq-modal-v2').classList.add('hidden')" class="hidden sm:flex absolute top-2 right-2 z-50 text-[#8a7a5a] hover:text-white font-bold text-xl leading-none w-6 h-6 items-center justify-center bg-black/20 rounded-full">✕</button>
-
-                <!-- LEFT COLUMN (Visuals) -->
-                <div class="w-full sm:w-[200px] flex sm:flex-col items-center justify-start pt-10 sm:pt-6 pb-2 px-3 bg-[#140e08] sm:bg-transparent border-b sm:border-b-0 sm:border-r border-[#3d2a16]">
+                <!-- BODY (Scrollable) -->
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-3 sm:flex-row sm:gap-6">
                     
-                    <!-- Header Text Desktop -->
-                    <div class="hidden sm:flex flex-col items-center mb-2 text-center">
-                        <h2 class="text-[#facb5a] font-bold text-base leading-tight mb-0.5 drop-shadow-md">${setInfo} Rune</h2>
-                        <span class="text-[#8a7a5a] text-[10px] font-bold uppercase tracking-widest">Slot ${eq.slot || "?"} • +${eq.lvl}</span>
-                    </div>
-
-                    <!-- Icon Container (Smaller) -->
-                    <div class="relative w-16 h-16 sm:w-28 sm:h-28 bg-[#0d0905] rounded-lg border border-[#3d2a16] shadow-inner flex-shrink-0 mr-3 sm:mr-0 sm:mb-4 group">
-                         <div class="absolute inset-0 bg-contain bg-center opacity-30" style="background-image: url('src/rune_bg.png');"></div>
-                         
-                         <div id="eq-icon-container" class="relative z-10 w-full h-full flex items-center justify-center">
-                             <div id="eq-upgrade-glow" class="absolute inset-[-5px] rounded-full opacity-0 pointer-events-none transition-all bg-yellow-500/20 blur-lg"></div>
+                    <!-- LEFT COL: Visuals -->
+                    <div class="flex sm:flex-col items-center gap-4 sm:w-[200px] sm:shrink-0 sm:border-r border-[#3d2a16]/50 sm:pr-4">
+                        
+                        <!-- Icon Container -->
+                        <div class="relative w-16 h-16 sm:w-32 sm:h-32 bg-[#0d0905] rounded-xl border border-[#3d2a16] shadow-inner flex-shrink-0 group">
+                             <div class="absolute inset-0 bg-contain bg-center opacity-30" style="background-image: url('src/rune_bg.png');"></div>
                              
-                             <div id="eq-energy-ring-1" class="absolute inset-1 border-2 border-[#facb5a]/30 rounded-full"></div>
-                             <div id="eq-energy-ring-2" class="absolute inset-2 border border-dashed border-white/10 rounded-full animate-[spin_10s_linear_infinite] opacity-50"></div>
+                             <div id="eq-icon-container" class="relative z-10 w-full h-full flex items-center justify-center">
+                                 <div id="eq-upgrade-glow" class="absolute inset-[-5px] rounded-full opacity-0 pointer-events-none transition-all bg-yellow-500/20 blur-lg"></div>
+                                 <div id="eq-energy-ring-1" class="absolute inset-1 border-2 border-[#facb5a]/30 rounded-full"></div>
+                                 <div id="eq-energy-ring-2" class="absolute inset-2 border border-dashed border-white/10 rounded-full animate-[spin_10s_linear_infinite] opacity-50"></div>
+                                 
+                                 <span class="text-3xl sm:text-6xl drop-shadow-lg filter brightness-125 relative z-20 transform group-hover:scale-110 transition-transform duration-300">
+                                     ${eq.type === 'weapon' ? '⚔️' : eq.type === 'armor' ? '🛡️' : eq.type === 'helmet' ? '⛑️' : '💍'}
+                                 </span>
+                                 <div class="absolute -bottom-1 -right-1 bg-black text-white text-[9px] sm:text-xs font-bold px-1.5 rounded border border-white/20 shadow z-30">+${eq.lvl}</div>
+                             </div>
                              
-                             <span class="text-3xl sm:text-5xl drop-shadow-lg filter brightness-125 relative z-20 transform group-hover:scale-110 transition-transform duration-300">
-                                 ${eq.type === 'weapon' ? '⚔️' : eq.type === 'armor' ? '🛡️' : '💍'}
-                             </span>
-                             <div class="absolute -bottom-1 -right-1 bg-black text-white text-[9px] sm:text-[10px] font-bold px-1 py-0.5 rounded border border-white/20 shadow z-30">+${eq.lvl}</div>
-                         </div>
-                         
-                         <div id="eq-anim-overlay" class="absolute inset-0 hidden items-center justify-center z-50 bg-black/60 rounded-lg">
-                             <span id="eq-anim-icon" class="text-3xl animate-bounce"></span>
-                         </div>
-                    </div>
+                             <div id="eq-anim-overlay" class="absolute inset-0 hidden items-center justify-center z-50 bg-black/60 rounded-xl">
+                                 <span id="eq-anim-icon" class="text-3xl animate-bounce"></span>
+                             </div>
+                        </div>
 
-                    <!-- Rarity/Set Info -->
-                    <div class="flex flex-col items-start sm:items-center text-left sm:text-center">
-                        <span class="bg-[#3e1a1a] text-[#ffaaaa] text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded border border-[#6b2a2a] uppercase tracking-widest mb-1">
-                             ${rarityInfo.name}
-                        </span>
-                         <div class="text-[#facb5a] text-[9px] leading-tight opacity-80 max-w-[140px]">
-                            ${setDesc}
+                        <!-- Info (Side on mobile, Bottom on Desktop) -->
+                        <div class="flex flex-col items-start sm:items-center text-left sm:text-center w-full">
+                            <span class="bg-[#3e1a1a] text-[#ffaaaa] text-[8px] sm:text-[10px] font-bold px-2 py-0.5 rounded border border-[#6b2a2a] uppercase tracking-widest mb-1.5">
+                                 ${rarityInfo.name}
+                            </span>
+                             <div class="text-[#facb5a] text-[10px] sm:text-xs leading-tight opacity-90">
+                                ${setDesc}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- MIDDLE & RIGHT COMBINED -->
-                <div class="flex-1 flex flex-col sm:flex-row p-3 pt-3 sm:pt-6 gap-3 bg-[#1a120b]">
-                    
-                    <!-- STATS -->
-                    <div class="flex-1 border-b sm:border-b-0 sm:border-r border-[#3d2a16] pb-3 sm:pb-0 sm:pr-4 flex flex-col justify-start">
+                    <!-- RIGHT COL: Stats -->
+                    <div class="flex-1 flex flex-col w-full">
                         ${mainStatHtml}
-                        <div class="bg-[#120c07] p-2 sm:p-3 rounded border border-[#3d2a16] flex-1">
-                             <h4 class="text-[#5c3a1a] text-[9px] font-bold uppercase mb-1">Sub Properties</h4>
+                        <div class="bg-[#120c07] p-3 rounded border border-[#3d2a16] flex-1 min-h-[100px]">
+                             <div class="flex justify-between items-center mb-1">
+                                <h4 class="text-[#5c3a1a] text-[9px] font-bold uppercase">Sub Properties</h4>
+                                <span class="text-[8px] text-[#5c3a1a] uppercase bg-[#2b2218] px-1 rounded">Rank ${Math.floor(eq.lvl/3)}/5</span>
+                             </div>
                              <div class="space-y-0.5">
                                 ${subsHtml}
                              </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- ACTIONS Panel -->
-                    <div class="w-full sm:w-[140px] flex flex-col justify-end sm:justify-start flex-shrink-0">
-                        <!-- Sell Price -->
-                        <div class="flex justify-between items-center bg-[#2b2218] px-2 py-1.5 rounded border border-[#3d2a16] mb-3 shadow-sm">
-                            <span class="text-[9px] text-[#8a7a5a] uppercase font-bold">Sell</span>
-                            <span class="text-[10px] font-bold text-[#facb5a]">${Math.floor(upgradeCost * 2.5)} G</span>
+                <!-- FOOTER (Fixed Actions) -->
+                <div class="p-4 bg-[#140e08] border-t border-[#3d2a16] flex flex-col gap-2 shrink-0 z-20">
+                    <div class="flex gap-2">
+                        <div class="flex-1">
+                             ${!isMax ? `
+                                <button id="btn-upgrade-action" onclick="performUpgrade('${eq.id}')" class="w-full py-3 bg-gradient-to-b from-[#fcd34d] to-[#d97706] border border-[#78350f] rounded text-[#451a03] font-black text-xs uppercase shadow-[0_2px_0_#451a03] active:translate-y-[2px] active:shadow-none hover:brightness-110 relative overflow-hidden group transition-all">
+                                    <span class="relative z-10 flex flex-col items-center leading-none">
+                                        <span class="tracking-wider text-sm">POWER-UP</span>
+                                        <span class="text-[9px] font-bold opacity-80 mt-1">${upgradeCost} G</span>
+                                    </span>
+                                    <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                </button>
+                            ` : `
+                                 <div class="w-full py-3 bg-[#2b2218] text-[#facb5a] text-center text-xs font-bold border border-[#3d2a16] rounded uppercase opacity-80 flex items-center justify-center">
+                                    Max Level Reached
+                                 </div>
+                            `}
                         </div>
-
-                        ${equipBtn}
-
-                        ${!isMax ? `
-                            <!-- FIXED: Added quotes around ID -->
-                            <button id="btn-upgrade-action" onclick="performUpgrade('${eq.id}')" class="w-full py-2.5 sm:py-3 bg-gradient-to-b from-[#fcd34d] to-[#d97706] border border-[#78350f] rounded text-[#451a03] font-black text-xs uppercase shadow-[0_2px_0_#451a03] active:translate-y-[2px] active:shadow-none hover:brightness-110 mb-2 relative overflow-hidden group transition-all">
-                                <span class="relative z-10 flex flex-col items-center">
-                                    <span class="tracking-wider">Power-up</span>
-                                    <span class="text-[8px] font-bold opacity-80 mt-0.5">${upgradeCost} G</span>
-                                </span>
-                                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                            </button>
-                        ` : `
-                             <div class="w-full py-2 bg-[#2b2218] text-[#facb5a] text-center text-[10px] font-bold border border-[#3d2a16] rounded mt-2 uppercase opacity-80">
-                                Max Lvl
-                             </div>
-                        `}
                         
-                        <!-- FIXED: Added quotes around ID -->
-                        <button onclick="sellEquipment('${eq.id}')" class="text-[#e57575] hover:text-[#ffaaaa] text-[10px] font-bold mt-auto text-center hover:underline decoration-dashed underline-offset-4 py-1 opacity-80 hover:opacity-100">
-                            Sell
-                        </button>
+                        <!-- Sell Button (Small) -->
+                        <div class="w-20">
+                             <button onclick="sellEquipment('${eq.id}')" class="w-full h-full bg-[#2b2218] border border-[#3d2a16] rounded flex flex-col items-center justify-center text-[#e57575] hover:bg-[#3d2a16] transition-colors">
+                                <span class="text-[9px] uppercase font-bold">Sell</span>
+                                <span class="text-[9px] font-bold opacity-80">${Math.floor(upgradeCost * 2.5)} G</span>
+                            </button>
+                        </div>
                     </div>
+                     ${equipBtn}
                 </div>
             </div>
         `;
