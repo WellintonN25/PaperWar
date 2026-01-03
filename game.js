@@ -71,9 +71,37 @@
                  };
               }
 
+              // ===== INICIALIZAR NOVAS FEATURES =====
+              initAchievements(state);
+              initPitySystem(state);
+              initDailyRewards(state);
+              
+              // Track inicial de achievements
+              trackAchievement(state, 'player_level', state.user.lvl);
+              trackAchievement(state, 'unique_monsters', new Set(state.inventory.map(m => m.id)).size);
+              trackAchievement(state, 'equipment_owned', state.equipment.length);
+              trackAchievement(state, 'gold_owned', state.user.gold);
+              trackAchievement(state, 'crystals_owned', state.user.crystals);
+              
+              // Contar equipamentos lendários
+              const legendaryEq = state.equipment.filter(e => e.rarity === 'legendary').length;
+              if (legendaryEq > 0) trackAchievement(state, 'legendary_equipment', legendaryEq);
+              
+              // Contar equipamentos +15
+              const maxLevelEq = state.equipment.filter(e => e.lvl >= 15).length;
+              if (maxLevelEq > 0) trackAchievement(state, 'equipment_max_level', maxLevelEq);
+
               checkDailyReset();
               // checkTowerReset(); // Assuming this function will be added later
               trackMission('login', 1);
+              
+              // Atualizar notificações de novas features
+              updateNewFeatureNotifications();
+              
+              // Mostrar daily reward se disponível
+              if (canClaimDailyReward(state)) {
+                setTimeout(() => showDailyRewardModal(), 1500);
+              }
 
               changeView("view-home");
               updateHeader();
@@ -291,7 +319,14 @@
           document.getElementById("tower-floor-display").innerText =
             state.towerFloor;
         if (id === "view-missions") renderMissions();
+        
+        // ===== NOVAS FEATURES =====
+        if (id === "view-achievements") renderAchievements();
+        
+        // Atualizar notificações
+        updateNewFeatureNotifications();
       };
+
 
       // --- RENDERIZAÇÃO DA CAMPANHA/HISTÓRIA ---
 const renderStory = () => {
@@ -359,11 +394,24 @@ const renderStory = () => {
         // Call openPrep just like tower does
         openPrep("story", stageNum);
         trackMission('campaign_play', 1); // Hook for mission tracking
+        
+        // ===== TRACKING DE BATALHAS =====
+        // Incrementa contador de batalhas iniciadas
+        // (Vitórias serão contadas quando completar)
+        if (!state.user.battlesStarted) state.user.battlesStarted = 0;
+        state.user.battlesStarted++;
       };
 
+
       const closeBattle = () => {
+        // ===== TRACKING DE VITÓRIA EM BATALHA =====
+        if (!state.user.totalBattles) state.user.totalBattles = 0;
+        state.user.totalBattles++;
+        trackAchievement(state, 'battles_won', state.user.totalBattles);
+        
         changeView("view-home");
       };
+
 
       const updateHeader = () => {
         // ===== OTIMIZADO COM DOM BATCHING =====
@@ -661,6 +709,22 @@ const renderStory = () => {
           currentSummonResults.push(newMon);
         }
 
+        // ===== TRACKING DE ACHIEVEMENTS & STATS =====
+        // Track summon count
+        if (!state.user.totalSummons) state.user.totalSummons = 0;
+        state.user.totalSummons += amount;
+        trackAchievement(state, 'summons_done', state.user.totalSummons);
+        
+        // Track legendary pulls
+        const legendariesInResults = currentSummonResults.filter(m => m.stars === 5).length;
+        if (legendariesInResults > 0) {
+          trackAchievement(state, 'legendary_pulled', legendariesInResults);
+        }
+        
+        // Track unique monsters
+        const uniqueCount = new Set(state.inventory.map(m => m.id)).size;
+        trackAchievement(state, 'unique_monsters', uniqueCount);
+
         save();
 
         // 2. ANIMAÇÃO CONDICIONAL BASEADA EM RARIDADE
@@ -857,10 +921,43 @@ const renderStory = () => {
   grid.appendChild(fragment);
 };
 
+
       const closeSummonResults = () => {
         document.getElementById("summon-results").classList.remove("flex");
         document.getElementById("summon-results").classList.add("hidden");
       };
+
+
+      // ========================================
+      // 🎯 MARCADOR: TRACKING DE BATALHAS
+      // ========================================
+      // ADICIONAR tracking quando jogador VENCE uma batalha:
+      // Procure onde o jogo:
+      //   - Distribui recompensas de batalha (XP, gold, etc)
+      //   - OU retorna para view-home após batalha
+      //   - OU onde detecta vitória do jogador
+      //
+      // CÓDIGO PARA ADICIONAR:
+      // if (!state.user.totalBattles) state.user.totalBattles = 0;
+      // state.user.totalBattles++;
+      // trackAchievement(state, 'battles_won', state.user.totalBattles);
+      // ========================================
+
+      // ========================================
+      // 🎯 MARCADOR: TRACKING DE DUNGEONS  
+      // ========================================
+      // ADICIONAR tracking quando jogador COMPLETA uma dungeon:
+      // Procure onde o jogo:
+      //   - Distribui equipamentos após dungeon
+      //   - OU incrementa dungeonProgress
+      //   - OU onde detecta clear de dungeon
+      //
+      // CÓDIGO PARA ADICIONAR:
+      // if (!state.user.dungeonsCleared) state.user.dungeonsCleared = 0;
+      // state.user.dungeonsCleared++;
+      // trackAchievement(state, 'dungeons_cleared', state.user.dungeonsCleared);
+      // trackAchievement(state, 'dungeon_floor', currentFloorNumber);
+      // ========================================
 
 
       // --- EQUIPMENT FUNCTIONS ---
@@ -3405,10 +3502,28 @@ const renderStory = () => {
             if (win) session.wins++;
         }
         
+        
         if (win) {
             trackMission('battle_win', 1);
             if (battleState.mode.startsWith("dungeon")) trackMission('dungeon_clear', 1);
             if (battleState.mode === "story") trackMission('campaign_play', 1);
+            
+            // ===== TRACKING DE ACHIEVEMENTS =====
+            // Track batalhas vencidas
+            if (!state.user.totalBattles) state.user.totalBattles = 0;
+            state.user.totalBattles++;
+            trackAchievement(state, 'battles_won', state.user.totalBattles);
+            
+            // Track dungeons completados
+            if (battleState.mode.startsWith("dungeon")) {
+              if (!state.user.dungeonsCleared) state.user.dungeonsCleared = 0;
+              state.user.dungeonsCleared++;
+              trackAchievement(state, 'dungeons_cleared', state.user.dungeonsCleared);
+              
+              // Track floor máximo
+              const currentFloor = battleState.level || 1;
+              trackAchievement(state, 'dungeon_floor', currentFloor);
+            }
         }
 
         // Se estiver em modo Farm (repeatCount > 0) e ganhou, NÃO mostra modal ainda, apenas acumula

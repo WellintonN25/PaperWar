@@ -377,6 +377,34 @@
                 Missões
               </h4>
             </div>
+
+            <!-- ACHIEVEMENTS BUTTON -->
+            <div
+              onclick="changeView('view-achievements')"
+              class="glass-panel p-3 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center bg-gradient-to-br from-amber-900/40 to-slate-900 border-amber-500/30 relative"
+            >
+              <div
+                class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full hidden"
+                id="achievement-notification"
+              ></div>
+              <div class="text-xl mb-1">🏆</div>
+              <h4 class="text-white font-bold uppercase text-[10px]">
+                Conquistas
+              </h4>
+            </div>
+
+            <!-- DAILY REWARDS BUTTON -->
+            <div
+              onclick="showDailyRewardModal()"
+              class="glass-panel p-3 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center bg-gradient-to-br from-pink-900/40 to-slate-900 border-pink-500/30 relative"
+            >
+              <div
+                class="absolute -top-1 -right-1 w-3 h-3 bg-pink-500 rounded-full animate-pulse hidden"
+                id="daily-notification"
+              ></div>
+              <div class="text-xl mb-1">🎁</div>
+              <h4 class="text-white font-bold uppercase text-[10px]">Diário</h4>
+            </div>
           </div>
         </div>
       </main>
@@ -1916,6 +1944,54 @@
           </div>
         </div>
       </div>
+
+      <!-- ACHIEVEMENTS VIEW -->
+      <main
+        id="view-achievements"
+        class="flex-1 hidden-view bg-slate-950 flex flex-col p-4"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <button
+            onclick="changeView('view-home')"
+            class="text-white font-bold text-xs bg-slate-800 px-3 py-2 rounded-lg"
+          >
+            ← Voltar
+          </button>
+          <span class="text-white font-bold uppercase text-xs"
+            >🏆 Conquistas</span
+          >
+          <div></div>
+        </div>
+
+        <div id="achievement-stats" class="mb-4"></div>
+        <div
+          id="achievement-list"
+          class="flex-1 overflow-y-auto space-y-2"
+        ></div>
+      </main>
+
+      <!-- DAILY REWARD MODAL -->
+      <div
+        id="daily-reward-modal"
+        class="absolute inset-0 z-[100] bg-slate-950/95 backdrop-blur-sm hidden flex items-center justify-center p-6"
+      >
+        <div class="glass-panel p-6 rounded-3xl max-w-md w-full space-y-4">
+          <div class="text-center">
+            <div class="text-6xl mb-3">🎁</div>
+            <h3 class="text-2xl font-black text-white">Recompensa Diária</h3>
+          </div>
+          <div id="daily-reward-content"></div>
+          <button
+            onclick="document.getElementById('daily-reward-modal').classList.add('hidden')"
+            class="w-full py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold rounded-xl"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+
+      <!-- PITY INFO (no summon) -->
+      <div id="pity-indicator" class="hidden"></div>
     </div>
 
     <!-- DATA MODULES - Carregados primeiro -->
@@ -1934,6 +2010,11 @@
     <!-- GAME MODULES - Lógica de jogo -->
     <script src="src/modules/game/MonsterManager.js"></script>
     <script src="src/modules/game/EquipmentManager.js"></script>
+    <script src="src/modules/game/Achievements.js"></script>
+    <script src="src/modules/game/PitySystem.js"></script>
+
+    <!-- UI MODULES - Renderização -->
+    <script src="src/modules/ui/NewFeaturesUI.js"></script>
 
     <!-- BATTLE MODULES - Sistema de batalha -->
     <script src="src/modules/battle/BattleHelpers.js"></script>
