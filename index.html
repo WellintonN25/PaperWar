@@ -643,9 +643,13 @@
       >
         <button
           onclick="changeView('view-home')"
-          class="mb-4 px-4 py-2 bg-slate-900 rounded-full border border-white/10 text-white text-xs font-bold w-max"
+          class="mb-6 pl-3 pr-5 py-2 bg-slate-800/80 backdrop-blur rounded-full border border-white/10 text-white text-xs font-bold w-max hover:bg-slate-700 active:scale-95 transition-all flex items-center gap-2 group shadow-lg"
         >
-          ← Cancelar
+          <span
+            class="group-hover:-translate-x-0.5 transition-transform text-lg"
+            >←</span
+          >
+          voltar
         </button>
 
         <h2 class="text-2xl font-black text-white uppercase italic mb-1">
@@ -672,11 +676,11 @@
               Seu Campeão
             </div>
             <div
-              class="w-30 h-30 rounded-3xl bg-slate-800/50 border-2 border-indigo-500 overflow-hidden relative mb-4 shadow-xl flex items-center justify-center"
+              class="w-40 h-40 aspect-square rounded-3xl bg-slate-800/50 border-2 border-indigo-500 overflow-hidden relative mb-4 shadow-xl flex items-center justify-center shrink-0"
             >
               <div
                 id="prep-img-wrapper"
-                class="absolute inset-0 flex items-center justify-center pointer-events-none"
+                class="absolute inset-0 flex items-center justify-center w-full h-full"
               >
                 <img
                   id="prep-img"
@@ -716,9 +720,14 @@
 
             <button
               onclick="document.getElementById('prep-roster').classList.remove('hidden')"
-              class="absolute top-4 right-4 bg-slate-700/50 p-2 rounded-lg text-xs text-white hover:bg-slate-600 transition-colors z-20"
+              class="absolute top-3 right-3 bg-indigo-600/90 hover:bg-indigo-500 text-white p-2 rounded-xl shadow-lg border border-white/20 backdrop-blur z-20 transition-all active:scale-95 flex items-center gap-2 pr-3"
             >
-              ↺ Trocar
+              <div class="w-5 h-5 flex items-center justify-center text-lg">
+                ↺
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider"
+                >Trocar</span
+              >
             </button>
           </div>
 

@@ -888,34 +888,40 @@ const renderStory = () => {
     }
 
     card.innerHTML = `
-          <div class="w-full h-full rounded-xl border-2 ${borderCol} bg-gradient-to-br ${bgGrad} p-2 flex flex-col items-center justify-between ${glow}">
-              <div class="w-full flex justify-between items-start">
-                  <span class="text-[10px] text-white font-bold bg-black/50 px-1 rounded">${"★".repeat(
+          <div class="w-full h-full rounded-2xl border-2 ${borderCol} bg-gradient-to-br ${bgGrad} p-3 flex flex-col items-center justify-between ${glow} relative overflow-hidden">
+              <!-- Glow Background -->
+              <div class="absolute inset-0 bg-gradient-to-t from-transparent via-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none"></div>
+              
+              <!-- Header -->
+              <div class="w-full flex justify-between items-start relative z-10">
+                  <span class="text-[9px] text-white font-black bg-black/70 px-2 py-0.5 rounded-full backdrop-blur-sm">${"★".repeat(
                     mon.stars
                   )}</span>
                   ${
                     mon.stars >= 5
-                      ? '<span class="animate-pulse text-amber-300">✨</span>'
+                      ? '<span class="animate-pulse text-amber-300 text-sm">✨</span>'
                       : ""
                   }
               </div>
-               <!-- IMAGE with EMOJI FALLBACK -->
-              <div class="relative w-full flex-1 flex items-center justify-center my-1 overflow-hidden">
+              
+              <!-- IMAGE with EMOJI FALLBACK - FIXED SIZE -->
+              <div class="relative w-full aspect-square flex items-center justify-center overflow-hidden">
                   <img 
                     src="${mon.img}" 
-                    class="w-full h-full object-contain filter drop-shadow-lg z-10" 
+                    class="w-full h-full object-contain filter drop-shadow-xl z-10 transition-transform hover:scale-105" 
                     onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
                   />
-                  <span class="text-5xl absolute hidden animate-bounce">${
-                    mon.emoji
+                  <span class="text-5xl absolute hidden">${
+                    mon.emoji || '❓'
                   }</span>
               </div>
 
-              <div class="text-center w-full relative z-20">
-                  <div class="text-[8px] text-slate-400 uppercase font-bold tracking-wider truncate">${
+              <!-- Footer -->
+              <div class="text-center w-full relative z-10 mt-1">
+                  <div class="text-[8px] text-slate-300 uppercase font-bold tracking-wider truncate opacity-80">${
                     mon.type
                   }</div>
-                  <div class="text-[10px] text-white font-black truncate w-full">${
+                  <div class="text-[10px] text-white font-black truncate w-full leading-tight">${
                     mon.name
                   }</div>
               </div>
@@ -1864,28 +1870,56 @@ const renderStory = () => {
 
 
       const renderPrepRoster = () => {
-  const grid = document.getElementById("prep-grid");
-  grid.innerHTML = "";
-  const fragment = document.createDocumentFragment();
-  state.inventory.forEach((mon, idx) => {
-    const el = document.createElement("div");
-    const isSel = idx === prepState.selectedMonIdx;
-    el.className = `aspect-square bg-slate-800 rounded-lg p-1 border-2 cursor-pointer ${
-      isSel ? "border-green-500" : "border-transparent"
-    }`;
-    el.innerHTML = getMonsterVisuals(mon);
-    const span = el.querySelector('span');
-    if (span) span.style.fontSize = "2rem";
-    el.onclick = () => {
-      prepState.selectedMonIdx = idx;
-      renderPrepUnit();
-      renderPrepRoster();
-      document.getElementById("prep-roster").classList.add("hidden");
-    };
-    fragment.appendChild(el);
-  });
-  grid.appendChild(fragment);
-};
+        const grid = document.getElementById("prep-grid");
+        if (!grid) return;
+        
+        grid.innerHTML = "";
+        const fragment = document.createDocumentFragment();
+        
+        state.inventory.forEach((mon, idx) => {
+          const el = document.createElement("div");
+          const isSel = idx === prepState.selectedMonIdx;
+          
+          el.className = `aspect-square bg-slate-800 rounded-xl relative cursor-pointer transition-all overflow-hidden group border-2 ${
+            isSel ? 'border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.4)] scale-95' : 'border-slate-700 hover:border-slate-500'
+          }`;
+          
+          el.innerHTML = `
+              <div class="w-full h-full flex items-center justify-center p-1 relative z-10">
+                  ${getMonsterVisuals(mon)}
+              </div>
+              <div class="absolute top-1 left-1 z-20">
+                   <span class="text-[8px] font-black text-white bg-black/60 px-1.5 py-0.5 rounded-full backdrop-blur">★${mon.stars}</span>
+              </div>
+              <div class="absolute bottom-1 right-1 z-20">
+                   <span class="text-[8px] font-bold text-white drop-shadow-md">Lv.${mon.lvl}</span>
+              </div>
+              ${isSel ? '<div class="absolute inset-0 bg-green-500/10 pointer-events-none z-10"></div><div class="absolute inset-0 border-2 border-green-400 rounded-xl animate-pulse z-20"></div>' : ''}
+          `;
+          
+          // Adjust visuals for small card
+          const img = el.querySelector('img');
+          if (img) img.className = "w-full h-full object-contain filter drop-shadow-md";
+          
+          const span = el.querySelector('span.select-none');
+          if (span) {
+              span.style.fontSize = "2rem";
+              // Span starts hidden if img exists, logic handles it
+          }
+      
+          el.onclick = () => {
+            prepState.selectedMonIdx = idx;
+            renderPrepUnit();
+            renderPrepRoster();
+            // Optional: Close roster on select? User might want to browse.
+            // Keeping original behavior:
+            const roster = document.getElementById("prep-roster");
+            if (roster) roster.classList.add("hidden");
+          };
+          fragment.appendChild(el);
+        });
+        grid.appendChild(fragment);
+      };
 
       window.startFarmPrep = () => {
          startBattle(prepState.mode, prepState.level, 5);
@@ -4053,12 +4087,16 @@ const renderStory = () => {
                 ? '<span class="text-fuchsia-400 drop-shadow-[0_0_2px_rgba(192,38,211,0.8)]">★</span>'.repeat(6)
            : '<span class="star-icon">★</span>'.repeat(s);
              
-             el.innerHTML = `
-                 <img src="${mon.img}" class="w-full h-full object-contain p-1">
-                 <div class="absolute bottom-0 w-full text-center bg-black/60 text-[9px] ${isAwakened ? '' : 'text-yellow-400'} font-bold">
-                   ${starsHtml}
-                 </div>
-             `;
+              el.innerHTML = `
+                  <img src="${mon.img}" class="w-full h-full object-contain p-1" 
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="hidden w-full h-full items-center justify-center text-5xl">
+                    ${mon.emoji || '❓'}
+                  </div>
+                  <div class="absolute bottom-0 w-full text-center bg-black/60 text-[9px] ${isAwakened ? '' : 'text-yellow-400'} font-bold">
+                    ${starsHtml}
+                  </div>
+              `;
          };
          
          const tDiv = document.getElementById("evo-target-preview");
@@ -4082,11 +4120,15 @@ const renderStory = () => {
              const isSel = evolveFoodIndices.includes(f.idx);
              const el = document.createElement("div");
              el.className = `aspect-square bg-slate-800 rounded border cursor-pointer relative transition-all ${isSel ? 'border-green-500 bg-green-900/20 scale-95' : 'border-slate-600 hover:border-slate-400'}`;
-             el.innerHTML = `
-                 <img src="${f.img}" class="w-full h-full object-contain opacity-80">
-                 <div class="absolute bottom-0 w-full text-center text-[8px] text-yellow-400">★${f.stars}</div>
-                 ${isSel ? '<div class="absolute inset-0 flex items-center justify-center text-green-400 font-bold text-xl drop-shadow-md">?</div>' : ''}
-             `;
+              el.innerHTML = `
+                  <img src="${f.img}" class="w-full h-full object-contain opacity-80"
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="hidden w-full h-full items-center justify-center text-4xl opacity-80">
+                    ${f.emoji || '❓'}
+                  </div>
+                  <div class="absolute bottom-0 w-full text-center text-[8px] text-yellow-400">★${f.stars}</div>
+                  ${isSel ? '<div class="absolute inset-0 flex items-center justify-center text-green-400 font-bold text-xl drop-shadow-md">✓</div>' : ''}
+              `;
              el.onclick = () => toggleFood(f.idx);
              grid.appendChild(el);
          });
@@ -4219,13 +4261,25 @@ const renderStory = () => {
          
           // Renderizar Prévia do Alvo
          const tDiv = document.getElementById("skill-target-preview");
-         tDiv.innerHTML = `<img src="${target.img}" class="w-full h-full object-contain">`;
+          tDiv.innerHTML = `
+            <img src="${target.img}" class="w-full h-full object-contain"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="hidden w-full h-full items-center justify-center text-5xl">
+              ${target.emoji || '❓'}
+            </div>
+          `;
 
           // Renderizar Prévia do Material
          const fDiv = document.getElementById("skill-feeder-preview");
          if (skillFeederIdx !== -1) {
              const feeder = state.inventory[skillFeederIdx];
-             fDiv.innerHTML = `<img src="${feeder.img}" class="w-full h-full object-contain p-2">`;
+              fDiv.innerHTML = `
+                <img src="${feeder.img}" class="w-full h-full object-contain p-2"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="hidden w-full h-full items-center justify-center text-4xl">
+                  ${feeder.emoji || '❓'}
+                </div>
+              `;
              fDiv.className = "w-24 h-24 border-2 border-orange-500 rounded-2xl bg-slate-800 relative overflow-hidden shadow-[0_0_15px_rgba(249,115,22,0.4)]";
          } else {
              fDiv.innerHTML = "?";
@@ -4254,7 +4308,11 @@ const renderStory = () => {
              const el = document.createElement("div");
              el.className = `aspect-square bg-slate-800 rounded-xl border-2 cursor-pointer relative transition-all overflow-hidden ${isSel ? 'border-orange-500 opacity-100 scale-95' : 'border-slate-700 hover:border-slate-500 opacity-80'}`;
              el.innerHTML = `
-                 <img src="${c.img}" class="w-full h-full object-contain">
+                 <img src="${c.img}" class="w-full h-full object-contain"
+                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                 <div class="hidden w-full h-full items-center justify-center text-5xl">
+                   ${c.emoji || '❓'}
+                 </div>
                  <div class="absolute top-0 right-0 p-1 bg-black/50 backdrop-blur rounded-bl-lg">
                      <div class="text-[8px] font-bold text-white">${c.id === "skillupper" ? "SKILL" : "★"+c.stars}</div>
                  </div>
