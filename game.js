@@ -25,6 +25,7 @@
         },
         inventory: [], // Start with NO monsters
         equipment: [], // Global Equipment Storage
+        runes: [], // NOVO: Runas do jogador
         leaderIdx: 0,
         storyProgress: 1,
         towerFloor: 1,
@@ -244,10 +245,16 @@
             state.user.firstClear = {};
             state.user.lastLoginDate = "";
             
+            // NOVO: Inicializar runas e dar 5 de teste
+            state.runes = [];
+            for (let i = 0; i < 5; i++) {
+              state.runes.push(generateRune(1));
+            }
+            
             // Removed starter monsters (Thyron, Vireya, Slime)
             // User starts with nothing and must summon using the 10 epic tickets
             
-            showToast(`Conta criada: ${val}`);
+            showToast(`Conta criada: ${val} - Você ganhou 5 runas!`);
           }
 
           localStorage.setItem("paperwar_last_user", val);
@@ -316,6 +323,7 @@
             state.towerFloor;
         if (id === "view-missions") renderMissions();
         if (id === "view-pvp") renderPvPView();
+        if (id === "view-runes") renderRunesView();
         
         // ===== NOVAS FEATURES =====
         if (id === "view-achievements") renderAchievements();
@@ -1127,6 +1135,19 @@ const renderStory = () => {
                              </div>
                              <div class="space-y-0.5">
                                 ${subsHtml}
+                             </div>
+                        </div>
+                        
+                        <!-- RUNE SLOTS SECTION -->
+                        <div class="bg-[#120c07] p-3 rounded border border-purple-900/30 mt-3">
+                             <div class="flex justify-between items-center mb-2">
+                                <h4 class="text-purple-400 text-[9px] font-bold uppercase flex items-center gap-1">
+                                    <span>💎</span> Rune Slots
+                                </h4>
+                                <span class="text-[8px] text-purple-400/60 uppercase">${getRuneSlots(eq)} Slots</span>
+                             </div>
+                             <div class="grid grid-cols-3 gap-2" id="eq-rune-slots">
+                                ${renderRuneSlots(eq)}
                              </div>
                         </div>
                     </div>
@@ -5327,6 +5348,370 @@ window.addXP = (mon, amount) => {
         openPrep('pvp', opponentIdx);
       };
 
+      // --- SISTEMA DE RUNAS ---
+      let currentRuneFilter = 'all';
+
+      const renderRunesView = () => {
+        currentRuneFilter = 'all';
+        renderRunes();
+      };
+
+      const filterRunes = (type) => {
+        currentRuneFilter = type;
+        
+        // Update tabs UI
+        document.querySelectorAll('.rune-tab').forEach(tab => {
+          tab.classList.remove('bg-purple-600', 'text-white');
+          tab.classList.add('bg-slate-800', 'text-slate-400');
+        });
+        
+        const activeTab = document.getElementById(`rune-tab-${type}`);
+        if (activeTab) {
+          activeTab.classList.remove('bg-slate-800', 'text-slate-400');
+          activeTab.classList.add('bg-purple-600', 'text-white');
+        }
+        
+        renderRunes();
+      };
+
+      const renderRunes = () => {
+        const grid = document.getElementById('runes-grid');
+        const emptyState = document.getElementById('runes-empty');
+        const countEl = document.getElementById('runes-count');
+        
+        if (!grid) return;
+        
+        // Initialize runes array if needed
+        if (!state.runes) state.runes = [];
+        
+        // Filter runes
+        let runes = state.runes;
+        if (currentRuneFilter !== 'all') {
+          runes = runes.filter(r => r.type === currentRuneFilter);
+        }
+        
+        // Sort runes
+        const sortBy = document.getElementById('rune-sort')?.value || 'rarity';
+        runes = [...runes].sort((a, b) => {
+          if (sortBy === 'rarity') {
+            const order = { legendary: 4, epic: 3, rare: 2, common: 1 };
+            return (order[b.rarity] || 0) - (order[a.rarity] || 0);
+          }
+          if (sortBy === 'type') return a.type.localeCompare(b.type);
+          if (sortBy === 'level') return b.level - a.level;
+          if (sortBy === 'value') return b.value - a.value;
+          return 0;
+        });
+        
+        // Update count
+        if (countEl) countEl.innerText = `${runes.length} runa${runes.length !== 1 ? 's' : ''}`;
+        
+        // Show empty state if no runes
+        if (runes.length === 0) {
+          grid.innerHTML = '';
+          grid.classList.add('hidden');
+          if (emptyState) emptyState.classList.remove('hidden');
+          emptyState.classList.add('flex');
+          return;
+        }
+        
+        grid.classList.remove('hidden');
+        if (emptyState) {
+          emptyState.classList.add('hidden');
+          emptyState.classList.remove('flex');
+        }
+        
+        // Render runes
+        grid.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+        
+        runes.forEach(rune => {
+          const type = RUNE_TYPES[rune.type];
+          const rarityData = RUNE_RARITIES[rune.rarity];
+          
+          if (!type || !rarityData) return;
+          
+          const card = document.createElement('div');
+          card.className = 'glass-panel p-2.5 rounded-3xl cursor-pointer active:scale-95 transition-all hover:border-purple-500/50 relative overflow-hidden';
+          card.style.borderColor = rarityData.color;
+          card.style.boxShadow = `inset 0 0 20px ${rarityData.color}22`;
+          
+          // Equipped badge
+          const equippedBadge = rune.equipped 
+            ? '<div class="absolute top-0.5 right-0.5 bg-green-600 text-white text-[7px] px-1 py-0.5 rounded font-bold">EQ</div>'
+            : '';
+          
+          // Calculate effective value with level bonus
+          const levelBonus = 1 + (rune.level - 1) * 0.05;
+          const effectiveValue = Math.floor(rune.value * levelBonus);
+          
+          card.innerHTML = `
+            ${equippedBadge}
+            <div class="text-center mb-1.5">
+              <div class="text-3xl mb-0.5">${type.icon}</div>
+              <div class="text-[8px] font-bold" style="color: ${rarityData.color}">${rarityData.name}</div>
+            </div>
+            <div class="text-center">
+              <div class="text-[10px] font-bold text-white mb-0.5 leading-tight">${type.name}</div>
+              <div class="text-[8px] text-slate-400 leading-tight">${type.description}</div>
+              <div class="mt-1.5 py-1 px-1.5 bg-slate-800/50 rounded-xl">
+                <div class="text-base font-black text-white">+${effectiveValue}</div>
+                <div class="text-[7px] text-slate-500">Lv. ${rune.level}/${rune.maxLevel}</div>
+              </div>
+            </div>
+          `;
+          
+          card.onclick = () => openRuneDetail(rune.id);
+          fragment.appendChild(card);
+        });
+        
+        grid.appendChild(fragment);
+      };
+
+      const openRuneDetail = (runeId) => {
+        const rune = state.runes.find(r => r.id === runeId);
+        if (!rune) return;
+        
+        window.currentRuneId = runeId; // Store for upgrade
+        
+        const type = RUNE_TYPES[rune.type];
+        const rarityData = RUNE_RARITIES[rune.rarity];
+        const upgradeCost = getRuneUpgradeCost(rune);
+        const canUpgrade = rune.level < rune.maxLevel;
+        const levelBonus = 1 + (rune.level - 1) * 0.05;
+        const effectiveValue = Math.floor(rune.value * levelBonus);
+        const nextLevelBonus = 1 + rune.level * 0.05;
+        const nextValue = Math.floor(rune.value * nextLevelBonus);
+        
+        // Show modal
+        const modal = document.getElementById('rune-detail-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // Update glow color
+        const glow = document.getElementById('rune-modal-glow');
+        if (glow) glow.style.background = rarityData.color;
+        
+        // Update header
+        document.getElementById('rune-modal-icon').innerText = type.icon;
+        document.getElementById('rune-modal-name').innerText = type.name;
+        const rarityEl = document.getElementById('rune-modal-rarity');
+        rarityEl.innerText = rarityData.name;
+        rarityEl.style.color = rarityData.color;
+        
+        // Update main stat
+        const mainStat = document.getElementById('rune-modal-main-stat');
+        mainStat.style.borderColor = rarityData.color;
+        document.getElementById('rune-modal-value').innerText = `+${effectiveValue}`;
+        document.getElementById('rune-modal-stat-type').innerText = type.stat.toUpperCase();
+        
+        // Update level
+        document.getElementById('rune-modal-level').innerText = `${rune.level}/${rune.maxLevel}`;
+        const levelPercent = (rune.level / rune.maxLevel) * 100;
+        document.getElementById('rune-modal-level-bar').style.width = `${levelPercent}%`;
+        
+        // Update status
+        const equippedBadge = document.getElementById('rune-modal-equipped-badge');
+        const availableBadge = document.getElementById('rune-modal-available-badge');
+        if (rune.equipped) {
+          equippedBadge.classList.remove('hidden');
+          availableBadge.classList.add('hidden');
+        } else {
+          equippedBadge.classList.add('hidden');
+          availableBadge.classList.remove('hidden');
+        }
+        
+        // Update upgrade UI
+        const nextLevelDiv = document.getElementById('rune-modal-next-level');
+        const costDiv = document.getElementById('rune-modal-cost');
+        const upgradeBtn = document.getElementById('rune-modal-upgrade-btn');
+        const maxLevelDiv = document.getElementById('rune-modal-max-level');
+        
+        if (canUpgrade) {
+          // Show upgrade options
+          nextLevelDiv.classList.remove('hidden');
+          document.getElementById('rune-modal-current-value').innerText = `+${effectiveValue}`;
+          document.getElementById('rune-modal-next-value').innerText = `+${nextValue}`;
+          
+          costDiv.classList.remove('hidden');
+          document.getElementById('rune-modal-cost-value').innerText = `${upgradeCost} 💰`;
+          
+          upgradeBtn.classList.remove('hidden');
+          maxLevelDiv.classList.add('hidden');
+        } else {
+          // Max level
+          nextLevelDiv.classList.add('hidden');
+          costDiv.classList.add('hidden');
+          upgradeBtn.classList.add('hidden');
+          maxLevelDiv.classList.remove('hidden');
+        }
+      };
+
+      const closeRuneDetail = () => {
+        const modal = document.getElementById('rune-detail-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        window.currentRuneId = null;
+      };
+
+      const confirmRuneUpgrade = () => {
+        if (!window.currentRuneId) return;
+        
+        const rune = state.runes.find(r => r.id === window.currentRuneId);
+        if (!rune) return;
+        
+        const upgradeCost = getRuneUpgradeCost(rune);
+        
+        if (state.user.gold < upgradeCost) {
+          showToast('Ouro insuficiente!', 'error');
+          return;
+        }
+        
+        state.user.gold -= upgradeCost;
+        upgradeRune(rune);
+        save();
+        updateHeader();
+        renderRunes();
+        
+        showToast(`Runa upada para nível ${rune.level}!`, 'success');
+        spawnParticles(window.innerWidth/2, window.innerHeight/2, 'gold');
+        
+        // Refresh modal with new values
+        openRuneDetail(window.currentRuneId);
+      };
+
+      // --- RUNE SOCKET FUNCTIONS ---
+      window.renderRuneSlots = (eq) => {
+        if (!eq) return '';
+        
+        const maxSlots = getRuneSlots(eq);
+        if (!state.runes) state.runes = [];
+        const equippedRunes = state.runes.filter(r => r.equipped === eq.id);
+        
+        let html = '';
+        
+        for (let i = 0; i < maxSlots; i++) {
+          const rune = equippedRunes[i];
+          
+          if (rune) {
+            const type = RUNE_TYPES[rune.type];
+            const rarityData = RUNE_RARITIES[rune.rarity];
+            const levelBonus = 1 + (rune.level - 1) * 0.05;
+            const effectiveValue = Math.floor(rune.value * levelBonus);
+            
+            html += `
+              <div onclick="unequipRuneFromSlot('${eq.id}', '${rune.id}')" 
+                   class="relative bg-slate-900 border-2 rounded-lg p-2 cursor-pointer hover:scale-105 transition-transform active:scale-95 group"
+                   style="border-color: ${rarityData.color}; box-shadow: inset 0 0 15px ${rarityData.color}33;">
+                <div class="absolute top-0.5 right-0.5 text-red-500 text-[8px] font-bold opacity-0 group-hover:opacity-100">✕</div>
+                <div class="text-center">
+                  <div class="text-xl mb-0.5">${type.icon}</div>
+                  <div class="text-[8px] font-bold text-white">+${effectiveValue}</div>
+                  <div class="text-[7px] text-slate-400">Lv.${rune.level}</div>
+                </div>
+              </div>
+            `;
+          } else {
+            html += `
+              <div onclick="openRuneSelectModal('${eq.id}')" 
+                   class="bg-slate-900/30 border-2 border-dashed border-slate-700 rounded-lg p-2 cursor-pointer hover:border-purple-500 hover:bg-slate-800/50 transition-all flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-2xl opacity-30">💎</div>
+                  <div class="text-[7px] text-slate-500 mt-0.5">Empty</div>
+                </div>
+              </div>
+            `;
+          }
+        }
+        
+        return html;
+      };
+
+      window.unequipRuneFromSlot = (eqId, runeId) => {
+        const rune = state.runes.find(r => r.id === runeId);
+        if (!rune) return;
+        
+        rune.equipped = null;
+        save();
+        renderUpgradeModal();
+        showToast('Runa removida!', 'success');
+      };
+
+      window.openRuneSelectModal = (eqId) => {
+        window.currentSocketEquipmentId = eqId;
+        
+        const eq = state.equipment.find(e => e.id === eqId);
+        if (!eq) return;
+        
+        const maxSlots = getRuneSlots(eq);
+        const equippedCount = state.runes.filter(r => r.equipped === eqId).length;
+        
+        if (equippedCount >= maxSlots) {
+          showToast('Todos os slots estão ocupados!', 'warning');
+          return;
+        }
+        
+        // Mostrar lista de runas disponíveis
+        const availableRunes = state.runes.filter(r => !r.equipped);
+        
+        if (availableRunes.length === 0) {
+          showToast('Você não tem runas disponíveis!', 'error');
+          return;
+        }
+        
+        let html = '<div class="space-y-2">';
+        html += '<h3 class="text-white font-bold text-sm mb-3">Selecione uma Runa:</h3>';
+        
+        availableRunes.forEach(rune => {
+          const type = RUNE_TYPES[rune.type];
+          const rarityData = RUNE_RARITIES[rune.rarity];
+          const levelBonus = 1 + (rune.level - 1) * 0.05;
+          const effectiveValue = Math.floor(rune.value * levelBonus);
+          
+          html += `
+            <div onclick="equipRuneToSocket('${rune.id}')" 
+                 class="flex items-center gap-3 p-2 bg-slate-800 hover:bg-slate-700 rounded-lg cursor-pointer border-2 transition-all"
+                 style="border-color: ${rarityData.color}33;">
+              <div class="text-2xl">${type.icon}</div>
+              <div class="flex-1">
+                <div class="text-xs font-bold text-white">${type.name}</div>
+                <div class="text-[10px] text-slate-400">${type.description}</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-white">+${effectiveValue}</div>
+                <div class="text-[9px]" style="color: ${rarityData.color}">${rarityData.name}</div>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += '</div>';
+        
+        // Usar um confirm simples por enquanto (pode criar modal depois)
+        document.getElementById('eq-modal-v2').innerHTML = `
+          <div class="relative w-[90%] max-w-md bg-slate-900 border-2 border-purple-500 rounded-xl p-4 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-purple-400 font-bold">💎 Selecionar Runa</h2>
+              <button onclick="renderUpgradeModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+            </div>
+            ${html}
+          </div>
+        `;
+      };
+
+      window.equipRuneToSocket = (runeId) => {
+        if (!window.currentSocketEquipmentId) return;
+        
+        const rune = state.runes.find(r => r.id === runeId);
+        if (!rune || rune.equipped) return;
+        
+        rune.equipped = window.currentSocketEquipmentId;
+        save();
+        renderUpgradeModal();
+        showToast('Runa equipada!', 'success');
+        spawnParticles(window.innerWidth/2, window.innerHeight/2, 'purple');
+      };
+
       // Initialize Timer Loop
       setInterval(() => {
           if(document.getElementById("view-missions") && !document.getElementById("view-missions").classList.contains("hidden")) {
@@ -5426,6 +5811,14 @@ window.addXP = (mon, amount) => {
       window.renderPvPView = renderPvPView;
       window.refreshPvPOpponents = refreshPvPOpponents;
       window.startPvPBattle = startPvPBattle;
+      
+      // Runes Exports
+      window.renderRunesView = renderRunesView;
+      window.filterRunes = filterRunes;
+      window.renderRunes = renderRunes;
+      window.openRuneDetail = openRuneDetail;
+      window.closeRuneDetail = closeRuneDetail;
+      window.confirmRuneUpgrade = confirmRuneUpgrade;
 
       // --- INICIALIZAÇÃO DO JOGO ---
       // Como os módulos de dados são carregados ANTES do game.js no HTML,

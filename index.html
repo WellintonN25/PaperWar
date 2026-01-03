@@ -367,6 +367,16 @@
               <div class="text-xl mb-1">📦</div>
               <h4 class="text-white font-bold uppercase text-[10px]">Summon</h4>
             </div>
+
+            <!-- RUNES BUTTON -->
+            <div
+              onclick="changeView('view-runes')"
+              class="glass-panel p-3 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center bg-gradient-to-br from-purple-900/40 to-slate-900 border-purple-500/30"
+            >
+              <div class="text-xl mb-1">💎</div>
+              <h4 class="text-white font-bold uppercase text-[10px]">Runas</h4>
+            </div>
+
             <!-- CHEST BUTTON REMOVED BY USER REQUEST -->
             <div
               onclick="changeView('view-inventory')"
@@ -485,6 +495,105 @@
         >
           <div class="text-4xl mb-2">🕸️</div>
           <p class="text-white text-xs">Baú vazio</p>
+        </div>
+      </main>
+
+      <!-- RUNES VIEW -->
+      <main
+        id="view-runes"
+        class="flex-1 hidden-view bg-slate-950 flex flex-col p-4 overflow-hidden"
+      >
+        <div class="flex items-center justify-between mb-4 shrink-0">
+          <button
+            onclick="changeView('view-home')"
+            class="text-white font-bold text-xs bg-slate-800 px-3 py-2 rounded-lg"
+          >
+            ← Voltar
+          </button>
+          <span class="text-white font-bold uppercase text-xs">💎 Runas</span>
+          <div class="text-xs text-slate-400" id="runes-count">0 runas</div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div
+          class="flex gap-2 mb-4 overflow-x-auto pb-2 shrink-0 custom-scrollbar"
+        >
+          <button
+            onclick="filterRunes('all')"
+            id="rune-tab-all"
+            class="rune-tab px-2.5 py-1 rounded-full bg-purple-600 text-white text-[9px] font-bold whitespace-nowrap flex-shrink-0"
+          >
+            Todas
+          </button>
+          <button
+            onclick="filterRunes('power')"
+            id="rune-tab-power"
+            class="rune-tab px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 text-[9px] font-bold whitespace-nowrap flex-shrink-0"
+          >
+            ⚡ Poder
+          </button>
+          <button
+            onclick="filterRunes('vitality')"
+            id="rune-tab-vitality"
+            class="rune-tab px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 text-[9px] font-bold whitespace-nowrap flex-shrink-0"
+          >
+            ❤️ Vida
+          </button>
+          <button
+            onclick="filterRunes('guard')"
+            id="rune-tab-guard"
+            class="rune-tab px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 text-[9px] font-bold whitespace-nowrap flex-shrink-0"
+          >
+            🛡️ Defesa
+          </button>
+          <button
+            onclick="filterRunes('swift')"
+            id="rune-tab-swift"
+            class="rune-tab px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 text-[9px] font-bold whitespace-nowrap flex-shrink-0"
+          >
+            💨 Vel
+          </button>
+          <button
+            onclick="filterRunes('blade')"
+            id="rune-tab-blade"
+            class="rune-tab px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 text-[9px] font-bold whitespace-nowrap flex-shrink-0"
+          >
+            ⚔️ Crit
+          </button>
+        </div>
+
+        <!-- Sorting -->
+        <div class="flex gap-2 mb-4 shrink-0">
+          <select
+            id="rune-sort"
+            onchange="renderRunes()"
+            class="bg-slate-800 text-white text-xs px-3 py-2 rounded-lg border border-white/10 font-bold"
+          >
+            <option value="rarity">Raridade</option>
+            <option value="type">Tipo</option>
+            <option value="level">Nível</option>
+            <option value="value">Valor</option>
+          </select>
+        </div>
+
+        <!-- Runes Grid -->
+        <div
+          id="runes-grid"
+          class="grid grid-cols-3 gap-3 overflow-y-auto pb-20 content-start flex-1 min-h-0 custom-scrollbar"
+        >
+          <!-- JS Injected -->
+        </div>
+
+        <!-- Empty State -->
+        <div
+          id="runes-empty"
+          class="hidden flex-col items-center justify-center flex-1 opacity-50"
+        >
+          <div class="text-5xl mb-3">💎</div>
+          <p class="text-white text-sm font-bold">Nenhuma Runa</p>
+          <p class="text-slate-500 text-xs mt-1">
+            Complete dungeons para obter runas
+          </p>
         </div>
       </main>
 
@@ -2100,6 +2209,169 @@
 
       <!-- PITY INFO (no summon) -->
       <div id="pity-indicator" class="hidden"></div>
+
+      <!-- RUNE DETAIL MODAL -->
+      <div
+        id="rune-detail-modal"
+        class="absolute inset-0 z-[100] bg-slate-950/95 backdrop-blur-sm hidden flex items-center justify-center p-4"
+      >
+        <div
+          class="glass-panel p-4 rounded-2xl max-w-sm w-full animate-fade-in relative overflow-hidden"
+          id="rune-modal-content"
+        >
+          <!-- Background glow -->
+          <div
+            id="rune-modal-glow"
+            class="absolute inset-0 opacity-10 blur-3xl"
+          ></div>
+
+          <!-- Content -->
+          <div class="relative z-10">
+            <!-- Header -->
+            <div class="text-center mb-3">
+              <div class="text-4xl mb-2" id="rune-modal-icon">💎</div>
+              <h3
+                class="text-lg font-black text-white uppercase"
+                id="rune-modal-name"
+              >
+                Runa
+              </h3>
+              <div
+                class="text-xs font-bold mt-1"
+                id="rune-modal-rarity"
+                style="color: #94a3b8"
+              >
+                Comum
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="space-y-2 mb-4">
+              <!-- Main Stat -->
+              <div
+                class="glass-panel p-3 rounded-xl border-2"
+                id="rune-modal-main-stat"
+              >
+                <div class="text-center">
+                  <div class="text-xs text-slate-400 mb-1">Bônus Atual</div>
+                  <div
+                    class="text-3xl font-black text-white"
+                    id="rune-modal-value"
+                  >
+                    +0
+                  </div>
+                  <div
+                    class="text-xs text-slate-500 mt-1"
+                    id="rune-modal-stat-type"
+                  >
+                    ATK
+                  </div>
+                </div>
+              </div>
+
+              <!-- Level Progress -->
+              <div class="glass-panel p-2 rounded-lg">
+                <div class="flex justify-between text-[10px] mb-1">
+                  <span class="text-slate-400">Nível</span>
+                  <span class="text-white font-bold" id="rune-modal-level"
+                    >1/15</span
+                  >
+                </div>
+                <div
+                  class="h-1.5 bg-slate-800 rounded-full overflow-hidden border border-white/10"
+                >
+                  <div
+                    id="rune-modal-level-bar"
+                    class="h-full bg-gradient-to-r from-purple-600 to-pink-600 transition-all"
+                    style="width: 6.67%"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Status -->
+              <div class="glass-panel p-3 rounded-xl">
+                <div class="flex justify-between items-center">
+                  <span class="text-[10px] text-slate-400">Status</span>
+                  <div
+                    id="rune-modal-equipped-badge"
+                    class="text-[10px] font-bold px-2 py-0.5 rounded bg-green-600/20 text-green-400 hidden"
+                  >
+                    ✓ Equipada
+                  </div>
+                  <div
+                    id="rune-modal-available-badge"
+                    class="text-xs font-bold px-2 py-1 rounded bg-slate-700 text-slate-400"
+                  >
+                    Disponível
+                  </div>
+                </div>
+              </div>
+
+              <!-- Next Level Preview (if can upgrade) -->
+              <div
+                id="rune-modal-next-level"
+                class="glass-panel p-3 rounded-xl hidden"
+              >
+                <div class="text-xs text-slate-400 mb-2">Próximo Nível</div>
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-white font-bold"
+                    id="rune-modal-current-value"
+                    >+50</span
+                  >
+                  <span class="text-slate-500">→</span>
+                  <span
+                    class="text-green-400 font-bold"
+                    id="rune-modal-next-value"
+                    >+53</span
+                  >
+                </div>
+              </div>
+
+              <!-- Upgrade Cost -->
+              <div
+                id="rune-modal-cost"
+                class="glass-panel p-3 rounded-xl border-yellow-500/20 hidden"
+              >
+                <div class="flex justify-between items-center">
+                  <span class="text-xs text-slate-400">Custo de Upgrade</span>
+                  <span
+                    class="text-yellow-400 font-bold"
+                    id="rune-modal-cost-value"
+                  >
+                    500 💰
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="space-y-2">
+              <button
+                id="rune-modal-upgrade-btn"
+                onclick="confirmRuneUpgrade()"
+                class="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black uppercase rounded-xl shadow-lg active:scale-95 transition-all text-sm hidden"
+              >
+                ⬆️ Fazer Upgrade
+              </button>
+
+              <div
+                id="rune-modal-max-level"
+                class="w-full py-2.5 bg-slate-800 text-center text-green-400 font-bold rounded-xl text-sm hidden"
+              >
+                ✓ NÍVEL MÁXIMO
+              </div>
+
+              <button
+                onclick="closeRuneDetail()"
+                class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-colors text-sm"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- DATA MODULES - Carregados primeiro -->
@@ -2107,11 +2379,13 @@
     <script src="src/modules/data/Skills.js"></script>
     <script src="src/modules/data/Missions.js"></script>
     <script src="src/modules/data/GameConstants.js"></script>
+    <script src="src/modules/data/Runes.js"></script>
 
     <!-- UTILITY MODULES - Funções auxiliares -->
     <script src="src/modules/utils/Helpers.js"></script>
     <script src="src/modules/utils/Toast.js"></script>
     <script src="src/modules/utils/Storage.js"></script>
+    <script src="src/modules/utils/StatsCalculator.js"></script>
     <script src="src/modules/utils/UIHelpers.js"></script>
     <script src="src/modules/utils/Performance.js"></script>
 

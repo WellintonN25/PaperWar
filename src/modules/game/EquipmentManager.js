@@ -271,5 +271,37 @@
     };
   };
   
+  /**
+   * Gera recompensas de dungeon (equipamento + runas)
+   * @param {number} floorLevel - Nível do dungeon
+   * @param {string} dungeonType - Tipo: 'golem', 'dragon'
+   * @returns {Object} Recompensas { equipment: Array, runes: Array }
+   */
+  window.generateDungeonRewards = (floorLevel = 1, dungeonType = "golem") => {
+    const rewards = {
+      equipment: [],
+      runes: []
+    };
+    
+    // Sempre dropa 1 equipamento
+    rewards.equipment.push(createEquipment(floorLevel, dungeonType));
+    
+    // Chance de dropar runas (aumenta com o nível)
+    const runeDropChance = Math.min(0.5 + (floorLevel * 0.05), 1.0); // 50% base, até 100%
+    const runeCount = Math.random() < runeDropChance ? 1 : 0;
+    
+    // Chance de bonus rune em níveis altos
+    if (floorLevel >= 7 && Math.random() < 0.3) {
+      rewards.runes.push(generateRune(floorLevel));
+    }
+    
+    // Dropar runas
+    for (let i = 0; i < runeCount; i++) {
+      rewards.runes.push(generateRune(floorLevel));
+    }
+    
+    return rewards;
+  };
+  
   console.log('✅ EquipmentManager.js carregado');
 })();
