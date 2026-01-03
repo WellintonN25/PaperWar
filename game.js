@@ -42,12 +42,8 @@
       let currentEqId = null; // for modal
       let currentInvFilter = "all";
 
-      // --- TOAST SYSTEM ---
-      // showToast agora está em: src/modules/utils/Toast.js
-
-      // --- MONSTER MANAGEMENT ---
-      // addMonster agora está em: src/modules/game/MonsterManager.js
-      // Wrapper para manter compatibilidade
+      
+      // --- WRAPPERS ---
       function addMonster(id) {
         return window.addMonster(id, state);
       }
@@ -928,41 +924,8 @@ const renderStory = () => {
       };
 
 
-      // ========================================
-      // 🎯 MARCADOR: TRACKING DE BATALHAS
-      // ========================================
-      // ADICIONAR tracking quando jogador VENCE uma batalha:
-      // Procure onde o jogo:
-      //   - Distribui recompensas de batalha (XP, gold, etc)
-      //   - OU retorna para view-home após batalha
-      //   - OU onde detecta vitória do jogador
-      //
-      // CÓDIGO PARA ADICIONAR:
-      // if (!state.user.totalBattles) state.user.totalBattles = 0;
-      // state.user.totalBattles++;
-      // trackAchievement(state, 'battles_won', state.user.totalBattles);
-      // ========================================
-
-      // ========================================
-      // 🎯 MARCADOR: TRACKING DE DUNGEONS  
-      // ========================================
-      // ADICIONAR tracking quando jogador COMPLETA uma dungeon:
-      // Procure onde o jogo:
-      //   - Distribui equipamentos após dungeon
-      //   - OU incrementa dungeonProgress
-      //   - OU onde detecta clear de dungeon
-      //
-      // CÓDIGO PARA ADICIONAR:
-      // if (!state.user.dungeonsCleared) state.user.dungeonsCleared = 0;
-      // state.user.dungeonsCleared++;
-      // trackAchievement(state, 'dungeons_cleared', state.user.dungeonsCleared);
-      // trackAchievement(state, 'dungeon_floor', currentFloorNumber);
-      // ========================================
-
-
-      // --- EQUIPMENT FUNCTIONS ---
-      // Agora em: src/modules/game/EquipmentManager.js
-      // generateSubStat, createEquipment, sellEquipment, equipItem, unequipItem, upgradeEquipment
+      
+      // --- EQUIPMENT UI HANDLERS ---
 
 
       const handleEqClick = (slot) => {
@@ -5149,8 +5112,6 @@ window.addXP = (mon, amount) => {
           spawnParticles(window.innerWidth/2, window.innerHeight/2, "gold");
       };
       
-      // Inject Trackers
-      // ... (Hooks manuais serão feitos editando as funções existentes)
 
       // Initialize Timer Loop
       setInterval(() => {
