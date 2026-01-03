@@ -1,5 +1,4 @@
-﻿
-      let state = {
+﻿      let state = {
         user: {
           name: "",
           crystals: 200,
@@ -44,42 +43,13 @@
       let currentInvFilter = "all";
 
       // --- TOAST SYSTEM ---
-      const showToast = (message, type = "success") => {
-        const container = document.getElementById("toast-container");
-        const toast = document.createElement("div");
+      // showToast agora está em: src/modules/utils/Toast.js
 
-        let icon = "✅";
-        if (type === "error") icon = "❌";
-        if (type === "info") icon = "ℹ️";
-
-        toast.className = `toast ${type}`;
-        toast.innerHTML = `<span class="toast-icon">${icon}</span><span>${message}</span>`;
-
-        container.appendChild(toast);
-
-        setTimeout(() => {
-          toast.style.animation = "toast-fade 0.3s ease-in forwards";
-          setTimeout(() => toast.remove(), 300);
-        }, 1000);
-      };
-
+      // --- MONSTER MANAGEMENT ---
+      // addMonster agora está em: src/modules/game/MonsterManager.js
+      // Wrapper para manter compatibilidade
       function addMonster(id) {
-        const template = MONSTERS_DB.find((m) => m.id === id) || MONSTERS_DB.find((m) => m.id === id?.toLowerCase());
-        if (!template) {
-          console.error("Monster ID not found:", id);
-          return;
-        }
-
-        const newMon = {
-          ...template,
-          instanceId: Date.now() + Math.random().toString(),
-          xp: 0,
-          lvl: 1,
-          equipped: { slot1: null, slot2: null, slot3: null, slot4: null },
-          stars: template.stars,
-        };
-
-        state.inventory.push(newMon);
+        return window.addMonster(id, state);
       }
 
       // --- CORE ---
@@ -178,13 +148,10 @@
         if (!state.user.lastLoginDate) state.user.lastLoginDate = "";
       }
 
-      const save = () => {
-        if (!state.user.name) return;
-        localStorage.setItem(
-          `paperwar_save_${state.user.name}`,
-          JSON.stringify(state)
-        );
-      };
+      // --- SAVE FUNCTION ---
+      // Agora usa o módulo Storage.js
+      const save = () => saveGame(state);
+
 
       // --- ÍCONES DE LOGIN ---
       let selectedLoginIcon = "??";
@@ -892,137 +859,11 @@ const renderStory = () => {
         document.getElementById("summon-results").classList.add("hidden");
       };
 
-      // Ajuda para gerar um substatus aleatório
-      const generateSubStat = (excludeTypes = []) => {
-          const types = ["atk", "def", "hp", "crit", "cdmg", "spd", "res", "acc"].filter(t => !excludeTypes.includes(t));
-          const type = types[Math.floor(Math.random() * types.length)];
-          
-          let val = 0;
-          // Faixas de Substatus (Estilo SW - levemente simplificado/adaptado)
-          switch(type) {
-              case "atk": val = Math.floor(Math.random() * 4) + 5; break; // 5-8%
-              case "def": val = Math.floor(Math.random() * 4) + 5; break; // 5-8%
-              case "hp":  val = Math.floor(Math.random() * 4) + 5; break; // 5-8%
-              case "crit": val = Math.floor(Math.random() * 3) + 4; break; // 4-6%
-              case "cdmg": val = Math.floor(Math.random() * 4) + 4; break; // 4-7%
-              case "spd": val = Math.floor(Math.random() * 3) + 4; break; // 4-6
-              case "res": val = Math.floor(Math.random() * 4) + 4; break; // 4-8%
-              case "acc": val = Math.floor(Math.random() * 4) + 4; break; // 4-8%
-          }
-          return { type, value: val };
-      };
 
-      const createEquipment = (floorLevel = 1, dungeonType = "golem") => {
-        // Seleção de Slot
-        let slot;
-        if (dungeonType === "golem") slot = [1, 2, 3][Math.floor(Math.random() * 3)];
-        else if (dungeonType === "dragon") slot = [2, 3, 4][Math.floor(Math.random() * 3)];
-        else slot = Math.floor(Math.random() * 4) + 1;
+      // --- EQUIPMENT FUNCTIONS ---
+      // Agora em: src/modules/game/EquipmentManager.js
+      // generateSubStat, createEquipment, sellEquipment, equipItem, unequipItem, upgradeEquipment
 
-        // Set selection
-        let availableSets;
-        if (dungeonType === "golem") availableSets = ["energy", "guard", "swift"];
-        else if (dungeonType === "dragon") availableSets = ["rage", "blade", "fatal", "violent"];
-        else availableSets = Object.keys(EQUIPMENT_SETS);
-        
-        const set = availableSets[Math.floor(Math.random() * availableSets.length)];
-
-        // Lógica de Raridade
-        const r = Math.random();
-        let rarity = "common";
-        // Simple rarity curve based on floor
-        let chanceLegend = 0.01 + (floorLevel * 0.005); // Max ~7% at floor 12
-        let chanceEpic = 0.05 + (floorLevel * 0.02);    // Max ~29%
-        let chanceRare = 0.2 + (floorLevel * 0.05);     // Max ~80%
-        
-        if (r < chanceLegend) rarity = "legendary";
-        else if (r < chanceLegend + chanceEpic) rarity = "epic";
-        else if (r < chanceLegend + chanceEpic + chanceRare) rarity = "rare";
-        else rarity = "common";
-
-        const base = EQ_RARITY[rarity]; // Keeps color/name info
-        
-        const eq = {
-          id: "eq_" + Date.now() + Math.random().toString(36).substr(2, 9),
-          slot: slot,
-          set: set,
-          rarity: rarity,
-          lvl: 0,
-          // NOVA ESTRUTURA
-          stats: {
-              main: {},
-              subs: []
-          }
-        };
-
-        // Definição de Status Principal
-        if (slot === 1) {
-             eq.type = "weapon";
-             eq.stats.main = { type: "atk", value: 100 }; // Flat ATK for weapon usually, simplified to 100 base
-        } else if (slot === 2) {
-             eq.type = "armor";
-             // Can be DEF or HP or DEF% / HP%? Let's stick to flat or %?
-             // SW: Slot 1 flat Atk, Slot 3 flat Def, Slot 5 flat HP.
-             // Here we have 4 slots. 
-             // Slot 1: Weapon (ATK)
-             // Slot 2: Armor (DEF or HP)
-             // Slot 3: Helmet (HP or DEF)
-             // Slot 4: Acc (CRIT/CDMG/ATK%/HP%/DEF%)
-             
-             // Simplification for PaperWar:
-             // Slot 1: Flat ATK
-             // Slot 2: Flat DEF
-             // Slot 3: Flat HP
-             // Slot 4: % Stats (Crit, CDmg, Atk%, Hp%)
-             
-             // BUT user wants functionality. 
-             // Let's use:
-             // Slot 1: ATK (Flat)
-             // Slot 2: DEF (Flat)
-             // Slot 3: HP (Flat)
-             // Slot 4: Random % Main Stat (Crit, CDmg, Atk, Def, Hp, Spd)
-             
-             eq.type = "armor";
-             eq.stats.main = { type: "def", value: 70 };
-        } else if (slot === 3) {
-             eq.type = "helmet";
-             eq.stats.main = { type: "hp", value: 300 };
-        } else if (slot === 4) {
-             eq.type = "acc";
-             const opts = ["crit", "cdmg", "atk", "hp", "def", "spd"];
-             const pick = opts[Math.floor(Math.random() * opts.length)];
-             
-             let val = 0;
-             if (pick === "crit") val = 7;
-             else if (pick === "cdmg") val = 11;
-             else if (pick === "spd") val = 7;
-             else val = 10; // atk/def/hp %
-             
-             eq.stats.main = { type: pick, value: val };
-        }
-
-        // Geração de Substatus
-        let subCount = 0;
-        if (rarity === "legendary") subCount = 4;
-        else if (rarity === "epic") subCount = 3;
-        else if (rarity === "rare") subCount = 2;
-        
-        const existingTypes = [eq.stats.main.type];
-        
-        for(let i=0; i<subCount; i++) {
-            const sub = generateSubStat(existingTypes);
-            eq.stats.subs.push(sub);
-            existingTypes.push(sub.type);
-        }
-        
-        // COMPATIBILIDADE RETROATIVA
-        // For easy calculation in calculateStats, we might want a 'total' or handle it there.
-        // Let's ensure 'calculateStats' (next refactor) handles this structure.
-        // For now, I will NOT set flattened properties like eq.stats.atk = X. 
-        // I will rely on updating calculateStats.
-
-        return eq;
-      };
 
       const handleEqClick = (slot) => {
         const mon = state.inventory[selectedDetailIdx];
@@ -1265,36 +1106,23 @@ const renderStory = () => {
 
       const sellEquipment = (eqId) => {
         const id = eqId || currentEqId;
-        const eq = state.equipment.find((e) => e.id === id);
-        if (!eq) return;
-        if (getEquipperName(eq.id))
-          return showToast("Desequipe antes de vender!", "error");
-
-        const conf = EQ_RARITY[eq.rarity];
-        const price = Math.floor(50 * (eq.lvl + 1) * conf.mult);
-
-        state.user.gold += price;
-        state.equipment = state.equipment.filter((e) => e.id !== id);
+        const price = window.sellEquipment(state, id);
+        
+        if (price === null) return; // Não vendeu (equipado ou não encontrado)
+        
         save();
-
+        
         document.getElementById("eq-modal-v2").classList.add("hidden");
         showToast(`Vendido por ${price} Ouro`);
         updateHeader();
 
         // Refresh views
-        if (
-          !document
-            .getElementById("view-inventory")
-            .classList.contains("hidden-view")
-        )
+        if (!document.getElementById("view-inventory").classList.contains("hidden-view"))
           renderInventory();
-        if (
-          !document
-            .getElementById("mon-detail-overlay")
-            .classList.contains("hidden")
-        )
+        if (!document.getElementById("mon-detail-overlay").classList.contains("hidden"))
           openDetail(selectedDetailIdx);
       };
+
 
       const performUpgrade = async (eqId) => {
         try {
@@ -5285,4 +5113,17 @@ window.addXP = (mon, amount) => {
       window.equipFromDetail = equipFromDetail;
       window.sellEquipment = sellEquipment;
       window.performUpgrade = performUpgrade;
+
+      // --- INICIALIZAÇÃO DO JOGO ---
+      // Como os módulos de dados são carregados ANTES do game.js no HTML,
+      // as constantes (MONSTERS_DB, SKILLS, etc.) já estarão disponíveis
+      window.addEventListener('DOMContentLoaded', () => {
+        console.log('🎮 Iniciando PaperWar...');
+        console.log('📦 Dados disponíveis:', {
+          MONSTERS_DB: window.MONSTERS_DB?.length || 0,
+          SKILLS: Object.keys(window.SKILLS || {}).length || 0,
+          DAILY_MISSIONS: window.DAILY_MISSIONS?.length || 0
+        });
+        init();
+      });
     

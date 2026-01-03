@@ -1918,7 +1918,26 @@
       </div>
     </div>
 
-    <script src="data.js"></script>
+    <!-- DATA MODULES - Carregados primeiro -->
+    <script src="src/modules/data/Monsters.js"></script>
+    <script src="src/modules/data/Skills.js"></script>
+    <script src="src/modules/data/Missions.js"></script>
+    <script src="src/modules/data/GameConstants.js"></script>
+
+    <!-- UTILITY MODULES - Funções auxiliares -->
+    <script src="src/modules/utils/Helpers.js"></script>
+    <script src="src/modules/utils/Toast.js"></script>
+    <script src="src/modules/utils/Storage.js"></script>
+    <script src="src/modules/utils/UIHelpers.js"></script>
+
+    <!-- GAME MODULES - Lógica de jogo -->
+    <script src="src/modules/game/MonsterManager.js"></script>
+    <script src="src/modules/game/EquipmentManager.js"></script>
+
+    <!-- BATTLE MODULES - Sistema de batalha -->
+    <script src="src/modules/battle/BattleHelpers.js"></script>
+
+    <!-- GAME LOGIC - Carregado depois que os dados estiverem disponíveis -->
     <script src="game.js"></script>
   </body>
 </html>
