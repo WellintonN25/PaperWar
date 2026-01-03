@@ -279,16 +279,23 @@
         }
       };
 
-      const changeView = (id) => {
+      const changeView = async (id) => {
         const target = document.getElementById(id);
         if (!target) return;
 
-        // Hide ALL main views inside #app
-        document.querySelectorAll("#app > main").forEach(el => {
+        // Encontrar a view atual
+        const currentView = document.querySelector("#app > main:not(.hidden-view)");
+
+        // Aplicar transição suave se o sistema estiver disponível
+        if (window.ScreenTransition && currentView && currentView.id !== id) {
+          await window.ScreenTransition.slideTransition(currentView, target);
+        } else {
+          // Fallback para transição sem animação
+          document.querySelectorAll("#app > main").forEach(el => {
             el.classList.add("hidden-view");
-        });
-        
-        target.classList.remove("hidden-view");
+          });
+          target.classList.remove("hidden-view");
+        }
 
         const h = document.getElementById("ui-header");
         if (h) {
@@ -2130,6 +2137,8 @@ const renderStory = () => {
 
       const renderBattleScene = () => {
         const pl = document.getElementById("player-sprite-container");
+        const en = document.getElementById("enemy-sprite-container");
+        
         if (pl && battleState.player) {
             const mon = battleState.player;
             // Handle imgBack if available specifically for player in battle
@@ -2146,7 +2155,18 @@ const renderStory = () => {
             }
             const span = pl.querySelector('span');
             if (span) span.style.fontSize = "4rem";
+            
+            // === NOVO: Animação de entrada do player ===
+            pl.classList.add('character-enter-left');
+            setTimeout(() => pl.classList.remove('character-enter-left'), 800);
         }
+        
+        // === NOVO: Animação de entrada do enemy ===
+        if (en) {
+            en.classList.add('character-enter-right');
+            setTimeout(() => en.classList.remove('character-enter-right'), 800);
+        }
+        
         renderSkillGrid();
       };
 
@@ -2298,11 +2318,20 @@ const renderStory = () => {
           isPlayer ? "ent-player" : "ent-enemy"
         );
 
+        // === NOVO: Verificar se é ultimate (MP >= 50) ===
+        const isUltimate = skill.mp && skill.mp >= 50;
+
         if (skill.type === "phys") {
           wrapperAtt.classList.add(
             isPlayer ? "anim-melee-player" : "anim-melee-enemy"
           );
           attackerEl.classList.add("anim-spin-atk");
+          
+          // === NOVO: Adicionar rastro de movimento ===
+          if (window.particleSystem) {
+            window.particleSystem.createMotionTrail(attackerEl);
+          }
+          
           await sleep(500 / spd);
           wrapperAtt.classList.remove(
             isPlayer ? "anim-melee-player" : "anim-melee-enemy"
@@ -2320,6 +2349,20 @@ const renderStory = () => {
           }
 
           attackerEl.classList.add("anim-cast");
+          
+          // === NOVO: Efeito de carregamento para ultimates ===
+          if (isUltimate && window.particleSystem) {
+            const rect = attackerEl.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Partículas de carregamento
+            for (let i = 0; i < 2; i++) {
+              setTimeout(() => {
+                window.particleSystem.createFloating(centerX, centerY, 6, '#fbbf24');
+              }, i * 200);
+            }
+          }
           
           // Otimização: Apenas atrasar 600ms (antes era 1500ms) se imgAtk personalizada for fornecida
           if (att.imgAtk) {
@@ -2378,12 +2421,56 @@ const renderStory = () => {
           // Tremor mais forte para crítico
           arena.classList.add("anim-shake-crit");
           setTimeout(() => arena.classList.remove("anim-shake-crit"), 400);
+          
+          // === NOVO: Efeitos de crítico ===
+          if (window.particleSystem) {
+            const rect = defenderEl.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            window.particleSystem.createStars(centerX, centerY, 8);
+            window.particleSystem.createShockwave(centerX, centerY, 'rgba(251, 191, 36, 0.8)');
+          }
         }
         dmg = Math.floor(dmg);
 
         def.curHp = Math.max(0, def.curHp - dmg);
         updateBattleHUD();
         showDmgText(dmg, isPlayer ? "ent-enemy" : "ent-player", isCrit);
+        
+        // === NOVO: Efeitos de impacto baseados no elemento ===
+        if (window.particleSystem) {
+          const rect = defenderEl.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          
+          const element = skill.element || att.element || 'physical';
+          
+          // Partículas baseadas no elemento
+          if (element === 'fire') {
+            window.particleSystem.createFireEffect(centerX, centerY);
+          } else if (element === 'water') {
+            window.particleSystem.createWaterEffect(centerX, centerY);
+          } else if (element === 'lightning') {
+            window.particleSystem.createLightningEffect(centerX, centerY);
+          } else if (element === 'nature') {
+            window.particleSystem.createHealEffect(centerX, centerY);
+          } else if (element === 'void') {
+            window.particleSystem.createBurst(centerX, centerY, 20, '#a855f7');
+          } else {
+            // Físico ou outros
+            window.particleSystem.createBurst(centerX, centerY, isCrit ? 20 : 10, '#ffffff');
+          }
+          
+          // Efeito extra para ultimates
+          if (isUltimate) {
+            setTimeout(() => {
+              window.particleSystem.createShockwave(centerX, centerY, 'rgba(168, 85, 247, 0.9)');
+              window.particleSystem.createBurst(centerX, centerY, 30, '#a855f7');
+            }, 100);
+          }
+        }
+        
         await sleep(300 / spd);
       };
 
@@ -3599,8 +3686,46 @@ const renderStory = () => {
           battleState.enemy.name;
       };
 
-      const winBattle = () => endScreen(true);
-      const loseBattle = () => endScreen(false);
+      const winBattle = async () => {
+        // === NOVO: Efeitos de vitória ===
+        const playerEl = document.getElementById("player-sprite-container");
+        
+        if (window.particleSystem && playerEl) {
+          const rect = playerEl.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          
+          // Celebração com partículas
+          for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+              window.particleSystem.createStars(centerX, centerY, 8);
+              window.particleSystem.createBurst(centerX, centerY, 20, '#fbbf24');
+            }, i * 200);
+          }
+          
+          // Animação de vitória
+          playerEl.classList.add('victory-celebration');
+          setTimeout(() => playerEl.classList.remove('victory-celebration'), 1000);
+        }
+        
+        // Aguardar um pouco para mostrar os efeitos
+        await sleep(800);
+        endScreen(true);
+      };
+      
+      const loseBattle = async () => {
+        // === NOVO: Efeitos de derrota ===
+        const playerEl = document.getElementById("player-sprite-container");
+        
+        if (playerEl) {
+          playerEl.classList.add('defeat-fall');
+          setTimeout(() => playerEl.classList.remove('defeat-fall'), 1000);
+        }
+        
+        // Aguardar um pouco para mostrar os efeitos
+        await sleep(800);
+        endScreen(false);
+      };
 
       const endScreen = (win) => {
         // --- LÓGICA DE SESSÃO DE FARM (ACUMULADOR) ---
