@@ -366,86 +366,89 @@ const renderStory = () => {
       };
 
       const updateHeader = () => {
-        document.getElementById("player-name-ui").innerText = state.user.name;
-
-        // Icon Logic
-        const iconEl = document.getElementById("header-icon-img");
-        const initEl = document.getElementById("header-initial");
+        // ===== OTIMIZADO COM DOM BATCHING =====
+        // Agrupa todas as leituras primeiro, depois todas as escritas
+        // Isso evita "layout thrashing" e melhora performance significativamente
         
-        // Cache previous icon state to avoid unnecessary DOM updates
-        const currentIcon = iconEl.getAttribute("data-icon");
-        
-        if (state.user.icon && state.user.icon !== currentIcon) {
-          const iconStr = state.user.icon;
-          iconEl.setAttribute("data-icon", iconStr); // Cache it
+        // PHASE 1: DOM READS (batchRead)
+        batchRead(() => {
+          // Lê propriedades do DOM sem causar reflow
+          const iconEl = document.getElementById("header-icon-img");
+          const currentIcon = iconEl?.getAttribute("data-icon");
           
-          // Fast check for images using simple string includes instead of regex
-          if ((typeof iconStr === 'string') && (iconStr.includes("src/") || iconStr.includes("http") || iconStr.endsWith(".png") || iconStr.endsWith(".jpg"))) {
-               iconEl.innerHTML = `<img src="${iconStr}" class="w-full h-full object-cover rounded-xl" />`;
-          } else if ((typeof iconStr === 'string') && (iconStr.indexOf("<") > -1)) { // Faster than includes check
-               iconEl.innerHTML = iconStr;
-          } else {
-               iconEl.innerText = iconStr;
-          }
-          iconEl.classList.remove("hidden");
-          initEl.classList.add("hidden");
-        } else if (!state.user.icon) {
-          iconEl.classList.add("hidden");
-          initEl.classList.remove("hidden");
-          // Only update text if changed
-          const newInit = state.user.name ? state.user.name[0].toUpperCase() : "?";
-          if (initEl.innerText !== newInit) initEl.innerText = newInit;
-        }
-
-        // Helper to update text only if changed
-        const updateText = (id, val) => {
-            const el = document.getElementById(id);
-            if(el && el.innerText != val) el.innerText = val;
-        };
-
-        updateText("val-crystals", state.user.crystals);
-        updateText("val-energy", state.user.energy);
-        updateText("val-gold", state.user.gold);
-        updateText("header-lvl", state.user.lvl);
-
-        const xpReq = 100 * state.user.lvl;
-        const pct = Math.min(100, Math.max(0, (state.user.xp / xpReq) * 100));
-        const xpBar = document.getElementById("header-xp-bar");
-        if (xpBar) {
-            xpBar.style.width = `${pct}%`;
-            // Force redraw hack? No, basic style should work.
-            // Maybe class 'w-0' is conflicting? Remove it?
-            xpBar.classList.remove("w-0");
-        }
-
-        // LÓGICA DE REGENERAÇÃO DE ENERGIA
-        const now = Date.now();
-        if (!state.user.lastEnergyRegen) state.user.lastEnergyRegen = now;
-        
-        const msPassed = now - state.user.lastEnergyRegen;
-        const twoMinutes = 2 * 60 * 1000;
-        
-        // Max Energy Soft Cap: 100 + Level (e.g. Lvl 10 = 110)
-        const maxEnergy = 100 + state.user.lvl;
-        
-        if (msPassed >= twoMinutes) {
-            if (state.user.energy < maxEnergy) {
+          // PHASE 2: COMPUTATIONS & DOM WRITES (batchWrite)
+          batchWrite(() => {
+            // Todas as escritas agrupadas
+            updateText("player-name-ui", state.user.name);
+            
+            // Icon Logic otimizado
+            const initEl = document.getElementById("header-initial");
+            
+            if (state.user.icon && state.user.icon !== currentIcon && iconEl) {
+              const iconStr = state.user.icon;
+              iconEl.setAttribute("data-icon", iconStr);
+              
+              // Fast check for images
+              if ((typeof iconStr === 'string') && (iconStr.includes("src/") || iconStr.includes("http") || iconStr.endsWith(".png") || iconStr.endsWith(".jpg"))) {
+                iconEl.innerHTML = `<img src="${iconStr}" class="w-full h-full object-cover rounded-xl" />`;
+              } else if ((typeof iconStr === 'string') && (iconStr.indexOf("<") > -1)) {
+                iconEl.innerHTML = iconStr;
+              } else {
+                iconEl.innerText = iconStr;
+              }
+              iconEl.classList.remove("hidden");
+              if (initEl) initEl.classList.add("hidden");
+            } else if (!state.user.icon && iconEl && initEl) {
+              iconEl.classList.add("hidden");
+              initEl.classList.remove("hidden");
+              const newInit = state.user.name ? state.user.name[0].toUpperCase() : "?";
+              if (initEl.innerText !== newInit) initEl.innerText = newInit;
+            }
+            
+            // Update resource values (já usa updateText que verifica mudanças)
+            updateText("val-crystals", state.user.crystals);
+            updateText("val-energy", state.user.energy);
+            updateText("val-gold", state.user.gold);
+            updateText("header-lvl", state.user.lvl);
+            
+            // XP Bar update
+            const xpReq = 100 * state.user.lvl;
+            const pct = Math.min(100, Math.max(0, (state.user.xp / xpReq) * 100));
+            const xpBar = document.getElementById("header-xp-bar");
+            if (xpBar) {
+              xpBar.style.width = `${pct}%`;
+              xpBar.classList.remove("w-0");
+            }
+            
+            // ENERGY REGENERATION LOGIC
+            const now = Date.now();
+            if (!state.user.lastEnergyRegen) state.user.lastEnergyRegen = now;
+            
+            const msPassed = now - state.user.lastEnergyRegen;
+            const twoMinutes = 2 * 60 * 1000;
+            const maxEnergy = 100 + state.user.lvl;
+            
+            if (msPassed >= twoMinutes) {
+              if (state.user.energy < maxEnergy) {
                 const intervals = Math.floor(msPassed / twoMinutes);
                 const regenAmount = intervals * 5;
                 
                 if (state.user.energy < maxEnergy) {
-                     state.user.energy = Math.min(maxEnergy, state.user.energy + regenAmount);
-                     state.user.lastEnergyRegen += intervals * twoMinutes; 
-                     save();
-                     document.getElementById("val-energy").innerText = state.user.energy;
+                  state.user.energy = Math.min(maxEnergy, state.user.energy + regenAmount);
+                  state.user.lastEnergyRegen += intervals * twoMinutes;
+                  save();
+                  updateText("val-energy", state.user.energy);
                 } else {
-                    state.user.lastEnergyRegen = now;
+                  state.user.lastEnergyRegen = now;
                 }
-            } else {
+              } else {
                 state.user.lastEnergyRegen = now;
+              }
             }
-        }
+          });
+        });
       };
+
 
       const logout = () => {
         document.getElementById(
@@ -1292,7 +1295,10 @@ const renderStory = () => {
         renderInventory();
       };
 
-      const renderInventory = () => {
+      // ===== VERSÃO INTERNA (não debounced) =====
+      const _renderInventoryInternal = () => {
+        perfStart('renderInventory'); // Performance tracking
+        
   const grid = document.getElementById("inventory-grid");
   if (!grid) return;
   grid.innerHTML = "";
@@ -1371,7 +1377,18 @@ const renderStory = () => {
     fragment.appendChild(el);
   });
   grid.appendChild(fragment);
+  
+  perfEnd('renderInventory'); // Fim tracking
 };
+
+      // ===== VERSÃO OTIMIZADA COM DEBOUNCE =====
+      // Evita renderizações excessivas durante filtros/busca
+      const renderInventory = debouncedRender(
+        'inventory',
+        _renderInventoryInternal,
+        100 // 100ms debounce
+      );
+
       const updateSummonUI = () => {
         const elC = document.getElementById("summon-tickets-common");
         const elE = document.getElementById("summon-tickets-epic");

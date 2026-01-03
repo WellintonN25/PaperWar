@@ -46,11 +46,12 @@
   
   /**
    * Calcula os stats finais de um monstro incluindo equipamentos
+   * OTIMIZADO: Usa cache para evitar recalcular stats que não mudaram
    * @param {Object} mon - Monstro
    * @param {Object} state - Estado do jogo
    * @returns {Object} Stats finais {hp, atk, def, crit, cdmg, spd}
    */
-  window.getMonsterFinalStats = (mon, state) => {
+  const calculateMonsterStats = (mon, state) => {
     if (!mon) return { hp: 0, atk: 0, def: 0, crit:0, cdmg: 50, spd: 100 };
     
     // Base stats (scaled by level)
@@ -70,9 +71,9 @@
         if (!eq) return;
         
         // Main stat
-        if (eq.mainStat) {
-          const val = eq.mainStat.value || 0;
-          switch(eq.mainStat.type) {
+        if (eq.stats && eq.stats.main) {
+          const val = eq.stats.main.value || 0;
+          switch(eq.stats.main.type) {
             case 'hp': hp += val; break;
             case 'atk': atk += val; break;
             case 'def': def += val; break;
@@ -83,8 +84,8 @@
         }
         
         // Substats
-        if (eq.subStats) {
-          eq.subStats.forEach(sub => {
+        if (eq.stats && eq.stats.subs) {
+          eq.stats.subs.forEach(sub => {
             const val = sub.value || 0;
             switch(sub.type) {
               case 'hp': hp += val; break;
@@ -138,6 +139,21 @@
       cdmg: Math.max(50, Math.floor(cdmg)),
       spd: Math.max(1, Math.floor(spd))
     };
+  };
+  
+  // Versão com cache da função (será criada quando window.cached estiver disponível)
+  window.getMonsterFinalStats = (mon, state) => {
+    // Gera chave única baseada no monstro e equipamentos
+    const cacheKey = `stats_${mon.instanceId}_${mon.lvl}_${Object.values(mon.equipped || {}).join('_')}`;
+    
+    // Tenta pegar do cache (se Performance.js estiver carregado)
+    if (window.cached) {
+      const cachedFn = cached(calculateMonsterStats, 'monsterStats');
+      return cachedFn(mon, state);
+    }
+    
+    // Fallback sem cache
+    return calculateMonsterStats(mon, state);
   };
   
   /**
