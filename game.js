@@ -5141,9 +5141,9 @@ window.addXP = (mon, amount) => {
           
           // --- BANNER VISUAL ---
           const bgMap = {
-              golem: "src/golenArt.jpg",
-              dragon: "src/dragaoArt.jpg",
-              xp: "src/metamorfoArt.avif"
+              golem: "src/images/golenArt.jpg",
+              dragon: "src/images/dragaoArt.jpg",
+              xp: "src/images/metamorfoArt.avif"
           };
           
           const bgSrc = bgMap[selectedDungeonType];

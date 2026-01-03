@@ -337,7 +337,7 @@
             rgba(2, 6, 23, 0.5),
             rgba(2, 6, 23, 0.95)
           ),
-          url("src/area.avif") no-repeat center center;
+          url("src/images/area.avif") no-repeat center center;
         background-size: cover;
         display: flex;
         flex-direction: column;
@@ -352,7 +352,7 @@
             rgba(2, 6, 23, 0.5),
             rgba(2, 6, 23, 0.95)
           ),
-          url("src/area.avif") no-repeat center center;
+          url("src/images/area.avif") no-repeat center center;
         background-size: cover;
       }
 
@@ -363,7 +363,7 @@
             rgba(41, 37, 36, 0.6),
             rgba(28, 25, 23, 0.95)
           ),
-          url("src/area2.jpg") no-repeat center center;
+          url("src/images/area2.jpg") no-repeat center center;
         background-size: cover;
       }
 
@@ -374,7 +374,7 @@
             rgba(127, 29, 29, 0.5),
             rgba(69, 10, 10, 0.95)
           ),
-          url("src/area3.jpg") no-repeat center center;
+          url("src/images/area3.jpg") no-repeat center center;
         background-size: cover;
       }
 
