@@ -315,6 +315,7 @@
           document.getElementById("tower-floor-display").innerText =
             state.towerFloor;
         if (id === "view-missions") renderMissions();
+        if (id === "view-pvp") renderPvPView();
         
         // ===== NOVAS FEATURES =====
         if (id === "view-achievements") renderAchievements();
@@ -1483,6 +1484,7 @@ const renderStory = () => {
           dungeon_xp: `Fenda XP B${lvl}`,
           tower: `Torre Andar ${lvl}`,
           story: `Campanha Fase ${lvl}`,
+          pvp: state.pvpOpponent ? `⚔️ ${state.pvpOpponent.username}` : `Arena PvP`,
         };
         // Normalizar custo da masmorra
         let cost = 5;
@@ -1513,6 +1515,9 @@ const renderStory = () => {
                  if (lvl < state.storyProgress) canFarm = true;
             }
             
+            // Disable farm button for PvP
+            if (mode === "pvp") canFarm = false;
+            
             if (canFarm) {
                 farmBtn.disabled = false;
                 farmBtn.className = "flex-1 py-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl text-white font-bold uppercase text-sm shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center gap-1 cursor-pointer hover:brightness-110";
@@ -1526,8 +1531,93 @@ const renderStory = () => {
         renderPrepRoster();
       };
 
+      window.confirmBattle = () => {
+        const mode = prepState.mode;
+        const level = prepState.level;
+        const selectedMon = state.inventory[prepState.selectedMonIdx];
+        
+        if (!selectedMon) {
+          showToast('Selecione um guerreiro!', 'error');
+          return;
+        }
+        
+        // Verificar energia
+        let cost = 5;
+        if (mode.startsWith("dungeon")) cost = 5 + Math.floor(level / 2);
+        
+        if (state.user.energy < cost) {
+          showToast(`Energia insuficiente! Necessário: ${cost}`, 'error');
+          return;
+        }
+        
+        // PvP Mode - Simular batalha
+        if (mode === 'pvp') {
+          if (!state.pvpOpponent) {
+            showToast('Oponente não encontrado!', 'error');
+            return;
+          }
+          
+          // Consumir energia
+          state.user.energy -= cost;
+          updateHeader();
+          save();
+          
+          // Simular batalha
+          const playerTeam = [selectedMon].map(mon => ({
+            ...mon,
+            currentHp: calculateStats(mon).hp,
+            maxHp: calculateStats(mon).hp
+          }));
+          
+          const victory = simulatePvPBattle(playerTeam, state.pvpOpponent.team);
+          
+          // Calcular recompensas
+          const rewards = calculatePvPRewards(victory, state.pvpOpponent.rank);
+          
+          // Atualizar estatísticas
+          updatePvPStats(victory, rewards);
+          
+          // Mostrar resultado
+          showToast(victory ? '🏆 Vitória!' : '💔 Derrota...', victory ? 'success' : 'error');
+          
+          setTimeout(() => {
+            const resultMsg = victory 
+              ? `🏆 VITÓRIA CONTRA ${state.pvpOpponent.username}!\n\n` +
+                `Recompensas:\n` +
+                `💰 +${rewards.gold} Ouro\n` +
+                `💎 +${rewards.crystals} Cristais\n` +
+                `📊 Rank: ${rewards.rankChange > 0 ? '+' : ''}${rewards.rankChange}\n\n` +
+                `Novo Rank: ${getPvPRankTitle(state.user.pvpRank).icon} ${getPvPRankTitle(state.user.pvpRank).name} (${state.user.pvpRank} pts)`
+              : `💔 DERROTA CONTRA ${state.pvpOpponent.username}\n\n` +
+                `Consolação:\n` +
+                `💰 +${rewards.gold} Ouro\n` +
+                `📊 Rank: ${rewards.rankChange}\n\n` +
+                `Novo Rank: ${getPvPRankTitle(state.user.pvpRank).icon} ${getPvPRankTitle(state.user.pvpRank).name} (${state.user.pvpRank} pts)`;
+            
+            alert(resultMsg);
+            
+            // Limpar oponente
+            state.pvpOpponent = null;
+            
+            // Voltar para PvP arena
+            changeView('view-pvp');
+            
+            // Partículas
+            if (victory) {
+              spawnParticles(window.innerWidth/2, window.innerHeight/2, 'gold');
+            }
+          }, 500);
+          
+          return;
+        }
+        
+       // TODO: Outras batalhas (story, dungeon, tower) - implementar se necessário
+        showToast('Modo de batalha não implementado ainda!', 'warning');
+      };
+
       window.startFarmPrep = () => {
-         startBattle(prepState.mode, prepState.level, 5);
+         // startBattle(prepState.mode, prepState.level, 5);
+         showToast('Farm ainda não implementado!', 'warning');
       };
 
       const renderPrepUnit = () => {
@@ -5112,6 +5202,130 @@ window.addXP = (mon, amount) => {
           spawnParticles(window.innerWidth/2, window.innerHeight/2, "gold");
       };
       
+      // --- SISTEMA PVP ---
+      let currentPvPOpponents = [];
+      let selectedPvPOpponent = null;
+
+      const renderPvPView = () => {
+        // Initialize PvP stats if needed
+        if (!state.user.pvpRank) state.user.pvpRank = 1000;
+        if (!state.user.pvpWins) state.user.pvpWins = 0;
+        if (!state.user.pvpLosses) state.user.pvpLosses = 0;
+        
+        // Update player info
+        const playerIconEl = document.getElementById('pvp-player-icon');
+        const playerNameEl = document.getElementById('pvp-player-name');
+        const rankBadgeEl = document.getElementById('pvp-rank-badge');
+        const rankPointsEl = document.getElementById('pvp-rank-points');
+        const winsEl = document.getElementById('pvp-wins');
+        const lossesEl = document.getElementById('pvp-losses');
+        
+        if (playerIconEl) playerIconEl.innerText = state.user.icon || '🦸';
+        if (playerNameEl) playerNameEl.innerText = state.user.name || 'Jogador';
+        
+        const rankInfo = getPvPRankTitle(state.user.pvpRank);
+        if (rankBadgeEl) {
+          rankBadgeEl.innerText = `${rankInfo.icon} ${rankInfo.name}`;
+          rankBadgeEl.style.background = `${rankInfo.color}33`;
+          rankBadgeEl.style.color = rankInfo.color;
+        }
+        
+        if (rankPointsEl) rankPointsEl.innerText = `${state.user.pvpRank} pts`;
+        if (winsEl) winsEl.innerText = `${state.user.pvpWins}V`;
+        if (lossesEl) lossesEl.innerText = `${state.user.pvpLosses}D`;
+        
+        // Generate opponents
+        refreshPvPOpponents();
+      };
+
+      const refreshPvPOpponents = () => {
+        const playerLevel = state.user.lvl || 1;
+        currentPvPOpponents = generatePvPOpponents(playerLevel, 8);
+        renderPvPOpponents();
+      };
+
+      const renderPvPOpponents = () => {
+        const container = document.getElementById('pvp-opponents-list');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        if (currentPvPOpponents.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-10 text-slate-500">
+              <div class="text-4xl mb-2">😴</div>
+              <p class="text-xs">Nenhum oponente disponível</p>
+            </div>
+          `;
+          return;
+        }
+        
+        const fragment = document.createDocumentFragment();
+        
+        currentPvPOpponents.forEach((opponent, idx) => {
+          const rankInfo = getPvPRankTitle(opponent.rank);
+          const winRate = opponent.wins + opponent.losses > 0 
+            ? Math.floor((opponent.wins / (opponent.wins + opponent.losses)) * 100)
+            : 50;
+          
+          const card = document.createElement('div');
+          card.className = 'glass-panel p-4 rounded-2xl cursor-pointer active:scale-95 transition-all hover:border-red-500/30 group';
+          
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-2xl shadow-md group-hover:shadow-red-500/20 transition-shadow">
+                  ${opponent.userIcon}
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h4 class="text-white font-bold text-sm">${opponent.username}</h4>
+                    ${opponent.type === 'npc' ? '<span class="text-[8px] bg-slate-700 text-slate-400 px-1 rounded">NPC</span>' : '<span class="text-[8px] bg-green-700 text-green-300 px-1 rounded">REAL</span>'}
+                  </div>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded" style="background: ${rankInfo.color}33; color: ${rankInfo.color}">
+                      ${rankInfo.icon} ${rankInfo.name}
+                    </span>
+                    <span class="text-[10px] text-slate-500">Nv.${opponent.userLevel}</span>
+                  </div>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[9px] text-green-400">${opponent.wins}V</span>
+                    <span class="text-[9px] text-slate-600">•</span>
+                    <span class="text-[9px] text-red-400">${opponent.losses}D</span>
+                    <span class="text-[9px] text-slate-600">•</span>
+                    <span class="text-[9px] text-slate-400">${winRate}%</span>
+                  </div>
+                </div>
+              </div>
+              <button class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg shadow-lg transition-colors">
+                DESAFIAR
+              </button>
+            </div>
+          `;
+          
+          card.onclick = () => startPvPBattle(idx);
+          fragment.appendChild(card);
+        });
+        
+        container.appendChild(fragment);
+      };
+
+      const startPvPBattle = (opponentIdx) => {
+        selectedPvPOpponent = currentPvPOpponents[opponentIdx];
+        if (!selectedPvPOpponent) return;
+        
+        // Verifica se tem energia
+        if (state.user.energy < 5) {
+          showToast('Energia insuficiente! (Custo: 5)', 'error');
+          return;
+        }
+        
+        // Salvar oponente para usar na batalha
+        state.pvpOpponent = selectedPvPOpponent;
+        
+        // Abrir tela de preparação para batalha PvP
+        openPrep('pvp', opponentIdx);
+      };
 
       // Initialize Timer Loop
       setInterval(() => {
@@ -5206,6 +5420,12 @@ window.addXP = (mon, amount) => {
       window.equipFromDetail = equipFromDetail;
       window.sellEquipment = sellEquipment;
       window.performUpgrade = performUpgrade;
+      window.claimMission = claimMission;
+      
+      // PvP Exports
+      window.renderPvPView = renderPvPView;
+      window.refreshPvPOpponents = refreshPvPOpponents;
+      window.startPvPBattle = startPvPBattle;
 
       // --- INICIALIZAÇÃO DO JOGO ---
       // Como os módulos de dados são carregados ANTES do game.js no HTML,
