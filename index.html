@@ -358,6 +358,25 @@
               <div class="text-xl mb-1">💼</div>
               <h4 class="text-white font-bold uppercase text-[10px]">Baú</h4>
             </div>
+
+            <!-- MISSIONS BUTTON -->
+            <div
+              onclick="changeView('view-missions')"
+              class="glass-panel p-3 rounded-2xl flex flex-col items-center justify-center cursor-pointer text-center bg-gradient-to-br from-indigo-900/40 to-slate-900 border-indigo-500/30 relative"
+            >
+              <div
+                class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping hidden"
+                id="mission-notification"
+              ></div>
+              <div
+                class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full hidden"
+                id="mission-notification-static"
+              ></div>
+              <div class="text-xl mb-1">📜</div>
+              <h4 class="text-white font-bold uppercase text-[10px]">
+                Missões
+              </h4>
+            </div>
           </div>
         </div>
       </main>
@@ -424,6 +443,69 @@
         </div>
       </main>
 
+      <!-- DUNGEON SELECT -->
+      <main
+        id="view-dungeon"
+        class="flex-1 hidden-view bg-slate-950 flex flex-col p-6 space-y-4"
+      >
+        <button
+          onclick="changeView('view-home')"
+          class="text-white font-bold text-xs bg-slate-800 px-3 py-2 rounded-lg w-max"
+        >
+          ← Voltar
+        </button>
+        <h2
+          id="dungeon-title"
+          class="text-2xl font-black text-white italic uppercase mb-4"
+        >
+          MASMORRA
+        </h2>
+
+        <div
+          id="dungeon-floors-list"
+          class="flex-1 overflow-y-auto space-y-2 pr-2"
+        >
+          <!-- Injetado via JS -->
+        </div>
+      </main>
+
+      <!-- MISSIONS VIEW -->
+      <main
+        id="view-missions"
+        class="flex-1 hidden-view bg-slate-950 flex flex-col p-4 sm:p-6 overflow-hidden"
+      >
+        <div class="flex items-center justify-between mb-6 shrink-0">
+          <button
+            onclick="changeView('view-home')"
+            class="text-white font-bold text-xs bg-slate-800 px-3 py-2 rounded-lg"
+          >
+            ← Voltar
+          </button>
+          <div
+            id="mission-timer"
+            class="text-xs font-mono text-indigo-400 bg-indigo-900/30 px-2 py-1 rounded border border-indigo-500/30"
+          >
+            --:--:--
+          </div>
+        </div>
+
+        <h2
+          class="text-2xl font-black text-white uppercase italic mb-1 shrink-0"
+        >
+          Missões Diárias
+        </h2>
+        <p class="text-slate-400 text-xs mb-4 shrink-0">
+          Complete tarefas para ganhar recompensas.
+        </p>
+
+        <div
+          id="missions-list"
+          class="flex-1 overflow-y-auto min-h-0 space-y-3 pb-20 scroll-container pr-2"
+        >
+          <!-- Injected via JS -->
+        </div>
+      </main>
+
       <!-- PRE-BATTLE PREPARATION -->
       <main
         id="view-prep"
@@ -462,7 +544,10 @@
             <div
               class="w-32 h-32 rounded-3xl bg-slate-800/50 border-2 border-indigo-500 overflow-hidden relative mb-4 shadow-xl flex items-center justify-center"
             >
-              <div id="prep-img-wrapper" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div
+                id="prep-img-wrapper"
+                class="absolute inset-0 flex items-center justify-center pointer-events-none"
+              >
                 <img
                   id="prep-img"
                   src=""
@@ -470,9 +555,14 @@
                 />
                 <span
                   id="prep-emoji"
-                  style="display:none;font-size:4rem;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.5));"
+                  style="
+                    display: none;
+                    font-size: 4rem;
+                    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+                  "
                   class="flex items-center justify-center"
-                >❓</span>
+                  >❓</span
+                >
               </div>
               <div
                 id="prep-el"
@@ -672,123 +762,208 @@
         </h2>
 
         <!-- CATEGORY: SUMMONS -->
-        <h3 class="text-indigo-400 font-bold text-[10px] uppercase tracking-widest mb-3 pl-1">
+        <h3
+          class="text-indigo-400 font-bold text-[10px] uppercase tracking-widest mb-3 pl-1"
+        >
           Invocação
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          
           <!-- Common Ticket -->
-          <div class="glass-panel p-4 rounded-3xl relative overflow-hidden group hover:border-blue-500/50 transition-colors">
-             <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-600/20 rounded-full blur-2xl group-hover:bg-blue-600/30 transition-all"></div>
-             <div class="relative z-10 flex items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-3xl shadow-lg shadow-blue-900/50">
-                    📜
-                  </div>
-                  <div>
-                    <h4 class="text-white font-bold text-lg leading-tight">Bilhete Comum</h4>
-                    <p class="text-blue-200/60 text-xs font-medium">1-3 Estrelas</p>
-                  </div>
+          <div
+            class="glass-panel p-4 rounded-3xl relative overflow-hidden group hover:border-blue-500/50 transition-colors"
+          >
+            <div
+              class="absolute -right-4 -top-4 w-24 h-24 bg-blue-600/20 rounded-full blur-2xl group-hover:bg-blue-600/30 transition-all"
+            ></div>
+            <div class="relative z-10 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-3xl shadow-lg shadow-blue-900/50"
+                >
+                  📜
                 </div>
-             </div>
-             <div class="mt-4 flex gap-2">
-                <button onclick="buyShopItem('ticket_common')" class="flex-1 bg-slate-800 hover:bg-slate-700 py-3 rounded-xl border border-white/5 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1 group">
-                   <span>1.000</span> <span class="text-[10px]">💰</span>
-                </button>
-                <button onclick="buyShopItem('ticket_common_11')" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 py-3 rounded-xl shadow-lg shadow-blue-900/30 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1">
-                   <span>10k (11x)</span> <span class="text-[10px]">💰</span>
-                </button>
-             </div>
+                <div>
+                  <h4 class="text-white font-bold text-lg leading-tight">
+                    Bilhete Comum
+                  </h4>
+                  <p class="text-blue-200/60 text-xs font-medium">
+                    1-3 Estrelas
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <button
+                onclick="buyShopItem('ticket_common')"
+                class="flex-1 bg-slate-800 hover:bg-slate-700 py-3 rounded-xl border border-white/5 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1 group"
+              >
+                <span>1.000</span> <span class="text-[10px]">💰</span>
+              </button>
+              <button
+                onclick="buyShopItem('ticket_common_11')"
+                class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 py-3 rounded-xl shadow-lg shadow-blue-900/30 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1"
+              >
+                <span>10k (11x)</span> <span class="text-[10px]">💰</span>
+              </button>
+            </div>
           </div>
 
           <!-- Epic Ticket -->
-          <div class="glass-panel p-4 rounded-3xl relative overflow-hidden group hover:border-amber-500/50 transition-colors border-amber-500/20">
-             <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-600/20 rounded-full blur-2xl group-hover:bg-amber-600/30 transition-all"></div>
-             <div class="relative z-10 flex items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-3xl shadow-lg shadow-amber-900/50">
-                    🎫
-                  </div>
-                  <div>
-                    <h4 class="text-white font-bold text-lg leading-tight">Bilhete Épico</h4>
-                    <p class="text-amber-200/60 text-xs font-medium">3-5 Estrelas</p>
-                  </div>
+          <div
+            class="glass-panel p-4 rounded-3xl relative overflow-hidden group hover:border-amber-500/50 transition-colors border-amber-500/20"
+          >
+            <div
+              class="absolute -right-4 -top-4 w-24 h-24 bg-amber-600/20 rounded-full blur-2xl group-hover:bg-amber-600/30 transition-all"
+            ></div>
+            <div class="relative z-10 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-3xl shadow-lg shadow-amber-900/50"
+                >
+                  🎫
                 </div>
-             </div>
-             <div class="mt-4 flex gap-2">
-                <button onclick="buyShopItem('ticket_epic')" class="flex-1 bg-slate-800 hover:bg-slate-700 py-3 rounded-xl border border-white/5 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1">
-                   <span>100</span> <span class="text-[10px]">💎</span>
-                </button>
-                <button onclick="buyShopItem('ticket_epic_11')" class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:brightness-110 py-3 rounded-xl shadow-lg shadow-amber-900/30 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1">
-                   <span>1k (11x)</span> <span class="text-[10px]">💎</span>
-                </button>
-             </div>
+                <div>
+                  <h4 class="text-white font-bold text-lg leading-tight">
+                    Bilhete Épico
+                  </h4>
+                  <p class="text-amber-200/60 text-xs font-medium">
+                    3-5 Estrelas
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <button
+                onclick="buyShopItem('ticket_epic')"
+                class="flex-1 bg-slate-800 hover:bg-slate-700 py-3 rounded-xl border border-white/5 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1"
+              >
+                <span>100</span> <span class="text-[10px]">💎</span>
+              </button>
+              <button
+                onclick="buyShopItem('ticket_epic_11')"
+                class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:brightness-110 py-3 rounded-xl shadow-lg shadow-amber-900/30 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1"
+              >
+                <span>1k (11x)</span> <span class="text-[10px]">💎</span>
+              </button>
+            </div>
           </div>
-
         </div>
 
         <!-- CATEGORY: RESOURCES -->
-        <h3 class="text-emerald-400 font-bold text-[10px] uppercase tracking-widest mb-3 pl-1">
+        <h3
+          class="text-emerald-400 font-bold text-[10px] uppercase tracking-widest mb-3 pl-1"
+        >
           Recursos & Boosts
         </h3>
         <div class="grid grid-cols-2 gap-3 mb-8">
-          
           <!-- Energy -->
-          <div class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
-             <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-xl mb-2 text-yellow-400">⚡</div>
-             <h4 class="text-white font-bold text-sm mb-1">Energia</h4>
-             <p class="text-[10px] text-slate-400 mb-3">+50 Energia</p>
-             <button onclick="buyShopItem('energy')" class="w-full py-2 rounded-lg bg-slate-800 border border-white/10 text-white font-bold text-[10px] hover:bg-slate-700 active:scale-95 transition-all">
-                50 💎
-             </button>
+          <div
+            class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-xl mb-2 text-yellow-400"
+            >
+              ⚡
+            </div>
+            <h4 class="text-white font-bold text-sm mb-1">Energia</h4>
+            <p class="text-[10px] text-slate-400 mb-3">+50 Energia</p>
+            <button
+              onclick="buyShopItem('energy')"
+              class="w-full py-2 rounded-lg bg-slate-800 border border-white/10 text-white font-bold text-[10px] hover:bg-slate-700 active:scale-95 transition-all"
+            >
+              50 💎
+            </button>
           </div>
 
           <!-- Pack 100 Energy (NEW) -->
-          <div class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300 border-yellow-500/20 bg-yellow-900/10">
-             <!-- Discount Badge -->
-             <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-green-600 text-white text-[8px] font-black rounded shadow-sm">-10%</div>
-             
-             <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-xl mb-2 text-yellow-400 font-black">⚡+</div>
-             <h4 class="text-white font-bold text-sm mb-1">Pacote Energia</h4>
-             <p class="text-[10px] text-slate-400 mb-3">+100 Energia</p>
-             <button onclick="buyShopItem('energy_100')" class="w-full py-2 rounded-lg bg-yellow-600 text-white font-bold text-[10px] shadow-lg shadow-yellow-900/20 hover:bg-yellow-500 active:scale-95 transition-all">
-                90 💎
-             </button>
+          <div
+            class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300 border-yellow-500/20 bg-yellow-900/10"
+          >
+            <!-- Discount Badge -->
+            <div
+              class="absolute top-2 right-2 px-1.5 py-0.5 bg-green-600 text-white text-[8px] font-black rounded shadow-sm"
+            >
+              -10%
+            </div>
+
+            <div
+              class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-xl mb-2 text-yellow-400 font-black"
+            >
+              ⚡+
+            </div>
+            <h4 class="text-white font-bold text-sm mb-1">Pacote Energia</h4>
+            <p class="text-[10px] text-slate-400 mb-3">+100 Energia</p>
+            <button
+              onclick="buyShopItem('energy_100')"
+              class="w-full py-2 rounded-lg bg-yellow-600 text-white font-bold text-[10px] shadow-lg shadow-yellow-900/20 hover:bg-yellow-500 active:scale-95 transition-all"
+            >
+              90 💎
+            </button>
           </div>
 
           <!-- XP Potion (NEW) -->
-          <div class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300 border-purple-500/20">
-             <!-- NEW Badge -->
-             <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-red-600 text-white text-[8px] font-black rounded rotate-12 shadow-sm">NOVO</div>
-             
-             <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-xl mb-2 text-purple-400">🧪</div>
-             <h4 class="text-white font-bold text-sm mb-1">Poção XP</h4>
-             <p class="text-[10px] text-slate-400 mb-3">+500 EXP</p>
-             <button onclick="buyShopItem('xp_pot')" class="w-full py-2 rounded-lg bg-slate-800 border border-white/10 text-white font-bold text-[10px] hover:bg-slate-700 active:scale-95 transition-all">
-                500 💰
-             </button>
+          <div
+            class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300 border-purple-500/20"
+          >
+            <!-- NEW Badge -->
+            <div
+              class="absolute top-2 right-2 px-1.5 py-0.5 bg-red-600 text-white text-[8px] font-black rounded rotate-12 shadow-sm"
+            >
+              NOVO
+            </div>
+
+            <div
+              class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-xl mb-2 text-purple-400"
+            >
+              🧪
+            </div>
+            <h4 class="text-white font-bold text-sm mb-1">Poção XP</h4>
+            <p class="text-[10px] text-slate-400 mb-3">+500 EXP</p>
+            <button
+              onclick="buyShopItem('xp_pot')"
+              class="w-full py-2 rounded-lg bg-slate-800 border border-white/10 text-white font-bold text-[10px] hover:bg-slate-700 active:scale-95 transition-all"
+            >
+              500 💰
+            </button>
           </div>
 
           <!-- Skillupper -->
-          <div class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
-             <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-xl mb-2 text-white shadow-inner">⚫</div>
-             <h4 class="text-white font-bold text-sm mb-1">Skillupper</h4>
-             <p class="text-[10px] text-slate-400 mb-3">Evoluir Skill</p>
-             <button onclick="buyShopItem('skillupper')" class="w-full py-2 rounded-lg bg-slate-800 border border-white/10 text-white font-bold text-[10px] hover:bg-slate-700 active:scale-95 transition-all">
-                1.000 💎
-             </button>
+          <div
+            class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-xl mb-2 text-white shadow-inner"
+            >
+              ⚫
+            </div>
+            <h4 class="text-white font-bold text-sm mb-1">Skillupper</h4>
+            <p class="text-[10px] text-slate-400 mb-3">Evoluir Skill</p>
+            <button
+              onclick="buyShopItem('skillupper')"
+              class="w-full py-2 rounded-lg bg-slate-800 border border-white/10 text-white font-bold text-[10px] hover:bg-slate-700 active:scale-95 transition-all"
+            >
+              1.000 💎
+            </button>
           </div>
 
           <!-- XP Boost -->
-          <div class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300 border-emerald-500/20 bg-emerald-900/5">
-             <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-xl mb-2 text-emerald-400">🚀</div>
-             <h4 class="text-white font-bold text-sm mb-1">Boost 3x</h4>
-             <p class="text-[10px] text-slate-400 mb-3">Duração: 7m</p>
-             <button onclick="buyShopItem('xp_boost')" class="w-full py-2 rounded-lg bg-emerald-600 text-white font-bold text-[10px] shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 active:scale-95 transition-all">
-                150 💎
-             </button>
+          <div
+            class="glass-panel p-3 rounded-2xl flex flex-col items-center text-center relative overflow-hidden hover:-translate-y-1 transition-transform duration-300 border-emerald-500/20 bg-emerald-900/5"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-xl mb-2 text-emerald-400"
+            >
+              🚀
+            </div>
+            <h4 class="text-white font-bold text-sm mb-1">Boost 3x</h4>
+            <p class="text-[10px] text-slate-400 mb-3">Duração: 7m</p>
+            <button
+              onclick="buyShopItem('xp_boost')"
+              class="w-full py-2 rounded-lg bg-emerald-600 text-white font-bold text-[10px] shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 active:scale-95 transition-all"
+            >
+              150 💎
+            </button>
           </div>
-
         </div>
 
         <div
@@ -835,164 +1010,438 @@
       </main>
 
       <!-- CHARACTER DETAIL (MODERN REDESIGN) -->
-      <main id="view-character-detail" class="flex-1 hidden-view flex flex-col relative overflow-hidden bg-slate-950">
-           <!-- Dynamic Background (Abstract) -->
-           <div class="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950 z-0"></div>
-           <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 z-0"></div>
-           
-           <!-- Top Navigation / Close -->
-           <div class="absolute top-0 w-full p-4 z-50 flex justify-between items-start pointer-events-none">
-                <button onclick="changeView('view-collection')" class="w-10 h-10 rounded-full bg-slate-900/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/10 pointer-events-auto transition-all active:scale-95">
-                    ←
+      <main
+        id="view-character-detail"
+        class="flex-1 hidden-view flex flex-col relative overflow-hidden bg-slate-950"
+      >
+        <!-- Dynamic Background (Abstract) -->
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950 z-0"
+        ></div>
+        <div
+          class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 z-0"
+        ></div>
+
+        <!-- Top Navigation / Close -->
+        <div
+          class="absolute top-0 w-full p-4 z-50 flex justify-between items-start pointer-events-none"
+        >
+          <button
+            onclick="changeView('view-collection')"
+            class="w-10 h-10 rounded-full bg-slate-900/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/10 pointer-events-auto transition-all active:scale-95"
+          >
+            ←
+          </button>
+        </div>
+
+        <div class="flex-1 flex flex-col z-10 overflow-y-auto custom-scrollbar">
+          <!-- HERO SECTION (Visual + Basic Info) -->
+          <div
+            class="relative w-full h-[45%] min-h-[300px] shrink-0 flex items-center justify-center"
+          >
+            <!-- Element Badge (Floating Top Left) -->
+            <div
+              id="det-element-badge"
+              class="absolute top-16 left-6 text-2xl z-20 animate-float drop-shadow-xl bg-black/20 p-2 rounded-xl backdrop-blur-sm border border-white/5"
+            ></div>
+
+            <!-- Visual Wrapper (Preserved ID) -->
+            <div
+              id="det-img-wrapper"
+              class="w-full h-full flex items-center justify-center relative z-10 transition-all duration-500"
+            >
+              <img
+                id="det-img"
+                src=""
+                class="h-[80%] w-auto object-contain filter drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-breathing"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+              />
+              <span
+                id="det-emoji"
+                style="display: none; font-size: 8rem"
+                class="filter drop-shadow-2xl animate-float"
+                >🐉</span
+              >
+            </div>
+
+            <!-- Name & Info Overlay (Bottom) -->
+            <div
+              class="absolute bottom-0 w-full bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent pt-20 pb-4 px-6 flex flex-col items-start z-30"
+            >
+              <h2
+                id="det-name"
+                class="text-4xl font-black text-white italic uppercase tracking-tighter leading-none drop-shadow-lg"
+              >
+                NAME
+              </h2>
+              <div class="flex items-center gap-3 mt-2">
+                <span
+                  id="det-type"
+                  class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-[10px] font-bold text-white uppercase tracking-widest backdrop-blur-md"
+                  >TYPE</span
+                >
+                <div class="flex items-center gap-1">
+                  <span
+                    class="text-yellow-400 text-xs tracking-widest"
+                    id="det-stars"
+                    >⭐⭐⭐⭐⭐</span
+                  >
+                  <span
+                    id="det-nat-grade"
+                    class="text-[9px] text-slate-500 font-bold uppercase hidden"
+                    >Natural Grade</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB NAVIGATION -->
+          <div
+            class="px-6 mt-4 flex gap-2 shrink-0 overflow-x-auto no-scrollbar relative z-40 bg-slate-950/80 backdrop-blur-sm pt-2 sticky top-0"
+          >
+            <button
+              onclick="switchDetailTab('status')"
+              id="tab-btn-status"
+              class="tab-btn flex-1 py-3 rounded-xl bg-indigo-600 text-white font-black uppercase text-xs tracking-wider transition-all border border-indigo-400 shadow-[0_0_15px_rgba(79,70,229,0.4)]"
+            >
+              status
+            </button>
+            <button
+              onclick="switchDetailTab('skills')"
+              id="tab-btn-skills"
+              class="tab-btn flex-1 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-500 font-bold uppercase text-xs tracking-wider hover:bg-slate-800 transition-all"
+            >
+              skills
+            </button>
+            <button
+              onclick="switchDetailTab('gear')"
+              id="tab-btn-gear"
+              class="tab-btn flex-1 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-500 font-bold uppercase text-xs tracking-wider hover:bg-slate-800 transition-all"
+            >
+              gear
+            </button>
+          </div>
+
+          <!-- CONTENT AREA -->
+          <div class="flex-1 bg-slate-950 relative z-30 pb-24">
+            <!-- TAB 1: STATUS -->
+            <div
+              id="tab-status"
+              class="tab-content px-6 py-6 flex flex-col gap-6 animate-fade-in"
+            >
+              <!-- Level & XP -->
+              <div
+                class="bg-slate-900/50 rounded-2xl p-4 border border-white/5"
+              >
+                <div class="flex justify-between items-end mb-4">
+                  <div>
+                    <div
+                      class="text-[10px] text-slate-500 uppercase font-bold tracking-widest"
+                    >
+                      Nível
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                      <span id="det-lvl" class="text-4xl font-black text-white"
+                        >40</span
+                      >
+                      <span class="text-sm text-slate-600 font-bold">/ 40</span>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div
+                      class="text-[8px] text-slate-500 font-bold uppercase mb-1"
+                    >
+                      Progresso XP
+                    </div>
+                    <div
+                      class="w-32 h-2 bg-slate-950 rounded-full overflow-hidden border border-white/10"
+                    >
+                      <div
+                        id="det-xp-bar"
+                        class="h-full bg-gradient-to-r from-emerald-500 to-green-400 transition-all duration-300"
+                        style="width: 0%"
+                      ></div>
+                    </div>
+                    <div
+                      id="det-xp-text"
+                      class="text-[9px] text-slate-400 mt-1 font-mono"
+                    >
+                      0 / 0
+                    </div>
+                  </div>
+                </div>
+                <!-- Potion Button -->
+                <div id="detail-pot-btn-container"></div>
+              </div>
+
+              <!-- Main Stats Grid -->
+              <div>
+                <div
+                  class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-4 flex items-center gap-2"
+                >
+                  <span class="w-1 h-4 bg-indigo-500 rounded-full"></span>
+                  Atributos Base
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div
+                    class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"
+                  >
+                    <span class="text-[10px] font-bold text-slate-400 uppercase"
+                      >Vida</span
+                    >
+                    <span
+                      id="val-hp"
+                      class="text-emerald-400 font-mono text-sm font-bold"
+                      >0</span
+                    >
+                  </div>
+                  <div
+                    class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"
+                  >
+                    <span class="text-[10px] font-bold text-slate-400 uppercase"
+                      >Ataque</span
+                    >
+                    <span
+                      id="val-atk"
+                      class="text-red-400 font-mono text-sm font-bold"
+                      >0</span
+                    >
+                  </div>
+                  <div
+                    class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"
+                  >
+                    <span class="text-[10px] font-bold text-slate-400 uppercase"
+                      >Defesa</span
+                    >
+                    <span
+                      id="val-def"
+                      class="text-blue-400 font-mono text-sm font-bold"
+                      >0</span
+                    >
+                  </div>
+                  <div
+                    class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"
+                  >
+                    <span class="text-[10px] font-bold text-slate-400 uppercase"
+                      >Agil.</span
+                    >
+                    <span
+                      id="val-spd"
+                      class="text-yellow-400 font-mono text-sm font-bold"
+                      >0</span
+                    >
+                  </div>
+                  <div
+                    class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"
+                  >
+                    <span class="text-[10px] font-bold text-slate-400 uppercase"
+                      >Crítico</span
+                    >
+                    <span
+                      id="val-crit"
+                      class="text-purple-400 font-mono text-xs font-bold"
+                      >0%</span
+                    >
+                  </div>
+                  <div
+                    class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"
+                  >
+                    <span class="text-[10px] font-bold text-slate-400 uppercase"
+                      >Dano C.</span
+                    >
+                    <span
+                      id="val-cdmg"
+                      class="text-purple-400 font-mono text-xs font-bold"
+                      >0%</span
+                    >
+                  </div>
+                  <div
+                    class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"
+                  >
+                    <span class="text-[10px] font-bold text-slate-400 uppercase"
+                      >Precisão</span
+                    >
+                    <span
+                      id="val-acc"
+                      class="text-cyan-400 font-mono text-xs font-bold"
+                      >0%</span
+                    >
+                  </div>
+                  <div
+                    class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"
+                  >
+                    <span class="text-[10px] font-bold text-slate-400 uppercase"
+                      >Resist.</span
+                    >
+                    <span
+                      id="val-res"
+                      class="text-orange-400 font-mono text-xs font-bold"
+                      >0%</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Evolution Button (User Request) -->
+              <div id="det-evolution-container"></div>
+
+              <!-- Leader Button -->
+              <button
+                onclick="equipLeader()"
+                id="btn-equip"
+                class="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold uppercase rounded-xl border border-white/10 shadow-lg active:scale-95 text-xs tracking-widest transition-all"
+              >
+                Definir como Líder
+              </button>
+            </div>
+
+            <!-- TAB 2: SKILLS -->
+            <div
+              id="tab-skills"
+              class="tab-content px-6 py-6 flex flex-col gap-6 hidden animate-fade-in"
+            >
+              <div id="det-skills-container" class="w-full space-y-4"></div>
+            </div>
+
+            <!-- TAB 3: GEAR -->
+            <div
+              id="tab-gear"
+              class="tab-content px-6 py-6 flex flex-col gap-6 hidden animate-fade-in"
+            >
+              <!-- Real-time Stats Header -->
+              <div
+                class="grid grid-cols-4 gap-2 mb-2 p-3 bg-slate-900/80 rounded-xl border border-white/5"
+              >
+                <div class="text-center">
+                  <div class="text-[8px] text-slate-500 font-bold">HP</div>
+                  <div
+                    id="gear-val-hp"
+                    class="text-[10px] text-emerald-400 font-mono"
+                  >
+                    0
+                  </div>
+                </div>
+                <div class="text-center">
+                  <div class="text-[8px] text-slate-500 font-bold">ATK</div>
+                  <div
+                    id="gear-val-atk"
+                    class="text-[10px] text-red-400 font-mono"
+                  >
+                    0
+                  </div>
+                </div>
+                <div class="text-center">
+                  <div class="text-[8px] text-slate-500 font-bold">DEF</div>
+                  <div
+                    id="gear-val-def"
+                    class="text-[10px] text-blue-400 font-mono"
+                  >
+                    0
+                  </div>
+                </div>
+                <div class="text-center">
+                  <div class="text-[8px] text-slate-500 font-bold">AGI</div>
+                  <div
+                    id="gear-val-spd"
+                    class="text-[10px] text-yellow-400 font-mono"
+                  >
+                    0
+                  </div>
+                </div>
+              </div>
+
+              <!-- Equipped Slots -->
+              <div class="grid grid-cols-4 gap-3">
+                <div
+                  id="eq-slot-slot1"
+                  class="aspect-square rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center relative cursor-pointer hover:border-white transition-colors group"
+                  onclick="handleEqClick('slot1')"
+                >
+                  <span
+                    class="text-xl mb-1 group-hover:scale-110 transition-transform"
+                    >⚔️</span
+                  >
+                  <span class="text-[7px] font-bold text-slate-500 uppercase"
+                    >Arma</span
+                  >
+                </div>
+                <div
+                  id="eq-slot-slot2"
+                  class="aspect-square rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center relative cursor-pointer hover:border-white transition-colors group"
+                  onclick="handleEqClick('slot2')"
+                >
+                  <span
+                    class="text-xl mb-1 group-hover:scale-110 transition-transform"
+                    >🛡️</span
+                  >
+                  <span class="text-[7px] font-bold text-slate-500 uppercase"
+                    >Traje</span
+                  >
+                </div>
+                <div
+                  id="eq-slot-slot3"
+                  class="aspect-square rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center relative cursor-pointer hover:border-white transition-colors group"
+                  onclick="handleEqClick('slot3')"
+                >
+                  <span
+                    class="text-xl mb-1 group-hover:scale-110 transition-transform"
+                    >⛑️</span
+                  >
+                  <span class="text-[7px] font-bold text-slate-500 uppercase"
+                    >Elmo</span
+                  >
+                </div>
+                <div
+                  id="eq-slot-slot4"
+                  class="aspect-square rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center relative cursor-pointer hover:border-white transition-colors group"
+                  onclick="handleEqClick('slot4')"
+                >
+                  <span
+                    class="text-xl mb-1 group-hover:scale-110 transition-transform"
+                    >💍</span
+                  >
+                  <span class="text-[7px] font-bold text-slate-500 uppercase"
+                    >Anel</span
+                  >
+                </div>
+              </div>
+
+              <!-- Active Sets -->
+              <div id="active-sets-container" class="hidden">
+                <div
+                  class="bg-indigo-900/20 border border-indigo-500/30 rounded-xl p-3"
+                >
+                  <div
+                    class="text-[9px] text-indigo-300 font-bold uppercase mb-2 flex items-center gap-2"
+                  >
+                    ✨ Bônus Ativos
+                  </div>
+                  <div id="active-sets-list" class="flex flex-col gap-2"></div>
+                </div>
+              </div>
+
+              <!-- MANAGEMENT BUTTONS -->
+              <div class="mt-4 grid grid-cols-1 gap-3">
+                <button
+                  onclick="openDetailInventoryModal()"
+                  class="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all text-xs border border-white/10 group shadow-lg"
+                >
+                  <span
+                    class="text-2xl group-hover:scale-110 transition-transform"
+                    >🎒</span
+                  >
+                  <div class="flex flex-col items-start leading-tight">
+                    <span class="uppercase tracking-wider">Abrir Sacola</span>
+                    <span class="text-[9px] text-slate-400 font-normal"
+                      >Organizar e Equipar Itens</span
+                    >
+                  </div>
                 </button>
-           </div>
-           
-           <div class="flex-1 flex flex-col z-10 overflow-y-auto custom-scrollbar">
-                
-                <!-- HERO SECTION (Visual + Basic Info) -->
-                <div class="relative w-full h-[45%] min-h-[300px] shrink-0 flex items-center justify-center">
-                    
-                    <!-- Element Badge (Floating Top Left) -->
-                    <div id="det-element-badge" class="absolute top-16 left-6 text-2xl z-20 animate-float drop-shadow-xl bg-black/20 p-2 rounded-xl backdrop-blur-sm border border-white/5"></div>
-                    
-                    <!-- Visual Wrapper (Preserved ID) -->
-                    <div id="det-img-wrapper" class="w-full h-full flex items-center justify-center relative z-10 transition-all duration-500">
-                        <img id="det-img" src="" class="h-[80%] w-auto object-contain filter drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-breathing" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
-                        <span id="det-emoji" style="display: none; font-size: 8rem;" class="filter drop-shadow-2xl animate-float">🐉</span>
-                    </div>
-                    
-                    <!-- Name & Info Overlay (Bottom) -->
-                    <div class="absolute bottom-0 w-full bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent pt-20 pb-4 px-6 flex flex-col items-start z-30">
-                        <h2 id="det-name" class="text-4xl font-black text-white italic uppercase tracking-tighter leading-none drop-shadow-lg">NAME</h2>
-                        <div class="flex items-center gap-3 mt-2">
-                             <span id="det-type" class="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-[10px] font-bold text-white uppercase tracking-widest backdrop-blur-md">TYPE</span>
-                             <div class="flex items-center gap-1">
-                                <span class="text-yellow-400 text-xs tracking-widest" id="det-stars">⭐⭐⭐⭐⭐</span>
-                                <span id="det-nat-grade" class="text-[9px] text-slate-500 font-bold uppercase hidden">Natural Grade</span>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB NAVIGATION -->
-                <div class="px-6 mt-4 flex gap-2 shrink-0 overflow-x-auto no-scrollbar relative z-40 bg-slate-950/80 backdrop-blur-sm pt-2 sticky top-0">
-                    <button onclick="switchDetailTab('status')" id="tab-btn-status" class="tab-btn flex-1 py-3 rounded-xl bg-indigo-600 text-white font-black uppercase text-xs tracking-wider transition-all border border-indigo-400 shadow-[0_0_15px_rgba(79,70,229,0.4)]">status</button>
-                    <button onclick="switchDetailTab('skills')" id="tab-btn-skills" class="tab-btn flex-1 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-500 font-bold uppercase text-xs tracking-wider hover:bg-slate-800 transition-all">skills</button>
-                    <button onclick="switchDetailTab('gear')" id="tab-btn-gear" class="tab-btn flex-1 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-500 font-bold uppercase text-xs tracking-wider hover:bg-slate-800 transition-all">gear</button>
-                </div>
-
-                <!-- CONTENT AREA -->
-                <div class="flex-1 bg-slate-950 relative z-30 pb-24">
-                    
-                    <!-- TAB 1: STATUS -->
-                    <div id="tab-status" class="tab-content px-6 py-6 flex flex-col gap-6 animate-fade-in">
-                        
-                        <!-- Level & XP -->
-                        <div class="bg-slate-900/50 rounded-2xl p-4 border border-white/5">
-                            <div class="flex justify-between items-end mb-4">
-                                <div>
-                                    <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Nível</div>
-                                    <div class="flex items-baseline gap-1">
-                                        <span id="det-lvl" class="text-4xl font-black text-white">40</span>
-                                        <span class="text-sm text-slate-600 font-bold">/ 40</span>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[8px] text-slate-500 font-bold uppercase mb-1">Progresso XP</div>
-                                    <div class="w-32 h-2 bg-slate-950 rounded-full overflow-hidden border border-white/10">
-                                        <div id="det-xp-bar" class="h-full bg-gradient-to-r from-emerald-500 to-green-400 transition-all duration-300" style="width: 0%"></div>
-                                    </div>
-                                    <div id="det-xp-text" class="text-[9px] text-slate-400 mt-1 font-mono">0 / 0</div>
-                                </div>
-                            </div>
-                            <!-- Potion Button -->
-                            <div id="detail-pot-btn-container"></div>
-                        </div>
-
-                        <!-- Main Stats Grid -->
-                        <div>
-                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> Atributos Base
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"><span class="text-[10px] font-bold text-slate-400 uppercase">Vida</span> <span id="val-hp" class="text-emerald-400 font-mono text-sm font-bold">0</span></div>
-                                <div class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"><span class="text-[10px] font-bold text-slate-400 uppercase">Ataque</span> <span id="val-atk" class="text-red-400 font-mono text-sm font-bold">0</span></div>
-                                <div class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"><span class="text-[10px] font-bold text-slate-400 uppercase">Defesa</span> <span id="val-def" class="text-blue-400 font-mono text-sm font-bold">0</span></div>
-                                <div class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"><span class="text-[10px] font-bold text-slate-400 uppercase">Agil.</span> <span id="val-spd" class="text-yellow-400 font-mono text-sm font-bold">0</span></div>
-                                <div class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"><span class="text-[10px] font-bold text-slate-400 uppercase">Crítico</span> <span id="val-crit" class="text-purple-400 font-mono text-xs font-bold">0%</span></div>
-                                <div class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"><span class="text-[10px] font-bold text-slate-400 uppercase">Dano C.</span> <span id="val-cdmg" class="text-purple-400 font-mono text-xs font-bold">0%</span></div>
-                                <div class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"><span class="text-[10px] font-bold text-slate-400 uppercase">Precisão</span> <span id="val-acc" class="text-cyan-400 font-mono text-xs font-bold">0%</span></div>
-                                <div class="stat-box flex justify-between items-center p-3 rounded-xl bg-slate-900 border border-white/5"><span class="text-[10px] font-bold text-slate-400 uppercase">Resist.</span> <span id="val-res" class="text-orange-400 font-mono text-xs font-bold">0%</span></div>
-                            </div>
-                        </div>
-
-                        <!-- Evolution Button (User Request) -->
-                        <div id="det-evolution-container"></div>
-                        
-                        <!-- Leader Button -->
-                        <button onclick="equipLeader()" id="btn-equip" class="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold uppercase rounded-xl border border-white/10 shadow-lg active:scale-95 text-xs tracking-widest transition-all">
-                            Definir como Líder
-                        </button>
-                    </div>
-
-                    <!-- TAB 2: SKILLS -->
-                    <div id="tab-skills" class="tab-content px-6 py-6 flex flex-col gap-6 hidden animate-fade-in">
-                        <div id="det-skills-container" class="w-full space-y-4"></div>
-                    </div>
-
-                    <!-- TAB 3: GEAR -->
-                    <div id="tab-gear" class="tab-content px-6 py-6 flex flex-col gap-6 hidden animate-fade-in">
-                        
-                        <!-- Real-time Stats Header -->
-                        <div class="grid grid-cols-4 gap-2 mb-2 p-3 bg-slate-900/80 rounded-xl border border-white/5">
-                             <div class="text-center"><div class="text-[8px] text-slate-500 font-bold">HP</div><div id="gear-val-hp" class="text-[10px] text-emerald-400 font-mono">0</div></div>
-                             <div class="text-center"><div class="text-[8px] text-slate-500 font-bold">ATK</div><div id="gear-val-atk" class="text-[10px] text-red-400 font-mono">0</div></div>
-                             <div class="text-center"><div class="text-[8px] text-slate-500 font-bold">DEF</div><div id="gear-val-def" class="text-[10px] text-blue-400 font-mono">0</div></div>
-                             <div class="text-center"><div class="text-[8px] text-slate-500 font-bold">AGI</div><div id="gear-val-spd" class="text-[10px] text-yellow-400 font-mono">0</div></div>
-                        </div>
-
-                        <!-- Equipped Slots -->
-                        <div class="grid grid-cols-4 gap-3">
-                            <div id="eq-slot-slot1" class="aspect-square rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center relative cursor-pointer hover:border-white transition-colors group" onclick="handleEqClick('slot1')">
-                                <span class="text-xl mb-1 group-hover:scale-110 transition-transform">⚔️</span>
-                                <span class="text-[7px] font-bold text-slate-500 uppercase">Arma</span>
-                            </div>
-                            <div id="eq-slot-slot2" class="aspect-square rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center relative cursor-pointer hover:border-white transition-colors group" onclick="handleEqClick('slot2')">
-                                <span class="text-xl mb-1 group-hover:scale-110 transition-transform">🛡️</span>
-                                <span class="text-[7px] font-bold text-slate-500 uppercase">Traje</span>
-                            </div>
-                            <div id="eq-slot-slot3" class="aspect-square rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center relative cursor-pointer hover:border-white transition-colors group" onclick="handleEqClick('slot3')">
-                                <span class="text-xl mb-1 group-hover:scale-110 transition-transform">⛑️</span>
-                                <span class="text-[7px] font-bold text-slate-500 uppercase">Elmo</span>
-                            </div>
-                            <div id="eq-slot-slot4" class="aspect-square rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center relative cursor-pointer hover:border-white transition-colors group" onclick="handleEqClick('slot4')">
-                                <span class="text-xl mb-1 group-hover:scale-110 transition-transform">💍</span>
-                                <span class="text-[7px] font-bold text-slate-500 uppercase">Anel</span>
-                            </div>
-                        </div>
-
-                        <!-- Active Sets -->
-                        <div id="active-sets-container" class="hidden">
-                             <div class="bg-indigo-900/20 border border-indigo-500/30 rounded-xl p-3">
-                                <div class="text-[9px] text-indigo-300 font-bold uppercase mb-2 flex items-center gap-2">✨ Bônus Ativos</div>
-                                <div id="active-sets-list" class="flex flex-col gap-2"></div>
-                             </div>
-                        </div>
-
-                        <!-- MANAGEMENT BUTTONS -->
-                        <div class="mt-4 grid grid-cols-1 gap-3">
-                             <button onclick="openDetailInventoryModal()" class="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all text-xs border border-white/10 group shadow-lg">
-                                <span class="text-2xl group-hover:scale-110 transition-transform">🎒</span>
-                                <div class="flex flex-col items-start leading-tight">
-                                    <span class="uppercase tracking-wider">Abrir Sacola</span>
-                                    <span class="text-[9px] text-slate-400 font-normal">Organizar e Equipar Itens</span>
-                                </div>
-                             </button>
-                        </div>
-                    </div>
-
-                </div>
-           </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
 
       <!-- INVENTORY MODAL (NEW BAG) -->
@@ -1001,128 +1450,108 @@
         class="absolute inset-0 z-[70] bg-slate-950 flex flex-col hidden animate-fade-in"
       >
         <!-- Header -->
-        <div class="p-6 pb-2 shrink-0 flex items-center justify-between bg-slate-900 border-b border-white/5">
-            <div>
-                <h2 class="text-xl font-black text-white italic uppercase">Inventário</h2>
-                <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Selecione para Equipar</p>
-            </div>
-            <button onclick="document.getElementById('det-inventory-modal').classList.add('hidden')" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white hover:bg-slate-700">
-                ✕
-            </button>
+        <div
+          class="p-6 pb-2 shrink-0 flex items-center justify-between bg-slate-900 border-b border-white/5"
+        >
+          <div>
+            <h2 class="text-xl font-black text-white italic uppercase">
+              Inventário
+            </h2>
+            <p
+              class="text-[10px] text-slate-400 uppercase tracking-widest mt-1"
+            >
+              Selecione para Equipar
+            </p>
+          </div>
+          <button
+            onclick="document.getElementById('det-inventory-modal').classList.add('hidden')"
+            class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white hover:bg-slate-700"
+          >
+            ✕
+          </button>
         </div>
 
         <!-- Filters -->
-        <div class="px-6 py-4 bg-slate-900 shrink-0 flex flex-wrap gap-2 justify-center">
-             <button onclick="filterDetailInv('all')" class="det-inv-tab px-4 py-2 rounded-xl bg-indigo-600 text-white text-[10px] font-bold uppercase transition-all shadow-lg active:scale-95 whitespace-nowrap">Todos</button>
-             <button onclick="filterDetailInv(1)" class="det-inv-tab px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-[10px] font-bold uppercase transition-all active:scale-95 whitespace-nowrap">⚔️ Armas</button>
-             <button onclick="filterDetailInv(2)" class="det-inv-tab px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-[10px] font-bold uppercase transition-all active:scale-95 whitespace-nowrap">🛡️ Armaduras</button>
-             <button onclick="filterDetailInv(3)" class="det-inv-tab px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-[10px] font-bold uppercase transition-all active:scale-95 whitespace-nowrap">⛑️ Capacetes</button>
-             <button onclick="filterDetailInv(4)" class="det-inv-tab px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-[10px] font-bold uppercase transition-all active:scale-95 whitespace-nowrap">💍 Acessórios</button>
+        <div
+          class="px-6 py-4 bg-slate-900 shrink-0 flex flex-wrap gap-2 justify-center"
+        >
+          <button
+            onclick="filterDetailInv('all')"
+            class="det-inv-tab px-4 py-2 rounded-xl bg-indigo-600 text-white text-[10px] font-bold uppercase transition-all shadow-lg active:scale-95 whitespace-nowrap"
+          >
+            Todos
+          </button>
+          <button
+            onclick="filterDetailInv(1)"
+            class="det-inv-tab px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-[10px] font-bold uppercase transition-all active:scale-95 whitespace-nowrap"
+          >
+            ⚔️ Armas
+          </button>
+          <button
+            onclick="filterDetailInv(2)"
+            class="det-inv-tab px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-[10px] font-bold uppercase transition-all active:scale-95 whitespace-nowrap"
+          >
+            🛡️ Armaduras
+          </button>
+          <button
+            onclick="filterDetailInv(3)"
+            class="det-inv-tab px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-[10px] font-bold uppercase transition-all active:scale-95 whitespace-nowrap"
+          >
+            ⛑️ Capacetes
+          </button>
+          <button
+            onclick="filterDetailInv(4)"
+            class="det-inv-tab px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-[10px] font-bold uppercase transition-all active:scale-95 whitespace-nowrap"
+          >
+            💍 Acessórios
+          </button>
         </div>
 
         <!-- Grid Content -->
-        <div class="flex-1 p-6 overflow-y-auto custom-scrollbar bg-slate-950 relatif">
-             <div class="absolute inset-0 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-             
-             <!-- Bag Stats Summary -->
-             <div class="flex justify-between items-center mb-4 relative z-10 bg-slate-900/80 p-3 rounded-xl border border-white/5">
-                 <div class="flex items-center gap-2">
-                    <span class="text-2xl">🎒</span>
-                    <div>
-                        <div class="text-[10px] text-slate-400 uppercase font-bold">Capacidade</div>
-                        <div id="det-inv-count" class="text-xs text-white font-bold">0 / 100</div>
-                    </div>
-                 </div>
-                 <div class="text-[10px] text-indigo-400 font-bold uppercase cursor-pointer hover:text-indigo-300">
-                    Organizar ⬇
-                 </div>
-             </div>
+        <div
+          class="flex-1 p-6 overflow-y-auto custom-scrollbar bg-slate-950 relatif"
+        >
+          <div
+            class="absolute inset-0 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"
+          ></div>
 
-             <div id="det-inv-grid" class="grid grid-cols-3 gap-3 content-start pb-20 relative z-10">
-                 <!-- Grid Items -->
-             </div>
+          <!-- Bag Stats Summary -->
+          <div
+            class="flex justify-between items-center mb-4 relative z-10 bg-slate-900/80 p-3 rounded-xl border border-white/5"
+          >
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">🎒</span>
+              <div>
+                <div class="text-[10px] text-slate-400 uppercase font-bold">
+                  Capacidade
+                </div>
+                <div id="det-inv-count" class="text-xs text-white font-bold">
+                  0 / 100
+                </div>
+              </div>
+            </div>
+            <div
+              class="text-[10px] text-indigo-400 font-bold uppercase cursor-pointer hover:text-indigo-300"
+            >
+              Organizar ⬇
+            </div>
+          </div>
+
+          <div
+            id="det-inv-grid"
+            class="grid grid-cols-3 gap-3 content-start pb-20 relative z-10"
+          >
+            <!-- Grid Items -->
+          </div>
         </div>
       </div>
 
       <!-- UPGRADE MODAL (MOVED TO BODY ROOT TO SHARE) -->
+      <!-- UPGRADE MODAL -->
       <div
-        id="eq-modal"
-        class="absolute inset-0 z-[80] bg-slate-950/95 hidden flex-col items-center justify-center p-6"
-      >
-        <div
-          class="glass-panel w-full max-w-sm p-6 rounded-3xl flex flex-col items-center relative text-white"
-        >
-          <button
-            onclick="document.getElementById('eq-modal').classList.add('hidden')"
-            class="absolute top-4 right-4 text-white"
-          >
-            ✕
-          </button>
-          
-          <!-- Equipment Icon -->
-          <div id="eq-icon-container" class="w-20 h-20 rounded-2xl border-2 border-slate-600 flex items-center justify-center mb-3 relative overflow-visible">
-            <span id="eq-modal-icon" class="text-4xl relative z-10">⚔️</span>
-            
-            <!-- Upgrade Animation Elements -->
-            <div id="eq-upgrade-glow" class="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300"></div>
-            
-            <!-- Rotating Energy Circles -->
-            <div id="eq-energy-ring-1" class="absolute inset-[-10px] border-2 border-transparent rounded-full opacity-0"></div>
-            <div id="eq-energy-ring-2" class="absolute inset-[-20px] border-2 border-transparent rounded-full opacity-0"></div>
-            
-            <!-- Success/Fail Result Overlay -->
-            <div id="eq-anim-overlay" class="absolute inset-0 hidden items-center justify-center">
-              <span id="eq-anim-icon" class="text-5xl relative z-20"></span>
-            </div>
-          </div>
-          
-          <h3 id="eq-modal-title" class="text-xl font-bold text-white mb-2">
-            Espada Comum
-          </h3>
-          <div
-            id="eq-modal-level"
-            class="text-xs font-bold px-2 py-1 bg-slate-800 border border-slate-700 rounded mb-4"
-          >
-            +0
-          </div>
-
-          <!-- Stats Grid -->
-           <div id="eq-stat-container" class="space-y-1 mb-6 bg-black/40 p-4 rounded-xl border border-white/5">
-              <!-- Injetado via JS -->
-           </div>
-
-          <!-- New Equip/Unequip Button -->
-          <button id="btn-equip-manage" class="w-full py-3 bg-indigo-600 rounded-xl text-white font-bold mb-2 hidden active:scale-95 transition-all text-xs border border-white/10 shadow-lg uppercase tracking-wider">
-              Equipar
-          </button>
-
-          <div class="w-full flex gap-2">
-            <button
-              id="btn-sell"
-              onclick="sellEquipment()"
-              class="flex-1 py-3 bg-red-900/50 border border-red-500 rounded-xl text-red-200 font-bold mb-2 text-xs"
-            >
-              Vender (<span id="sell-price">100</span> 💰)
-            </button>
-            <button
-              id="btn-upgrade"
-              onclick="performUpgrade()"
-              class="flex-[2] py-3 bg-green-600 rounded-xl text-white font-bold mb-2 disabled:opacity-50 disabled:grayscale text-xs"
-            >
-              Melhorar (<span id="upg-cost">100</span> 💰)
-            </button>
-          </div>
-          <p id="upg-chance" class="text-[10px] text-slate-400 text-center">
-            Chance: 100%
-          </p>
-          <p
-            id="eq-equipped-by"
-            class="text-[10px] text-indigo-400 font-bold mt-2 hidden"
-          >
-            Equipado em: Monster
-          </p>
-        </div>
-      </div>
+        id="eq-modal-v2"
+        class="absolute inset-0 z-[80] bg-slate-950/95 hidden flex-col items-center justify-center p-6 animate-fade-in"
+      ></div>
 
       <!-- BATTLE -->
       <main id="view-battle" class="flex-1 hidden-view battle-scene relative">
@@ -1405,7 +1834,7 @@
                 onclick="doSummon('epic', 10)"
                 class="w-full py-2 rounded-xl bg-slate-900 border border-slate-800 text-[10px] text-amber-700 hover:text-amber-400 hover:border-amber-900/50 transition-colors uppercase font-bold"
               >
-                  Invocar 10x
+                Invocar 10x
               </button>
             </div>
           </div>
