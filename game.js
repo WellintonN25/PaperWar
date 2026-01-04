@@ -607,6 +607,20 @@ const renderStory = () => {
         updateShopUI();
         updateHeader();
         showToast("Compra realizada com sucesso!", "success");
+        
+        // === NOVO: Feedback visual de compra na posição do último clique ===
+        if (window.particleSystem && window.lastClickPosition) {
+          window.particleSystem.createPurchaseParticles(
+            window.lastClickPosition.x, 
+            window.lastClickPosition.y, 
+            15
+          );
+        } else if (window.particleSystem) {
+          // Fallback para centro da tela
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          window.particleSystem.createPurchaseParticles(centerX, centerY, 15);
+        }
       };
       // Expose to window for HTML onclick logic
       window.buyShopItem = buyShopItem;
@@ -749,6 +763,13 @@ const renderStory = () => {
         const flash = document.getElementById("summon-flash");
         const app = document.getElementById("app");
 
+        // === NOVO: Portal de summon ===
+        if (window.particleSystem) {
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          window.particleSystem.createSummonPortal(centerX, centerY);
+        }
+
         // Reset state
         core.style.transform = "scale(1)";
         rays.style.opacity = "0";
@@ -767,6 +788,13 @@ const renderStory = () => {
           // Spin
           rays.style.opacity = "1";
           await sleep(1500);
+
+          // === NOVO: Raios de summon 5 estrelas ===
+          if (window.particleSystem) {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            window.particleSystem.createSummonLightning(centerX, centerY, 8);
+          }
 
           // LIGHTNING STRIKE EFFECT
           const lightning = document.createElement("div");
@@ -804,6 +832,13 @@ const renderStory = () => {
             overlay.appendChild(bolt);
             setTimeout(() => bolt.remove(), 200);
             await sleep(100);
+          }
+          
+          // === NOVO: Confete para nat 5 ===
+          if (window.particleSystem) {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            window.particleSystem.createConfetti(centerX, centerY, 50);
           }
         } else {
           // === STANDARD ANIMATION (NAT 1-4) - SIMPLE ===
@@ -847,16 +882,32 @@ const renderStory = () => {
 
   const count = currentSummonResults.length;
   const fragment = document.createDocumentFragment();
+  
+  // === NOVO: Ocultar botão "Continuar" em summons múltiplos ===
+  const closeButton = modal.querySelector('button');
+  if (closeButton) {
+    if (count > 1) {
+      // Múltiplos summons: ocultar botão (auto-close ativo)
+      closeButton.classList.add('hidden');
+    } else {
+      // Single summon: mostrar botão
+      closeButton.classList.remove('hidden');
+    }
+  }
 
   // Adjust grid based on summon count
   if (count === 1) {
     // Single summon: centered, larger card
     grid.className =
       "flex-1 flex items-center justify-center overflow-y-auto pb-20";
-  } else {
-    // Multiple summons: 2 Columns for vertical scrolling, centered items
+  } else if (count <= 10) {
+    // 10x summon: Grid 3 colunas - SEM SCROLL
     grid.className =
-      "flex-1 grid grid-cols-2 place-content-start justify-items-center gap-6 overflow-y-auto pb-20 pt-10 custom-scrollbar";
+      "flex-1 grid grid-cols-3 gap-2.5 px-3 py-2 place-content-center items-center justify-items-center";
+  } else {
+    // Mais de 10: Grid com scroll (fallback)
+    grid.className =
+      "flex-1 grid grid-cols-3 gap-2.5 px-3 py-2 overflow-y-auto pb-20 custom-scrollbar";
   }
 
   currentSummonResults.forEach((mon, idx) => {
@@ -864,10 +915,14 @@ const renderStory = () => {
 
     // Adjust card size based on count
     if (count === 1) {
+      // Single: Grande
       card.className = "relative w-48 h-64 perspective-1000 opacity-0";
+    } else if (count <= 10) {
+      // 10x: Bem compacto (w-20 = 80px, h-28 = 112px)
+      card.className = "relative w-20 h-28 perspective-1000 opacity-0";
     } else {
-      // 10x: Larger cards (w-32 ˜ 128px, h-44 ˜ 176px)
-      card.className = "relative w-32 h-44 perspective-1000 opacity-0";
+      // Mais de 10: Pequeno
+      card.className = "relative w-18 h-26 perspective-1000 opacity-0";
     }
 
     card.style.animation = `card-flip 0.5s ease-out ${
@@ -894,19 +949,27 @@ const renderStory = () => {
       glow = "shadow-[0_0_30px_#fbbf24] animate-pulse";
     }
 
+    // Ajustar tamanhos de fonte e padding para cards compactos
+    const isCompact = count > 1 && count <= 10;
+    const starSize = isCompact ? "text-[6px]" : "text-[9px]";
+    const typeSize = isCompact ? "text-[5px]" : "text-[8px]";
+    const nameSize = isCompact ? "text-[7px]" : "text-[10px]";
+    const emojiSize = isCompact ? "text-2xl" : "text-5xl";
+    const padding = isCompact ? "p-1" : "p-3";
+
     card.innerHTML = `
-          <div class="w-full h-full rounded-2xl border-2 ${borderCol} bg-gradient-to-br ${bgGrad} p-3 flex flex-col items-center justify-between ${glow} relative overflow-hidden">
+          <div class="w-full h-full rounded-2xl border-2 ${borderCol} bg-gradient-to-br ${bgGrad} ${padding} flex flex-col items-center justify-between ${glow} relative overflow-hidden">
               <!-- Glow Background -->
               <div class="absolute inset-0 bg-gradient-to-t from-transparent via-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none"></div>
               
               <!-- Header -->
               <div class="w-full flex justify-between items-start relative z-10">
-                  <span class="text-[9px] text-white font-black bg-black/70 px-2 py-0.5 rounded-full backdrop-blur-sm">${"★".repeat(
+                  <span class="${starSize} text-white font-black bg-black/70 px-1 py-0.5 rounded-full backdrop-blur-sm">${"★".repeat(
                     mon.stars
                   )}</span>
                   ${
                     mon.stars >= 5
-                      ? '<span class="animate-pulse text-amber-300 text-sm">✨</span>'
+                      ? `<span class="animate-pulse text-amber-300 ${isCompact ? 'text-[10px]' : 'text-sm'}">✨</span>`
                       : ""
                   }
               </div>
@@ -918,17 +981,17 @@ const renderStory = () => {
                     class="w-full h-full object-contain filter drop-shadow-xl z-10 transition-transform hover:scale-105" 
                     onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
                   />
-                  <span class="text-5xl absolute hidden">${
+                  <span class="${emojiSize} absolute hidden">${
                     mon.emoji || '❓'
                   }</span>
               </div>
 
               <!-- Footer -->
-              <div class="text-center w-full relative z-10 mt-1">
-                  <div class="text-[8px] text-slate-300 uppercase font-bold tracking-wider truncate opacity-80">${
+              <div class="text-center w-full relative z-10 ${isCompact ? 'mt-0' : 'mt-1'}">
+                  <div class="${typeSize} text-slate-300 uppercase font-bold tracking-wider truncate opacity-80">${
                     mon.type
                   }</div>
-                  <div class="text-[10px] text-white font-black truncate w-full leading-tight">${
+                  <div class="${nameSize} text-white font-black truncate w-full leading-tight">${
                     mon.name
                   }</div>
               </div>
@@ -937,6 +1000,38 @@ const renderStory = () => {
     fragment.appendChild(card);
   });
   grid.appendChild(fragment);
+  
+  // === NOVO: Auto-close após destacar raros ===
+  if (count > 1) {
+    // Calcular tempo total de animação dos cards
+    const totalAnimTime = count * 100 + 500; // 100ms por card + 500ms extra
+    
+    // Encontrar cards raros (3+ estrelas)
+    const rareCards = currentSummonResults.filter(m => m.stars >= 3);
+    
+    if (rareCards.length > 0) {
+      // Destacar raros por 2 segundos, depois fechar
+      setTimeout(() => {
+        // Adicionar pulse extra nos raros
+        const allCards = grid.querySelectorAll('.perspective-1000');
+        currentSummonResults.forEach((mon, idx) => {
+          if (mon.stars >= 3) {
+            allCards[idx]?.classList.add('animate-pulse');
+          }
+        });
+        
+        // Fechar após 2 segundos
+        setTimeout(() => {
+          closeSummonResults();
+        }, 2000);
+      }, totalAnimTime);
+    } else {
+      // Sem raros: fechar após 3 segundos
+      setTimeout(() => {
+        closeSummonResults();
+      }, totalAnimTime + 3000);
+    }
+  }
 };
 
 
@@ -4069,6 +4164,26 @@ const renderStory = () => {
         if (didLevel) {
             showToast(`${mon.name} subiu para o Nível ${mon.lvl}!`, "success");
             trackMission('levelup_mon', 1);
+            
+            // === NOVO: Efeito visual de level up ===
+            if (window.particleSystem) {
+              const centerX = window.innerWidth / 2;
+              const centerY = window.innerHeight / 2;
+              
+              // Explosão de luz
+              window.particleSystem.createLightExplosion(centerX, centerY);
+              
+              // Texto animado
+              window.particleSystem.createLevelUpText();
+              
+              // Partículas extras
+              for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                  window.particleSystem.createStars(centerX, centerY, 12);
+                  window.particleSystem.createBurst(centerX, centerY, 30, '#fbbf24');
+                }, i * 300);
+              }
+            }
         }
       };
 

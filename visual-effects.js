@@ -197,6 +197,146 @@ class ParticleSystem {
       setTimeout(() => particle.remove(), 2000);
     }
   }
+
+  // === NOVOS FEEDBACKS VISUAIS ===
+
+  // Ripple effect (botões)
+  createRipple(element, x, y) {
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    
+    const rect = element.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    
+    ripple.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${x - rect.left - size / 2}px;
+      top: ${y - rect.top - size / 2}px;
+    `;
+    
+    element.style.position = 'relative';
+    element.style.overflow = 'hidden';
+    element.appendChild(ripple);
+    
+    setTimeout(() => ripple.remove(), 600);
+  }
+
+  // Confete (summons lendários)
+  createConfetti(x, y, count = 50) {
+    const colors = ['#fbbf24', '#ef4444', '#3b82f6', '#22c55e', '#a855f7', '#ec4899'];
+    
+    for (let i = 0; i < count; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.cssText = `
+        left: ${x + (Math.random() - 0.5) * 100}px;
+        top: ${y}px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        animation-delay: ${Math.random() * 0.5}s;
+      `;
+      this.container.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 3000);
+    }
+  }
+
+  // Portal de summon
+  createSummonPortal(x, y) {
+    const portal = document.createElement('div');
+    portal.className = 'summon-portal';
+    portal.style.cssText = `
+      left: ${x - 100}px;
+      top: ${y - 100}px;
+    `;
+    this.container.appendChild(portal);
+    setTimeout(() => portal.remove(), 2000);
+  }
+
+  // Raios de summon 5 estrelas
+  createSummonLightning(x, y, count = 8) {
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const lightning = document.createElement('div');
+        lightning.className = 'summon-lightning';
+        lightning.style.cssText = `
+          left: ${x + (Math.random() - 0.5) * 200}px;
+          top: 0;
+        `;
+        this.container.appendChild(lightning);
+        setTimeout(() => lightning.remove(), 300);
+      }, i * 100);
+    }
+  }
+
+  // Explosão de luz (level up)
+  createLightExplosion(x, y) {
+    const explosion = document.createElement('div');
+    explosion.className = 'light-explosion';
+    explosion.style.cssText = `
+      left: ${x - 150}px;
+      top: ${y - 150}px;
+    `;
+    this.container.appendChild(explosion);
+    setTimeout(() => explosion.remove(), 1000);
+  }
+
+  // Texto de level up
+  createLevelUpText() {
+    const text = document.createElement('div');
+    text.className = 'levelup-text';
+    text.textContent = 'LEVEL UP!';
+    this.container.appendChild(text);
+    setTimeout(() => text.remove(), 2000);
+  }
+
+  // Partículas de upgrade (equipamento)
+  createUpgradeParticles(x, y, count = 20) {
+    for (let i = 0; i < count; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'upgrade-particle';
+      particle.style.cssText = `
+        left: ${x + (Math.random() - 0.5) * 60}px;
+        top: ${y}px;
+        animation-delay: ${Math.random() * 0.3}s;
+      `;
+      this.container.appendChild(particle);
+      setTimeout(() => particle.remove(), 1500);
+    }
+  }
+
+  // Partículas de compra
+  createPurchaseParticles(x, y, count = 15) {
+    for (let i = 0; i < count; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'purchase-particles';
+      const angle = (Math.PI * 2 * i) / count;
+      const distance = 50 + Math.random() * 30;
+      particle.style.cssText = `
+        left: ${x}px;
+        top: ${y}px;
+        --tx: ${Math.cos(angle) * distance}px;
+        --ty: ${Math.sin(angle) * distance}px;
+      `;
+      this.container.appendChild(particle);
+      setTimeout(() => particle.remove(), 800);
+    }
+  }
+
+  // Partículas de troca de aba
+  createTabSwitchParticles(x, y, count = 10) {
+    for (let i = 0; i < count; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'tab-switch-particle';
+      particle.style.cssText = `
+        left: ${x}px;
+        top: ${y}px;
+        --tx: ${(Math.random() - 0.5) * 100}px;
+        --ty: ${(Math.random() - 0.5) * 100}px;
+      `;
+      this.container.appendChild(particle);
+      setTimeout(() => particle.remove(), 600);
+    }
+  }
 }
 
 // === SCREEN TRANSITION SYSTEM ===

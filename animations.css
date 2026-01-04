@@ -600,3 +600,392 @@
     transform: scale(1.2) rotate(180deg);
   }
 }
+
+/* ============================================
+   NOVOS FEEDBACKS VISUAIS - FASE 2
+   ============================================ */
+
+/* === RIPPLE EFFECT (Botões) === */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: ripple-animation 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* === BUTTON GLOW (Hover) === */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.btn-glow:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-glow-active {
+  box-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+  animation: glow-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
+  }
+}
+
+/* === CONFETE (Summons Lendários) === */
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #fbbf24;
+  animation: confetti-fall 3s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* === PORTAL SUMMON === */
+.summon-portal {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.8), rgba(168, 85, 247, 0.4), transparent);
+  animation: portal-spin 2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes portal-spin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1.1);
+  }
+}
+
+.summon-portal::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.6), transparent);
+  animation: portal-pulse 1s ease-in-out infinite;
+}
+
+@keyframes portal-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* === RAIOS DE SUMMON 5 ESTRELAS === */
+.summon-lightning {
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, #fbbf24, transparent);
+  animation: lightning-strike 0.3s ease-out;
+  pointer-events: none;
+  box-shadow: 0 0 10px #fbbf24, 0 0 20px #fbbf24;
+}
+
+@keyframes lightning-strike {
+  0%, 100% {
+    opacity: 0;
+  }
+  10%, 30%, 50%, 70%, 90% {
+    opacity: 1;
+  }
+  20%, 40%, 60%, 80% {
+    opacity: 0.3;
+  }
+}
+
+/* === EXPLOSÃO DE LUZ (Level Up) === */
+.light-explosion {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.9), rgba(251, 191, 36, 0.4), transparent);
+  animation: light-burst 1s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes light-burst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* === TEXTO LEVEL UP ANIMADO === */
+.levelup-text {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: 900;
+  color: #fbbf24;
+  text-shadow: 0 0 30px #fbbf24, 3px 3px 0 #000, -3px -3px 0 #000;
+  z-index: 10000;
+  pointer-events: none;
+  animation: levelup-text-appear 2s ease-out forwards;
+}
+
+@keyframes levelup-text-appear {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.3) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+/* === BRILHO DE EQUIPAMENTO === */
+.equipment-shine {
+  animation: equipment-shine 1s ease-out;
+}
+
+@keyframes equipment-shine {
+  0% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(2) drop-shadow(0 0 20px #fbbf24);
+    transform: scale(1.1);
+  }
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+}
+
+/* === SHAKE DE FALHA === */
+.upgrade-fail-shake {
+  animation: upgrade-fail 0.5s ease-in-out;
+}
+
+@keyframes upgrade-fail {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-10px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(10px);
+  }
+}
+
+/* === PARTÍCULAS DE UPGRADE === */
+.upgrade-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #fbbf24;
+  border-radius: 50%;
+  animation: upgrade-particle-rise 1.5s ease-out forwards;
+  pointer-events: none;
+  box-shadow: 0 0 10px #fbbf24;
+}
+
+@keyframes upgrade-particle-rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* === GLOW DE NOTIFICAÇÃO === */
+.notification-glow {
+  animation: notification-pulse 2s ease-in-out infinite;
+}
+
+@keyframes notification-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px currentColor;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+    transform: scale(1.05);
+  }
+}
+
+/* === PULSE DE NOVO ITEM === */
+.new-item-pulse {
+  position: relative;
+}
+
+.new-item-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid #fbbf24;
+  border-radius: inherit;
+  animation: new-item-pulse-ring 1.5s ease-out infinite;
+}
+
+@keyframes new-item-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+/* === PARTÍCULAS DE TROCA DE ABA === */
+.tab-switch-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #6366f1;
+  border-radius: 50%;
+  animation: tab-particle-burst 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes tab-particle-burst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* === COMPRA DE ITEM === */
+.purchase-success {
+  animation: purchase-pop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes purchase-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.purchase-particles {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: purchase-particle-burst 0.8s ease-out forwards;
+  pointer-events: none;
+  box-shadow: 0 0 10px #22c55e;
+}
+
+@keyframes purchase-particle-burst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* === HOVER GLOW SUAVE === */
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 0 15px currentColor;
+  transform: translateY(-2px);
+}
+
+/* === CLICK FEEDBACK === */
+.click-feedback {
+  animation: click-scale 0.2s ease-out;
+}
+
+@keyframes click-scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
