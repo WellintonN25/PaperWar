@@ -32,6 +32,9 @@
         inventorySpace: 50, // Max number of monsters in inventory
       };
 
+      // Expose state globally specifically for modules
+      window.state = state;
+
       let battleState = {
         active: false,
         busy: false,
@@ -58,6 +61,7 @@
           if (saved) {
             try {
               state = JSON.parse(saved);
+              window.state = state; // Sync global state
               loadMigration();
               
               // Initialize missions if not present (for old saves)
@@ -225,6 +229,7 @@
           const saved = localStorage.getItem(`paperwar_save_${val}`);
           if (saved) {
             state = JSON.parse(saved);
+            window.state = state; // Sync global state
             loadMigration();
             // If they want to change icon on re-login, un-comment below. For now, strict load.
             // state.user.icon = selectedLoginIcon;
