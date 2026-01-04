@@ -2283,19 +2283,19 @@ const renderStory = () => {
     if (!s) return;
     const canAfford = battleState.player.mp >= s.mp;
     const btn = document.createElement("button");
-    btn.className = `bg-slate-800/80 border border-white/10 rounded-xl p-2 flex flex-col items-center transition-all ${
+    btn.className = `bg-slate-800/80 border border-white/10 rounded-lg p-1.5 flex flex-col items-center transition-all ${
       canAfford
         ? "hover:bg-white/10 active:scale-90"
         : "opacity-50 grayscale cursor-not-allowed"
     }`;
     btn.innerHTML = `
-              <span class="text-xl mb-1">${s.icon}</span>
-              <span class="text-[8px] font-black uppercase text-white">${
+              <span class="text-lg mb-0.5">${s.icon}</span>
+              <span class="text-[7px] font-black uppercase text-white leading-tight">${
                 s.n
               }</span>
               ${
                 s.mp > 0
-                  ? `<span class="text-[8px] text-blue-300 font-bold">${s.mp} MP</span>`
+                  ? `<span class="text-[7px] text-blue-300 font-bold leading-none">${s.mp} MP</span>`
                   : ""
               }
           `;
