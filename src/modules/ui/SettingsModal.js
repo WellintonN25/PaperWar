@@ -21,7 +21,7 @@ window.SettingsModal = (() => {
     console.log('✅ SettingsModal inicializado');
   };
   
-  // Criar o HTML do modal dinamicamente
+  // Criar o HTML do modal dinamicamente (Layout Compacto)
   const createModal = () => {
     const modalHTML = `
       <div
@@ -30,94 +30,103 @@ window.SettingsModal = (() => {
         style="background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);"
       >
         <div
-          class="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-2xl border border-slate-700 shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full max-h-[85vh] overflow-y-auto relative transform scale-95 transition-transform duration-300"
+          class="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-2xl border border-slate-700 shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full relative transform scale-95 transition-transform duration-300 overflow-hidden"
           onclick="event.stopPropagation()"
         >
-          <!-- Header -->
+          <!-- Header Compacto -->
           <div
-            class="sticky top-0 bg-gradient-to-r from-indigo-900/90 to-purple-900/90 backdrop-blur-md p-4 border-b border-slate-700/50 flex items-center justify-between z-10"
+            class="bg-gradient-to-r from-indigo-900/90 to-purple-900/90 backdrop-blur-md px-4 py-3 border-b border-slate-700/50 flex items-center justify-between"
           >
-            <div class="flex items-center gap-3">
-              <span class="text-2xl filter drop-shadow">⚙️</span>
-              <h2 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300">Configurações</h2>
+            <div class="flex items-center gap-2">
+              <span class="text-xl filter drop-shadow">⚙️</span>
+              <h2 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 uppercase tracking-wide">Configurações</h2>
             </div>
             <button
               id="close-settings-btn"
-              class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all active:scale-95"
+              class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all active:scale-95"
             >
-              <span class="text-white text-xl leading-none">&times;</span>
+              <span class="text-white text-lg leading-none">&times;</span>
             </button>
           </div>
   
-          <!-- Content -->
-          <div class="p-6 space-y-6">
-            <!-- Seção: Gerenciar Save -->
-            <div class="space-y-3">
-              <h3 class="text-base font-bold text-slate-200 flex items-center gap-2 uppercase tracking-wide text-xs">
-                <span>💾</span>
-                <span>Gerenciar Progresso</span>
-              </h3>
-  
-              <div class="grid grid-cols-1 gap-3">
-                <!-- Botão Export -->
+          <!-- Content Compacto -->
+          <div class="p-4 space-y-4">
+            
+            <!-- GRID DE AÇÕES (2x2) -->
+            <div class="grid grid-cols-2 gap-2.5">
+                <!-- Exportar Arquivo -->
                 <button
                   onclick="triggerExport()"
-                  class="group w-full py-3 px-4 bg-gradient-to-r from-emerald-600/20 to-emerald-600/10 hover:from-emerald-600/30 hover:to-emerald-600/20 border border-emerald-500/30 hover:border-emerald-500/50 text-white rounded-xl transition-all duration-300 active:scale-95 flex items-center gap-4"
+                  class="group relative overflow-hidden bg-gradient-to-br from-emerald-900/40 to-emerald-950/40 border border-emerald-500/20 hover:border-emerald-500/50 hover:from-emerald-900/60 rounded-xl p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-95"
                 >
-                  <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                    📥
-                  </div>
-                  <div class="text-left flex-1">
-                    <div class="text-sm font-bold text-emerald-100">Exportar Save</div>
-                    <div class="text-[10px] text-emerald-300/70">Baixar arquivo de backup (.json)</div>
-                  </div>
+                  <div class="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span class="text-2xl mb-1 filter drop-shadow group-hover:scale-110 transition-transform">📥</span>
+                  <span class="text-xs font-bold text-emerald-100 uppercase tracking-wider">Salvar Arquivo</span>
+                  <span class="text-[9px] text-emerald-400/60">Backup Local (.json)</span>
                 </button>
   
-                <!-- Botão Import -->
+                <!-- Importar Arquivo -->
                 <button
                   onclick="window.openImportDialog()"
-                  class="group w-full py-3 px-4 bg-gradient-to-r from-blue-600/20 to-blue-600/10 hover:from-blue-600/30 hover:to-blue-600/20 border border-blue-500/30 hover:border-blue-500/50 text-white rounded-xl transition-all duration-300 active:scale-95 flex items-center gap-4"
+                  class="group relative overflow-hidden bg-gradient-to-br from-blue-900/40 to-blue-950/40 border border-blue-500/20 hover:border-blue-500/50 hover:from-blue-900/60 rounded-xl p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-95"
                 >
-                  <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                    📤
-                  </div>
-                  <div class="text-left flex-1">
-                    <div class="text-sm font-bold text-blue-100">Importar Save</div>
-                    <div class="text-[10px] text-blue-300/70">Carregar backup existente</div>
-                  </div>
+                  <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span class="text-2xl mb-1 filter drop-shadow group-hover:scale-110 transition-transform">📤</span>
+                  <span class="text-xs font-bold text-blue-100 uppercase tracking-wider">Carregar Arquivo</span>
+                  <span class="text-[9px] text-blue-400/60">Restaurar Backup</span>
                 </button>
-              </div>
+  
+                <!-- Copiar Nuvem -->
+                <button
+                  onclick="window.CloudStorage.copyCode()"
+                  class="group relative overflow-hidden bg-gradient-to-br from-indigo-900/40 to-indigo-950/40 border border-indigo-500/20 hover:border-indigo-500/50 hover:from-indigo-900/60 rounded-xl p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-95"
+                >
+                  <div class="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span class="text-2xl mb-1 filter drop-shadow group-hover:scale-110 transition-transform">☁️</span>
+                  <span class="text-xs font-bold text-indigo-100 uppercase tracking-wider">Copiar Código</span>
+                  <span class="text-[9px] text-indigo-400/60">Salvar na Nuvem</span>
+                </button>
+  
+                <!-- Colar Nuvem -->
+                <button
+                  onclick="window.CloudStorage.importCode()"
+                  class="group relative overflow-hidden bg-gradient-to-br from-purple-900/40 to-purple-950/40 border border-purple-500/20 hover:border-purple-500/50 hover:from-purple-900/60 rounded-xl p-3 flex flex-col items-center justify-center gap-1 transition-all active:scale-95"
+                >
+                  <div class="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span class="text-2xl mb-1 filter drop-shadow group-hover:scale-110 transition-transform">📋</span>
+                  <span class="text-xs font-bold text-purple-100 uppercase tracking-wider">Colar Código</span>
+                  <span class="text-[9px] text-purple-400/60">Restaurar da Nuvem</span>
+                </button>
             </div>
   
-            <!-- Seção: Informações -->
-            <div class="space-y-3 pt-2 border-t border-slate-800">
-               <h3 class="text-base font-bold text-slate-200 flex items-center gap-2 uppercase tracking-wide text-xs">
-                <span>ℹ️</span>
-                <span>Sobre</span>
-              </h3>
-  
-              <div class="space-y-2 text-xs">
-                <div class="flex justify-between items-center p-2.5 bg-slate-800/40 rounded-lg border border-slate-700/30">
-                  <span class="text-slate-400">Versão</span>
-                  <span class="text-white font-mono bg-slate-700/50 px-2 py-0.5 rounded text-[10px]">v1.2.2</span>
-                </div>
-                
-                <div class="flex justify-between items-center p-2.5 bg-slate-800/40 rounded-lg border border-slate-700/30">
-                  <span class="text-slate-400">Jogador</span>
-                  <span class="text-emerald-400 font-bold" id="settings-player-name">-</span>
-                </div>
-                
-                <div class="flex justify-between items-center p-2.5 bg-slate-800/40 rounded-lg border border-slate-700/30">
-                  <span class="text-slate-400">Nível</span>
-                  <span class="text-amber-400 font-bold" id="settings-player-level">-</span>
-                </div>
-              </div>
+            <!-- Info Player Compacta -->
+            <div class="bg-slate-800/40 border border-slate-700/50 rounded-lg px-3 py-2 flex justify-between items-center">
+                 <div class="flex items-center gap-3">
+                    <div class="flex flex-col">
+                        <span class="text-[9px] text-slate-500 uppercase font-bold">Jogador</span>
+                        <span class="text-emerald-400 font-bold text-xs" id="settings-player-name">-</span>
+                    </div>
+                    <div class="w-px h-6 bg-slate-700"></div>
+                     <div class="flex flex-col">
+                        <span class="text-[9px] text-slate-500 uppercase font-bold">Nível</span>
+                        <span class="text-amber-400 font-bold text-xs" id="settings-player-level">-</span>
+                    </div>
+                 </div>
+                 <div class="flex flex-col items-end">
+                    <span class="text-[9px] text-slate-500 uppercase font-bold">Versão</span>
+                    <span class="text-slate-300 font-mono text-[10px]">v1.2.4</span>
+                 </div>
             </div>
             
-            <!-- Footer -->
-             <div class="pt-4 mt-2 border-t border-slate-800 text-center">
-              <p class="text-[10px] text-slate-600">
-                PaperWar &copy; 2026 &bull; Desenvolvido com <span class="text-red-500">❤️</span>
+            <!-- Footer / Logs -->
+             <div class="flex justify-between items-center pt-2 border-t border-slate-800/50">
+               <button onclick="window.Logger.exportLogs()" class="flex items-center gap-1.5 px-2 py-1 rounded hover:bg-slate-800 transition-colors group">
+                    <span class="text-xs opacity-50 group-hover:opacity-100">🐞</span>
+                    <span class="text-[10px] text-slate-500 group-hover:text-slate-300 font-bold">Debug Logs</span>
+               </button>
+              
+              <p class="text-[9px] text-slate-600 font-medium">
+                PaperWar &copy; 2026
               </p>
             </div>
           </div>
@@ -163,7 +172,6 @@ window.SettingsModal = (() => {
           
           // Efeito visual
           if (window.particleSystem) {
-              // Tenta pegar posição do botão
               const btn = document.activeElement;
               let x = window.innerWidth / 2;
               let y = window.innerHeight / 2;
