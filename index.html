@@ -2452,5 +2452,17 @@
 
     <!-- GAME LOGIC -->
     <script src="game.js"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then((reg) => console.log("✅ SW registrado!", reg))
+            .catch((err) => console.log("❌ Falha no SW:", err));
+        });
+      }
+    </script>
   </body>
 </html>
